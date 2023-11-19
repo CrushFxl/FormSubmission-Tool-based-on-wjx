@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>WeActive - 轻量化活动报名托管平台</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/static/css/login.css">
+</head>
+
+<body>
+    <div class="container">
+        <div><img src="/static/img/logo.png" id="logo" alt="logo" ></div>
+        <div><p id="title">WeActive</p></div>
+        <div><p id="description">轻量化活动报名托管平台</p></div>
+        <form action="/" method="POST" style="width: 100%">
+            <div class="input_wrapper">
+                <p class="tip">账号</p>
+                <input class="input" type="text" name="user" id="user" placeholder=" 用户名/邮箱" />
+            </div>
+            <div class="input_wrapper">
+                <p class="tip">密码</p>
+                <input class="input" type="text" name="pwd" id="pwd" placeholder=" 输入密码" />
+            </div>
+            <div><p id="err" class="err_tip"></p></div>
+            <div>
+                <label><input type="checkbox" name="keep" value=true /> 下次自动登录</label>
+                <a id="forget" href="#">忘记密码</a>
+            </div>
+            <div>
+                <input type="submit" class="btn1" value="登 录" id="btn">
+            </div>
+        </form>
+        <div id="register"> 没有账号？<a href="#">立即注册 </a></div>
+    </div>
+    <footer id="footer"> Powered by：杭医信工CrushFxl </footer>
+    <script type="text/javascript" src="/static/js/login.js" defer></script>
+</body>
+</html>
