@@ -6,35 +6,39 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="viewport" content="minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link rel="stylesheet" type="text/css" href="/static/css/public.css">
     <link rel="stylesheet" type="text/css" href="/static/css/login.css">
-</head>
 
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+</head>
 <body>
     <div class="container">
         <img id="logo" src="/static/img/logo.png" alt="logo" >
         <p id="title">WeActive</p>
         <p id="description">轻量化活动报名托管平台</p>
         <form action="/" method="POST" style="width: 95%">
-            <div class="input_wrapper">
+            <div class="input_container">
                 <p class="info">账号</p>
-                <input class="input" type="text" name="user" id="user" placeholder=" 用户名/邮箱" />
+                <input class="input" type="text" name="phone" placeholder="输入手机号">
+                <span class='warn_tip' id="w1"></span>
             </div>
-            <div class="input_wrapper">
+            <div class="input_container">
                 <p class="info">密码</p>
-                <input class="input" type="text" name="pwd" id="pwd" placeholder=" 输入密码" />
+                <input class="input" type="text" name="pwd" placeholder="输入密码">
+                <span class='warn_tip' id="w1"></span>
             </div>
             <p id="err" class="err_tip"></p>
             <div>
                 <label><input type="checkbox" name="keep" value=true /> 下次自动登录</label>
                 <a id="forget" href="#">忘记密码</a>
             </div>
-            <input type="submit" class="btn1" value="登 录" id="btn">
+            <input type="submit" class="btn1" value="登 录">
         </form>
-        <a href="/register/" style="TEXT-DECORATION:none; width: 95%">
-            <input type="submit" class="btn2" value="注 册" id="btn"></a>
+        <a href="/register/" style=" width:95%; text-decoration: none">
+            <input type="button" class="btn2" value="注 册">
+        </a>
     </div>
-    <footer id="footer"> Powered by：杭医信工CrushFxl </footer>
-    <!-- ><script type="text/javascript" src="/static/js/fadeIn.js" defer></script>
+    <p id="footer"> Powered by：杭医信工CrushFxl </p>
 </body>
 </html>

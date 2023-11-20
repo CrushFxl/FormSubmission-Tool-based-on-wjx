@@ -20,14 +20,14 @@ body{
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-width: 300px;
-    width: 80%;
+    max-width: 330px;
+    width: 82%;
     margin: 0;
 }
 
-.input_wrapper{
+.input_container{
     padding: 0;
-    margin: 0 0 20px;
+    margin: 0 0 20px 0;
 }
 
 .input:hover{
@@ -42,13 +42,14 @@ body{
 
 .input{
     outline-color: rgb(108,94,252);
-    border-radius: 3px;
+    border-radius: 5px;
     background-color: #ffffff;
     border: 1px solid #7f7f7f;
     height: 35px;
     width: 100%;
-    font-size: 100%;
+    font-size: 90%;
     padding: 0;
+    text-indent: 10px;
 }
 
 .btn1:hover{
@@ -93,12 +94,23 @@ body{
 }
 
 .info{
-    color: #5f5f5f;
+    color: #3f3f3f;
     margin: 0 0 5px 0;
+}
+.tip{
+    margin: 5px 0 30px 0;
+    font-size: 14px;
+    color: #3f3f3f;
+}
+
+.warn_tip{
+    margin-top: 0;
+    font-size: 14px;
+    color: red;
 }
 
 #footer{
     margin-top: 15px;
     font-size: 14px;
-    color: #ffffff;
+    color: #FFFFFF;
 }

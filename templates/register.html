@@ -6,13 +6,40 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="viewport" content="minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link rel="stylesheet" type="text/css" href="/static/css/public.css">
+
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script src="/static/js/register.js"></script>
+
 </head>
 
 <body>
-    <div class="container">
-        <h2>用户注册</h2>
-
+    <div class="container" style="display:none; padding-top: 20px">
+        <h1 style="margin-bottom: 30px">用户注册</h1>
+        <form action="/" method="POST" style="width: 95%">
+            <div class="input_container">
+                <p class="info"><span style="color: red">* </span>注册手机号</p>
+                <input class="input" type="text" name="phone" placeholder="+(86) 中国">
+                <span class='warn_tip' id="w1"></span>
+            </div>
+            <div class="input_container">
+                <p class="info"><span style="color: red">* </span>设置密码</p>
+                <input class="input" type="text" name="pwd" placeholder="长度不能少于6位">
+                <span class='warn_tip' id="w2"></span>
+            </div>
+            <div class="input_container">
+                <p class="info"><span style="color: red">* </span>邀请码</p>
+                <input class="input" type="text" name="code" placeholder="必填">
+                <span class='warn_tip' id="w3"></span>
+                <p class="tip">
+                    网站正处于内测阶段，必须拥有<span style="color: red">邀请码</span>才能注册。
+                </p>
+            </div>
+            <p id="err" class="err_tip"></p>
+        </form>
+        <input id="btn1" type="button" class="btn1" value="下一步" style="width: 95%">
     </div>
+    <p id="footer"> Powered by：杭医信工CrushFxl </p>
 </body>
 </html>
