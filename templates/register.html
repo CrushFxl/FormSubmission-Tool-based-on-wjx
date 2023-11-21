@@ -6,26 +6,24 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="viewport" content="minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <link rel="stylesheet" type="text/css" href="/static/css/public.css">
-
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
     <script src="/static/js/register.js"></script>
 
 </head>
 
 <body>
-    <div class="container" style="display:none; padding-top: 20px">
-        <h1 style="margin-bottom: 30px">用户注册</h1>
+    <div id="form1" class="container" style="display:none; padding-top: 20px">
+        <h1 style="margin: 20px 0">用户注册</h1>
         <form action="/" method="POST" style="width: 95%">
             <div class="input_container">
-                <p class="info"><span style="color: red">* </span>注册手机号</p>
-                <input class="input" type="text" name="phone" placeholder="+(86) 中国">
+                <p class="info"><span style="color: red">* </span>设置用户名</p>
+                <input class="input" type="text" name="name" placeholder="取一个好听的名字~">
                 <span class='warn_tip' id="w1"></span>
             </div>
             <div class="input_container">
                 <p class="info"><span style="color: red">* </span>设置密码</p>
-                <input class="input" type="text" name="pwd" placeholder="长度不能少于6位">
+                <input class="input" type="text" name="pwd" placeholder="长度不能少于6位噢~">
                 <span class='warn_tip' id="w2"></span>
             </div>
             <div class="input_container">
@@ -33,12 +31,44 @@
                 <input class="input" type="text" name="code" placeholder="必填">
                 <span class='warn_tip' id="w3"></span>
                 <p class="tip">
-                    网站正处于内测阶段，必须拥有<span style="color: red">邀请码</span>才能注册。
+                    网站正处内测阶段，必须拥有<span style="color: red">邀请码</span>才能注册。
                 </p>
             </div>
-            <p id="err" class="err_tip"></p>
         </form>
         <input id="btn1" type="button" class="btn1" value="下一步" style="width: 95%">
+    </div>
+    <div id="form2" class="container" style="display:none; padding-top: 20px">
+        <h1 style="margin: 20px 0 5px 0">完善用户信息</h1>
+        <form action="/" method="POST" style="width: 95%">
+            <p class="tip" style="margin-bottom: 20px;">
+                为了实现自动填写问卷，完成抢活动，我们需要您补充下列信息。</p>
+            <div class="input_container">
+                <p class="info">当出现<span style="font-weight: bolder">班级</span>时，填入：</p>
+                <input class="input" type="text" name="phone">
+            </div>
+            <div class="input_container">
+                <p class="info">当出现<span style="font-weight: bolder">姓名</span>时，填入：</p>
+                <input class="input" type="text" name="pwd">
+            </div>
+            <div class="input_container">
+                <p class="info">当出现<span style="font-weight: bolder">学号</span>时，填入：</p>
+                <input class="input" type="text" name="code">
+                <p class="tip">
+                    您稍后可在个人主页修改或添加这些内容。
+                </p>
+            </div>
+        </form>
+        <input id="btn2" type="button" class="btn1" value="下一步" style="width: 95%">
+    </div>
+    <div id="form3" class="container" style="display:none; padding-top: 20px">
+        <div style="width: 95%; text-align: center">
+            <h1 style="margin: 30px 0">注册完成</h1>
+            <p class="info" style="margin-bottom: 15px;">
+                感谢！我们已<span style="font-weight: bolder">免费赠送您1.00￥</span>体验余额</p>
+            <p class="info" style="margin-bottom: 40px;">
+                一键托管报名，不用设置闹钟踩点，免拼手速，1秒完成，你也快来试试吧~</p>
+            <input id="btn3" type="button" class="btn1" value="进入主页">
+        </div>
     </div>
     <p id="footer"> Powered by：杭医信工CrushFxl </p>
 </body>

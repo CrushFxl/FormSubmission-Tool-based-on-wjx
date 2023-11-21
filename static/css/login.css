@@ -2,24 +2,25 @@
     width: 100px;
     height: 100px;
     filter:drop-shadow(0 0 2px #7f7f7f);
-    margin: 0;
+    margin-right: 15px;
 }
 
 #title{
     font-size: 40px;
-    margin: 10px 0 0 0;
+    font-weight: bolder;
+    margin: 0;
 }
 
 #description{
-    font-size: 18px;
+    font-size: 17px;
+    font-weight: bolder;
     color: #3f3f3f;
-    margin-top: 0;
-    margin-bottom: 30px;
+    margin: 0;
 }
 
 #forget{
     color: #3f3f3f;
     float:right;
     margin-top: 0;
-    margin-bottom: 50px;
+    margin-bottom: 40px;
 }

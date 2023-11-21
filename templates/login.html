@@ -6,21 +6,23 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="viewport" content="minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <link rel="stylesheet" type="text/css" href="/static/css/public.css">
     <link rel="stylesheet" type="text/css" href="/static/css/login.css">
-
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <img id="logo" src="/static/img/logo.png" alt="logo" >
-        <p id="title">WeActive</p>
-        <p id="description">轻量化活动报名托管平台</p>
+        <div style="display: flex; margin-bottom: 30px">
+            <img id="logo" src="/static/img/logo.png">
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center">
+                <p id="title">WeActive</p>
+                <p id="description">轻量活动报名托管平台</p>
+            </div>
+        </div>
         <form action="/" method="POST" style="width: 95%">
             <div class="input_container">
-                <p class="info">账号</p>
-                <input class="input" type="text" name="phone" placeholder="输入手机号">
+                <p class="info">用户名</p>
+                <input class="input" type="text" name="phone" placeholder="输入用户名">
                 <span class='warn_tip' id="w1"></span>
             </div>
             <div class="input_container">
@@ -30,10 +32,10 @@
             </div>
             <p id="err" class="err_tip"></p>
             <div>
-                <label><input type="checkbox" name="keep" value=true /> 下次自动登录</label>
+                <label><input type="checkbox" name="keep" value=true checked="checked"> 下次自动登录</label>
                 <a id="forget" href="#">忘记密码</a>
             </div>
-            <input type="submit" class="btn1" value="登 录">
+            <input type="submit" class="btn1" style="margin-bottom: 15px" value="登 录">
         </form>
         <a href="/register/" style=" width:95%; text-decoration: none">
             <input type="button" class="btn2" value="注 册">

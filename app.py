@@ -3,8 +3,6 @@ import re
 from flask import Flask, render_template, request, abort
 
 pwd_regex = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.!@#%^&*()_+=-"
-phone_regex = ("^(13[0-9]|14[0|5|6|7|9]|15[0|1|2|3|5|6|7|8|9]|16[2|5|6|7]|17[0|1|2|"
-               "3|5|6|7|8]|18[0-9]|19[1|3|5|6|7|8|9])\d{8}$")
 
 app = Flask(__name__)
 
@@ -13,11 +11,11 @@ app = Flask(__name__)
 def login():
     if request.method == 'GET':
         return render_template("login.html")
+
     # 登录校验
-    user = request.form['user']
-    pwd = request.form['pwd']
-    print(request.method)
-    return "提交完成"
+    user = request.form.get("phone")
+    pwd = request.form.get("pwd")
+    return abort(404)
 
 
 @app.route('/register/')
@@ -32,16 +30,17 @@ def invitation_code():
         return abort(403)
 
     # 检查手机号合法性
-    phone = request.form["phone"]
-    pattern = re.compile(phone_regex)
-    if not pattern.search(phone):
-        return "invalid_phone", 400
+    name = request.form.get("name")
+    if len(name) < 2:
+        return "name_too_short", 400
+    if len(name) > 20:
+        return "name_too_long", 400
 
     # 检查密码合法性
-    pwd = request.form["pwd"]
+    pwd = request.form.get("pwd")
     if len(pwd) < 6:
         return "pwd_too_short", 400
-    elif len(pwd) > 18:
+    if len(pwd) > 18:
         return "pwd_too_long", 400
     for i in pwd:
         if i not in pwd_regex:
