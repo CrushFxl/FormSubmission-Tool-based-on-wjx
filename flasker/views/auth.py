@@ -1,13 +1,11 @@
-import re
+from flask import Blueprint, render_template, request, abort
 
-from flask import Flask, render_template, request, abort
+bp = Blueprint('auth', __name__, template_folder='/static/templates/')
 
 pwd_regex = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.!@#%^&*()_+=-"
 
-app = Flask(__name__)
 
-
-@app.route('/', methods=['GET', 'POST'])
+@bp.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
         return render_template("login.html")
@@ -18,13 +16,13 @@ def login():
     return abort(404)
 
 
-@app.route('/register/')
+@bp.route('/register/')
 def register():
     if request.method == 'GET':
         return render_template('register.html')
 
 
-@app.route('/register/_invitation_code/', methods=['GET', 'POST'])
+@bp.route('/api.inv_code/', methods=['GET', 'POST'])
 def invitation_code():
     if request.method == 'GET':
         return abort(403)
@@ -52,7 +50,3 @@ def invitation_code():
         return "invalid_inv_code", 400
 
     return "ok", 200
-
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8088, debug=False)

@@ -41,6 +41,7 @@ $(document).on("click", "#btn1", function(){
 
 $(document).on("click", "#btn2", function(){
     $("#form2").fadeOut(200, function (){
+
         $("#form3").fadeIn(200);
     });
 });
