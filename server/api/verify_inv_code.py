@@ -1,32 +1,12 @@
-from flask import Blueprint, render_template, request, abort
+from flask import Blueprint, request
 
-bp = Blueprint('auth', __name__, template_folder='/static/templates/')
+bp = Blueprint('verify_inv_code', __name__)
 
 pwd_regex = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.!@#%^&*()_+=-"
 
 
-@bp.route('/', methods=['GET', 'POST'])
-def login():
-    if request.method == 'GET':
-        return render_template("login.html")
-
-    # 登录校验
-    user = request.form.get("phone")
-    pwd = request.form.get("pwd")
-    return abort(404)
-
-
-@bp.route('/register/')
-def register():
-    if request.method == 'GET':
-        return render_template('register.html')
-
-
-@bp.route('/api.inv_code/', methods=['GET', 'POST'])
-def invitation_code():
-    if request.method == 'GET':
-        return abort(403)
-
+@bp.post('/verify_inv_code/')
+def verify_inv_code():
     # 检查手机号合法性
     name = request.form.get("name")
     if len(name) < 2:

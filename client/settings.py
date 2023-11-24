@@ -1,5 +1,4 @@
 from flask import Flask
-import flasker.views.auth
 
 
 def create_app():
@@ -10,11 +9,10 @@ def create_app():
         "SECRET_KEY": "dev",
         "DEBUG": True,
         "TESTING": True,
-        "SQLALCHEMY_DATABASE_URI": "",
-        "SQLALCHEMY_TRACK_MODIFICATIONS": False,
     })
 
     # 注册蓝图
-    app.register_blueprint(flasker.views.auth.bp)
+    import views.auth
+    app.register_blueprint(views.auth.bp)
 
     return app

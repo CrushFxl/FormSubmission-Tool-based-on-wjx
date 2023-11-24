@@ -6,12 +6,12 @@ $(document).ready(function () {
 $(document).on("click", "#btn1", function(){
     const name = $("input[name='name']").val();
     const pwd = $("input[name='pwd']").val();
-    const inv_code = $("input[name='code']").val();
+    const inv_code = $("input[name='inv_code']").val();
     $("#w1").text("");
     $("#w2").text("");
     $("#w3").text("");
     $.ajax({
-        url: "/register/_invitation_code/",
+        url: "http://127.0.0.1:12345/verify_inv_code/",
         data: {"name": name, "pwd": pwd, "inv_code": inv_code},
         type: "POST",
         dataType: "text",   /*响应的数据类型*/
