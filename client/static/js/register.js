@@ -45,3 +45,7 @@ $(document).on("click", "#btn2", function(){
         $("#form3").fadeIn(200);
     });
 });
+
+$(document).on("click", "#btn3", function(){
+    window.location.replace("/user/");
+});

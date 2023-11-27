@@ -12,7 +12,7 @@ def create_app():
     })
 
     # 注册蓝图
-    import views.auth
-    app.register_blueprint(views.auth.bp)
+    # import views.auth
+    # app.register_blueprint(views.auth.bp)
 
     return app

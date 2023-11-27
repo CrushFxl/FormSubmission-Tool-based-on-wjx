@@ -1,8 +1,5 @@
 from flask import Flask
 
-# 允许的跨源地址
-origin = {"Access-Control-Allow-Origin": "http://119.3.159.148"}
-
 
 def create_app():
     # 创建并配置app实例
@@ -17,6 +14,9 @@ def create_app():
         "DEBUG": True,
         "TESTING": True,
     })
+
+    # 默认允许的跨源访问地址
+    app.config["origin"] = {"Access-Control-Allow-Origin": "*"}
 
     # 注册蓝图
     import api.verify_inv_code
