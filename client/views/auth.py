@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, abort
 
-bp = Blueprint('auth', __name__, template_folder='../static/templates/')
+bp = Blueprint('auth', __name__)
 
 pwd_regex = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.!@#%^&*()_+=-"
 

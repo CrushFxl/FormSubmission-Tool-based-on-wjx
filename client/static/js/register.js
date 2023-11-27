@@ -11,7 +11,7 @@ $(document).on("click", "#btn1", function(){
     $("#w2").text("");
     $("#w3").text("");
     $.ajax({
-        url: "http://127.0.0.1:12345/verify_inv_code/",
+        url: "http://119.3.159.148:12345/verify_inv_code/",
         data: {"name": name, "pwd": pwd, "inv_code": inv_code},
         type: "POST",
         dataType: "text",   /*响应的数据类型*/
