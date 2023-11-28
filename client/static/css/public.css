@@ -1,28 +1,30 @@
 html{
-    font-family: -apple-system, PingFang SC, sans-serif;
+    font-family:"PingFang SC", "Microsoft YaHei", "sans-serif";
     margin: 0;
 }
 
 body{
-    background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
+    background-attachment: fixed;
+    box-sizing: border-box;
     height: 100vh;
     display: flex;
-    align-items: center;
     flex-direction: column;
+    align-items: center;
     margin: 0;
 }
 
-.container{
-    background-color: #ffffff;
-    box-shadow:0 0 12px #5f5f5f;
+.box{
+    background-color: #FFFFFF;
+    box-shadow:0 0 6px #9F9F9F;
     border-radius: 10px;
     padding: 30px 20px;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-width: 330px;
-    width: 82%;
-    margin: 10px;
+    max-width: 500px;
+    width: 90%;
+    margin: 0;
 }
 
 .input_container{
@@ -62,7 +64,7 @@ body{
     border-radius: 5px;
     border: none;
     background-color: rgb(108,94,252);
-    color:#ffffff;
+    color:#FFFFFF;
     font-weight: bold;
     font-size: 105%;
     display: block;
@@ -112,4 +114,11 @@ body{
     margin-top: 15px;
     font-size: 14px;
     color: #FFFFFF;
+}
+
+.slim{
+    padding: 0;
+    margin: 0;
+    position: relative;
+    display: block;
 }
