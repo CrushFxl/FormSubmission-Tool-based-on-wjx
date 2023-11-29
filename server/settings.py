@@ -1,25 +1,26 @@
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
 
 def create_app():
-    # 创建并配置app实例
+    # 配置MySQL数据库
+    HOSTNAME = "127.0.0.1"
+    PORT = 3306
+    USERNAME = "root"
+    PASSWORD = "123456."
+    DATABASE = "weactive"
+
     app = Flask(__name__)
     app.config.from_mapping({
-
-        # 数据库配置
-        "SQLALCHEMY_DATABASE_URI": "",
-        "SQLALCHEMY_TRACK_MODIFICATIONS": False,
-
+        "SQLALCHEMY_DATABASE_URI": f"mysql+pymysql://{USERNAME}:{PASSWORD}@{HOSTNAME}:"
+                                   f"{PORT}/{DATABASE}?charset=utf8mb4",
         "SECRET_KEY": "dev",
         "DEBUG": True,
         "TESTING": True,
     })
+    db = SQLAlchemy(app)
+    # # 注册蓝图
+    # import api.verify_inv_code
+    # app.register_blueprint(api.verify_inv_code.bp)
 
-    # 默认允许的跨源访问地址
-    app.config["origin"] = {"Access-Control-Allow-Origin": "*"}
-
-    # 注册蓝图
-    import api.verify_inv_code
-    app.register_blueprint(api.verify_inv_code.bp)
-
-    return app
+    return app, db
