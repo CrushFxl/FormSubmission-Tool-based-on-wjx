@@ -5,3 +5,14 @@
     padding: 20px 30px 30px 30px;
     max-width: 400px;
 }
+
+.phone_input{
+    width: 60%;
+}
+
+.send_code_btn{
+    height: 38px;
+    margin-left: 10px;
+    width: 40%;
+    font-weight: normal;
+}

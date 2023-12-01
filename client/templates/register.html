@@ -12,51 +12,52 @@
     <script src="../static/js/register.js"></script>
     <style>
         span{color: red; font-size: 14px}
-        h1{margin:10px 0 20px 0;}
+        h1{margin:10px 0 25px 0;}
         .info{margin: 0 0 5px 0;}
         .tip{margin: 5px 0 30px 0;}
     </style>
 </head>
 
-<body style="justify-content: center; background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);">
+<body class="index_bg" style="justify-content: center;">
     <div id="form1" class="box container sd3">
         <h1>用户注册</h1>
         <form action="/" method="POST" style="width: 95%">
             <div class="input_container">
                 <p class="info">注册手机号</p>
-                <input class="input phone_input" type="text" placeholder="(+86) 中国">
-                <span class="phone_warn"></span>
+                <div>
+                    <input class="input phone_input" type="text" placeholder="(+86) 中国">
+                    <input type="button" class="btn1 send_code_btn sd1 s15" value="获取验证码">
+                </div>
+                <span class="phone_warn hide"></span>
+            </div>
+            <div class="input_container">
+                <p class="info">短信验证码</p>
+                <input class="input code_input" type="text" placeholder="六位数字">
+                <span class="code_warn hide">无效的验证码</span>
             </div>
             <div class="input_container">
                 <p class="info">设置密码</p>
-                <input class="input pwd_input" type="text" placeholder="长度不少于6位">
-                <span class="pwd_warn"></span>
-            </div>
-            <div class="input_container">
-                <p class="info">昵称</p>
-                <input class="input nick_input" type="text" placeholder="起一个好听的名字">
-                <span class="nick_warn"></span>
+                <input class="input pwd_input" type="text" placeholder="长度不少于8位">
+                <span class="pwd_warn hide">至少使用字母、数字、特殊字符两种类型的组合密码，长度在8-18位</span>
             </div>
         </form>
-        <input type="button" class="btn1 next1" value="下一步" style="width: 95%; margin-top: 20px">
+        <input type="button" class="btn1 next1 sd1" value="下一步" style="width: 95%; margin-top: 20px">
     </div>
     <div id="form2" class="box container sd3">
         <h1 style="margin-bottom: 5px">完善用户信息</h1>
         <form action="/" method="POST" style="width: 95%">
-            <p class="tip grey2 sz1" style="margin-bottom: 20px;">
-                为了实现自动报名等功能，我们需要您提供下列信息。
-                注意，一旦注册成功，后续将<span>无法修改</span>，请仔细检查。
-            </p>
+            <p class="tip grey2 sz1" style="margin-bottom: 20px;">为了实现自动报名等功能，我们需要您补充下列信息。
+                您稍后也可在个人主页中修改。</p>
             <div class="input_container">
-                <p class="info" style="margin: 0 0 5px 0;">当问卷中出现<span class="grey3 bold s16">班级</span>时，填入：</p>
+                <p class="info" style="margin: 0 0 5px 0;">当问卷出现<span class="grey3 bold s16">班级</span>时，自动填入：</p>
                 <input class="input class_id_input" type="text">
             </div>
             <div class="input_container">
-                <p class="info">当问卷中出现<span class="grey3 bold s16">姓名</span>时，填入：</p>
+                <p class="info">当问卷出现<span class="grey3 bold s16">姓名</span>时，自动填入：</p>
                 <input class="input real_name_input" type="text">
             </div>
             <div class="input_container">
-                <p class="info">当问卷中出现<span class="grey3 bold s16">学号</span>时，填入：</p>
+                <p class="info">当问卷出现<span class="grey3 bold s16">学号</span>时，自动填入：</p>
                 <input class="input stu_id_input" type="text">
             </div>
         </form>
@@ -67,9 +68,12 @@
         <p class="info" style="margin-bottom: 15px;">
             感谢！我们已<span class="grey3 bold s16">免费赠送您1.00￥</span>体验余额</p>
         <p class="info" style="margin-bottom: 40px;">
-            告别闹钟踩点 一键托管 一秒提交 速来！</p>
+            告别闹钟踩点 一键托管 一秒提交 速来~</p>
         <input type="button" class="btn1 next3" value="进入主页">
     </div>
     <p id="footer" class="sz1"> Powered by：杭医信工CrushFxl </p>
+    <div class="alert_bg" >
+        <div class="alert_box box">测试</div>
+    </div>
 </body>
 </html>

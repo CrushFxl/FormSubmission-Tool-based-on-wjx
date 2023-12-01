@@ -9,8 +9,6 @@ def login():
     if request.method == 'GET':
         return render_template("login.html")
 
-    # user = request.form.get("phone")
-    # pwd = request.form.get("pwd")
     return abort(404)
 
 
