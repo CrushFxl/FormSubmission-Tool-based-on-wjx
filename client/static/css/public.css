@@ -96,6 +96,7 @@ div{
     height: 40px;
     width: 100%;
     justify-content: center;
+    -webkit-appearance: none;
 }
 .btn2:hover{
     border: none;
@@ -115,6 +116,7 @@ div{
     height: 40px;
     width: 100%;
     justify-content: center;
+    -webkit-appearance: none;
 }
 
 #footer{
@@ -150,5 +152,9 @@ div{
 }
 
 .hide{
+    display: none;
+}
+
+#serverURL, #clientURL{
     display: none;
 }

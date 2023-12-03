@@ -1,0 +1,6 @@
+/.idea
+/server/SecretKey.ini
+/server/API Document.md
+/server/db/weactive.db
+/client/venv
+/server/venv

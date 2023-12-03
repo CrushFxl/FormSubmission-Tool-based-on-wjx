@@ -1,16 +1,20 @@
 window.onload = function () {
+    const serverURL = $("#serverURL").text()
     let $phone = $(".phone_input"), $code = $(".code_input"), $pwd = $(".pwd_input");
-    let $phone_warn = $(".phone_warn"), $code_warn = $(".code_warn"), $pwd_warn = $(".pwd_warn");
+    let $phone_wrong = $(".phone_wrong"), $phone_existed = $(".phone_existed")
+    let $code_warn = $(".code_warn"), $pwd_warn = $(".pwd_warn");
+    let send_code_btn_text = $(".send_code_btn").attr('value')
     let Phone, Code, Password;
     $("#form1, #footer").fadeIn(500);
 
     $(document).on("click", ".send_code_btn", function() {
         Phone = $phone.val();
-        $phone_warn.hide();
+        $phone_wrong.hide();
+        $phone_existed.hide();
         const phoneNumRegExp = new RegExp("^1[356789]\\d{9}$");
         if(!phoneNumRegExp.test(Phone)){
-            $phone_warn.text("无效的手机号")
-            $phone_warn.show();
+            $phone_existed.hide();
+            $phone_wrong.show();
             return;
         }
         let btn = $(".send_code_btn");
@@ -25,14 +29,14 @@ window.onload = function () {
                 time--;
             }else{
                 btn.attr("disabled", false)
-                    .attr("value", '获取验证码')
+                    .attr("value", send_code_btn_text)
                     .css({'background-color': 'rgb(108,94,252)'});
                 clearInterval(timer);
             }
         },1000)
         Phone = $(".phone_input").val();
         $.ajax({
-            url: "http://127.0.0.1:12345/phone/",
+            url: serverURL + "/phone/",
             data: {"Phone": Phone},
             type: "POST",
             dataType: "json",
@@ -41,8 +45,8 @@ window.onload = function () {
                 if(Code === 1001){
                     alert("此IP请求已达上限");
                 }else if(Code === 1002){
-                    $phone_warn.text("该手机号已被注册")
-                    $phone_warn.show();
+                    $phone_existed.show()
+                    $phone_wrong.hide();
                 }else if(Code === 1003){
                     alert("手机号格式不正确");
                 }else if(Code === 2000){
@@ -55,15 +59,16 @@ window.onload = function () {
 
     $(document).on("click", ".next1", function(){
         let error = false;
-        $phone_warn.hide();
+        $phone_wrong.hide();
+        $phone_existed.hide()
         $code_warn.hide();
         $pwd_warn.hide();
 
         Phone = $phone.val();
         const phoneNumRegExp = new RegExp("^1[356789]\\d{9}$");
         if(!phoneNumRegExp.test(Phone)){
-            $phone_warn.text("无效的手机号")
-            $phone_warn.show();
+            $phone_existed.hide();
+            $phone_wrong.show()
             error = true;
         }
 
@@ -85,7 +90,8 @@ window.onload = function () {
 
         if(!error){
             $.ajax({
-            url: "http://127.0.0.1:12345/register/",
+            url: serverURL + "/register/",
+            xhrFields:{withCredentials: true},
             data: {"Phone": Phone, "Code":Code, "Password":Password},
             type: "POST",
             dataType: "json",
@@ -100,8 +106,8 @@ window.onload = function () {
                 }else if(Code === 1002){
                     $code_warn.show();
                 }else if(Code === 1003){
-                    $phone_warn.text("该手机号已被注册")
-                    $phone_warn.show();
+                    $phone_wrong.hide();
+                    $phone_existed.show();
                 }
             }});
         }
@@ -112,11 +118,11 @@ window.onload = function () {
         let real_name = $(".real_name_input").val();
         let stu_id = $(".stu_id_input").val();
         $.ajax({
-            url: "http://119.3.159.148:12345/register/",
+            url: serverURL + "/register/",
             data: {"Phone": Phone, "Code": Code, "Password": Password},
             type: "POST",
             dataType: "text",
-            complete: function(data) {
+            success: function(data) {
                 let res = data.responseText;
                 if(res === "1000"){
                     $("#form1").fadeOut(200, function (){
