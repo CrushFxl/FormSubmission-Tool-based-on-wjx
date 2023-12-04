@@ -1,7 +1,7 @@
 """
 Python Required: 3.9.13
 """
-from settings import init_app, init_db
+from settings import init_app, init_db, Config
 from src.SMS_SDK import send_sm
 from src.SQLiteConnectionPool import Cursor
 from flask import request, make_response
@@ -14,11 +14,6 @@ valid_chr = ("0123456789ABCEDFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 
 app = init_app()
 pool = init_db()
-
-
-def login_required(func):
-    def inner():
-        uid = request.cookies.get('uid')
 
 
 @app.post('/phone/')
@@ -152,5 +147,15 @@ def logout():
     return {"Code": 1001}, 200
 
 
+@app.post('/wjx/img/')
+def wjx_img():
+    print(request.files)
+    if 'file' not in request.files:
+        return {"Code": 1001, "Message": "文件上传失败"}, 200
+    file = request.files['file']
+    # file.save('\\db\\wjx_img\\' + file.filename)
+    return {"Code": 1000, "title": "成功"}, 200
+
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=12345)
+    app.run(host="0.0.0.0", port=int(Config['server_ip'].split(':')[-1]))

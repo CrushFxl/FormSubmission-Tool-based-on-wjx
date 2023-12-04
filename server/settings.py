@@ -2,27 +2,28 @@ from src.SQLiteConnectionPool import SQLiteConnectionPool, Cursor
 from flask_cors import CORS
 from datetime import timedelta
 from flask import Flask
+import configparser
 import os
 
-# 设置前端服务器地址
-clientURL = "http://127.0.0.1"
-
-
-# 设置数据库sqlite3
-DB_NAME = "weactive.db"
-MAX_CONNECTIONS = 10
+Config = {}
+settings_path = '\\'.join(os.path.dirname(__file__).split('\\')[:-1])+"\\settings.ini"
+conf = configparser.ConfigParser()
+conf.read(settings_path, encoding='utf-8-sig')
+for k, v in conf["Config"].items():
+    Config[k] = v
 
 
 def init_app():
     app = Flask(__name__)
     app.config.from_mapping({
-        "DEBUG": True,
-        "TESTING": True,
+        "DEBUG": int(Config["debug"]),
+        "TESTING": int(Config["testing"]),
         "PERMANENT_SESSION_LIFETIME": timedelta(days=365),
-        "SESSION_COOKIE_SAMESITE": "Lax"
     })
-    # 允许clientURL跨域
-    CORS(app, supports_credentials=True, origins=clientURL)
+
+    # 允许clientURL携带Cookie跨域
+    CORS(app, resources={"/*": {"origins": Config["client_ip"]}},
+         supports_credentials=True)
     return app
 
 
@@ -32,7 +33,7 @@ def init_db():
     """
     # 实例化数据库连接池
     db_path = os.path.dirname(__file__) + f"\\db"
-    pool = SQLiteConnectionPool(db_path + f"\\{DB_NAME}", MAX_CONNECTIONS)
+    pool = SQLiteConnectionPool(db_path + f"\\{Config['db_name']}", int(Config["max_connections"]))
 
     # 创建数据表
     if not os.path.exists(db_path):

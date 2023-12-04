@@ -1,7 +1,13 @@
 from flask import Flask
+import configparser
+import os
 
-# 设置后端服务器地址
-serverURL = "http://127.0.0.1:12345"
+Config = {}
+settings_path = '\\'.join(os.path.dirname(__file__).split('\\')[:-1])+"\\settings.ini"
+conf = configparser.ConfigParser()
+conf.read(settings_path, encoding='utf-8-sig')
+for k, v in conf["Config"].items():
+    Config[k] = v
 
 
 def create_app():
@@ -9,8 +15,8 @@ def create_app():
     app = Flask(__name__)
     app.config.from_mapping({
         "SECRET_KEY": "dev",
-        "DEBUG": True,
-        "TESTING": True,
+        "DEBUG": int(Config["debug"]),
+        "TESTING": int(Config["testing"]),
     })
     # 注册蓝图
     # import views.auth

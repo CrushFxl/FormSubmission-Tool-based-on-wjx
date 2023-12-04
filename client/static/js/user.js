@@ -1,68 +1,73 @@
+let $input_img = $('.input-img')
 const serverURL = $("#serverURL").text()
-let $squareIcon=$("#squareIcon"),$squareText=$("#squareText"),$squarePage=$("#squarePage"),
-    $orderIcon=$("#orderIcon"),$orderText=$("#orderText"),$orderPage=$("#orderPage"),
-    $uploadIcon=$("#uploadIcon"),$uploadText=$("#uploadText"),$uploadPage=$("#uploadPage"),
-    $moreIcon=$("#moreIcon"),$moreText=$("#moreText"),$morePage=$("#morePage"),
-    $mineIcon=$("#mineIcon"),$mineText=$("#mineText"),$minePage=$("#minePage"), $page=$(".page")
 
-function set_default(){
-    $page.hide();
-    $squareIcon.attr("stroke","#3f3f3f");
-    $orderIcon.attr("stroke","#3f3f3f");
-    $uploadIcon.attr("stroke","#3f3f3f");
-    $moreIcon.attr("stroke","#3f3f3f");
-    $mineIcon.attr("stroke","#3f3f3f");
-    $squareText.css("color", "#3f3f3f");
-    $orderText.css("color", "#3f3f3f");
-    $uploadText.css("color", "#3f3f3f");
-    $moreText.css("color", "#3f3f3f");
-    $mineText.css("color", "#3f3f3f");
+function changePage(pageName){
+    $(".page").hide();
+    $(".icon").attr("stroke","#3f3f3f");
+    $(".ico_text").css("color", "#3f3f3f");
+    $("#"+pageName+"Page").show();
+    $("#"+pageName+"Icon").attr("stroke","rgb(108,94,252)");
+    $("#"+pageName+"Text").css("color", "rgb(108,94,252)");
 }
 
-// $(document).on("click", "#squareTab", function(){
-//     set_default();
-//     $squareIcon.attr("stroke","rgb(108,94,252)");
-//     $squareText.css("color", "rgb(108,94,252)");
-//     $squarePage.show();
-// });
-
-$(document).on("click", "#orderTab", function(){
-    set_default();
-    $orderIcon.attr("stroke","rgb(108,94,252)");
-    $orderText.css("color", "rgb(108,94,252)");
-    $orderPage.show();
+$(document).on("click", ".tab", function(){
+    let pageName = $(this).attr("id").slice(0,-3)
+    changePage(pageName)
 });
 
-$(document).on("click", "#uploadTab", function(){
-    set_default();
-    $uploadIcon.attr("stroke","rgb(108,94,252)");
-    $uploadText.css("color", "rgb(108,94,252)");
-    $uploadPage.show();
-});
+window.onload = function () {
 
-// $(document).on("click", "#moreTab", function(){
-//     set_default();
-//     $moreIcon.attr("stroke","rgb(108,94,252)");
-//     $moreText.css("color", "rgb(108,94,252)");
-//     $morePage.show();
-// });
+    /*展示upload主页面*/
+    changePage("upload")
 
-$(document).on("click", "#mineTab", function(){
-    set_default();
-    $mineIcon.attr("stroke","rgb(108,94,252)");
-    $mineText.css("color", "rgb(108,94,252)");
-    $minePage.show();
-});
-
-//user-mine
-$(document).on("click", ".logout", function(){
-    $.ajax({
-        url: serverURL + "/logout/",
-        xhrFields:{withCredentials: true},
-        type: "POST",
-        dataType: "json",
-        success: function() {
-            window.location.replace("/");
-        }
+    /*点 问卷星活动代抢 按钮事件 上传图片*/
+    $(document).on("click", "#getActivity_btn", function () {
+        $input_img[0].click();
+        //window.location.assign("/activity_order/");
     });
-});
+
+    /*前端验证上传的图片，将文件发送到后端服务器*/
+    $input_img.on('change', function () {
+        let file = $(this).get(0).files[0]
+        if (!file || file.length === 0) {
+            return;
+        }
+        const isLt2M = file.size / 1024 / 1024 < 5;
+        if(!isLt2M) {
+            alert('上传的图片大小不能超过5MB');
+            $(this).get(0).value = '';
+            return;
+        }
+
+
+        let formdata = new FormData();
+        formdata.append("file", file);
+        $.ajax({
+            url: serverURL + "/wjx/img/",
+            xhrFields: {withCredentials: true},
+            method: 'POST',
+            data: formdata,
+            processData: false,
+            contentType: false,
+            success: function(resp) {
+                let Code = resp["Code"];
+                console.log(Code)
+            },
+        });
+        $(this).get(0).value = '';
+        formdata = null;
+    });
+
+    /*点击 退出登录 按钮事件*/
+    $(document).on("click", ".logout", function () {
+        $.ajax({
+            url: serverURL + "/logout/",
+            xhrFields: {withCredentials: true},
+            type: "POST",
+            dataType: "json",
+            success: function () {
+                window.location.replace("/");
+            }
+        });
+    });
+}

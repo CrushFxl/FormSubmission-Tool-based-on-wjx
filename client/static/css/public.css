@@ -12,6 +12,13 @@ body{
     background-attachment: fixed;
     box-sizing: border-box;
     height: 100vh;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+  display: none; /* Chrome Safari */
 }
 
 div{
@@ -22,10 +29,10 @@ div{
 .box{
     background-color: #FFFFFF;
     border-radius: 10px;
-    width: 90%;
+    width: 92%;
 }
 .sd1{
-    box-shadow:0 0 4px #CDCDCD;
+    box-shadow:0 0 10px #DDDDDD;
 }
 .sd2{
     box-shadow:0 0 4px #7F7F7F;
@@ -41,7 +48,7 @@ div{
     color: #5F5F5F;
 }
 .grey3{
-    color: #2F2F2F;
+    color: #3F3F3F;
 }
 .white{
     color: #FFFFFF;

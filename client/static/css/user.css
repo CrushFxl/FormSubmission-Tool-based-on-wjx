@@ -5,6 +5,11 @@ body{
     padding-bottom: 50px;
 }
 
+.blank{
+    min-height: 50px;
+    visibility: hidden;
+}
+
 .bg{
     background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
     width: 100%;
@@ -27,9 +32,25 @@ body{
 }
 
 .page{
+    display: none;
     align-items: center;
     flex-direction: column;
     width: 100vw;
+}
+
+#uploadPage{
+    justify-content: center;
+    height: 100vh;
+}
+
+#getActivity_btn, #getVideo_btn{
+    margin: 10px;
+    padding: 18px 30px;
+}
+
+.text_wrapper{
+    flex-direction: column;
+    margin-left: 15px;
 }
 
 #block1{
@@ -78,17 +99,22 @@ body{
     box-sizing: border-box;
 }
 
-.funcBox{
+.menuBox{
     justify-content: center;
     margin-top: 20px;
 }
 
-.block2{
-    justify-content: space-between;
+.menu{
     background-image: linear-gradient(to right, #8847ce 0%, #5b93f3 100%);
     border-radius: 10px;
     padding: 10px 10px 10px 15px;
     margin: 0;
+}
+
+.menu:hover{
+    transition: all, 300ms;
+    background-image: linear-gradient(to right, #8038ce 0%, #3a7ef3 100%);
+    cursor: pointer;
 }
 
 .subText {
@@ -110,6 +136,12 @@ body{
     height: 100%;
     width: 100%;
     padding: 11px 0;
+}
+
+.li:hover{
+    transition: all, 300ms;
+    background-color: #EDEDED;
+    cursor: pointer;
 }
 
 .liText{

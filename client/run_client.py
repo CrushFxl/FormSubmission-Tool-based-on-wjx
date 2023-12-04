@@ -1,8 +1,10 @@
 import functools
 
-from settings import create_app, serverURL
+from settings import create_app, Config
 from flask import request, render_template, redirect
 import requests
+
+serverURL = Config['server_ip']
 
 app = create_app()
 
@@ -47,4 +49,4 @@ def user():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=80)
+    app.run(host="0.0.0.0", port=int(Config['client_ip'].split(':')[-1]))
