@@ -142,5 +142,15 @@ def login():
     return make_response({"Code": 1001}, 200)
 
 
+@app.post('/logout/')
+def logout():
+    sid = request.cookies.get('sid')
+    if sid:
+        with Cursor(pool) as c:
+            c.execute("DELETE FROM login_cache WHERE sid = ?", (sid,))
+        return {"Code": 1000}, 200
+    return {"Code": 1001}, 200
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=12345)

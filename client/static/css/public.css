@@ -25,10 +25,10 @@ div{
     width: 90%;
 }
 .sd1{
-    box-shadow:0 0 4px #AFAFAF;
+    box-shadow:0 0 4px #CDCDCD;
 }
 .sd2{
-    box-shadow:0 0 6px #7F7F7F;
+    box-shadow:0 0 4px #7F7F7F;
 }
 .sd3{
     box-shadow:0 0 10px #7F7F7F;
@@ -120,6 +120,8 @@ div{
 }
 
 #footer{
+
+    bottom: 10px;
     font-size: 14px;
     margin-top: 15px;
     color: #FFFFFF;
@@ -133,6 +135,9 @@ div{
 }
 .s16{
     font-size: 16px;
+}
+.s17{
+    font-size: 17px;
 }
 
 .alert_bg{

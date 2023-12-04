@@ -2,18 +2,11 @@ from src.SQLiteConnectionPool import SQLiteConnectionPool, Cursor
 from flask_cors import CORS
 from datetime import timedelta
 from flask import Flask
-import configparser
 import os
 
+# 设置前端服务器地址
 clientURL = "http://127.0.0.1"
 
-# 从SecretKey.ini中读取所有密钥信息
-path = os.path.dirname(__file__)
-conf = configparser.ConfigParser()
-conf.read(path+f"\\SecretKey.ini", encoding='utf-8-sig')
-Ali_ACCESS_KEY_ID = conf["Ali_AccessKey"]["access_key_id"]
-Ali_ACCESS_KEY_SECRET = conf["Ali_AccessKey"]["access_key_secret"]
-FLASK_SECRET_KEY = conf["Flask_SecretKey"]["secret_key"]
 
 # 设置数据库sqlite3
 DB_NAME = "weactive.db"
@@ -23,7 +16,6 @@ MAX_CONNECTIONS = 10
 def init_app():
     app = Flask(__name__)
     app.config.from_mapping({
-        "SECRET_KEY": FLASK_SECRET_KEY,
         "DEBUG": True,
         "TESTING": True,
         "PERMANENT_SESSION_LIFETIME": timedelta(days=365),

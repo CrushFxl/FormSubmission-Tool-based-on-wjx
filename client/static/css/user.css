@@ -78,7 +78,7 @@ body{
     box-sizing: border-box;
 }
 
-.func_container{
+.funcBox{
     justify-content: center;
     margin-top: 20px;
 }
@@ -98,16 +98,30 @@ body{
 }
 
 .list{
-    flex-direction: row;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
     margin: 10px 0;
-    padding: 5px 15px;
-    height: 50px;
-
+    padding: 0;
 }
 
-.listText{
-    margin: 0;
-    font-size: 18px;
+.li{
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    padding: 11px 0;
+}
+
+.liText{
+    font-size: 17px;
+}
+
+.liTip{
+    margin-right: 2px;
+}
+
+.sep{
+    width: 90%;
+    margin: 10px 0;
+    border: 1px solid #F3F3F3;
 }

@@ -1,12 +1,15 @@
 from alibabacloud_tea_openapi import models as open_api_models
 from alibabacloud_dysmsapi20170525.client import Client as Client
 from alibabacloud_dysmsapi20170525 import models as models
-from server.settings import Ali_ACCESS_KEY_ID, Ali_ACCESS_KEY_SECRET
+import os
 
-# 从settings.py读取AccessKey口令
+# 从系统环境变量读取AccessKey
+ALI_ACCESS_KEY_ID = os.getenv('ALI_ACCESS_KEY_ID')
+ALI_ACCESS_KEY_SECRET = os.getenv('ALI_ACCESS_KEY_SECRET')
+
 config = open_api_models.Config(
-    access_key_id=Ali_ACCESS_KEY_ID,
-    access_key_secret=Ali_ACCESS_KEY_SECRET
+    access_key_id=ALI_ACCESS_KEY_ID,
+    access_key_secret=ALI_ACCESS_KEY_SECRET
 )
 config.endpoint = 'dysmsapi.aliyuncs.com'
 client = Client(config)

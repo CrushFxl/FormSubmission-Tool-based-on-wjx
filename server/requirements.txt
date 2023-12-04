@@ -1,2 +1,3 @@
 flask~=3.0.0
 alibabacloud_dysmsapi20170525~=2.0.24
+flask-Cors~=4.0.0

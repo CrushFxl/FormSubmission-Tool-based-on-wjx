@@ -12,7 +12,8 @@
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js" defer></script>
     <script src="../static/js/user.js" defer></script>
 </head>
-<body>
+<body style="background-color: #F8F8F8">
+    <p id="serverURL">{{serverURL}}</p>
     <div id="squarePage" class="page" style="display: none">
         <h1>广场</h1>
         <p class="tip">此功能正在加紧开发中...</p>
@@ -52,7 +53,7 @@
                 <span class="bar_tip">已完成</span>
             </div>
         </div>
-        <div class="func_container box" style="margin-bottom: 15px">
+        <div class="funcBox box" style="margin-bottom: 15px; background-color: #F8F8F8">
             <div class="block2 box sd2" style="margin-right: 8px">
                 <span class="subText">余额<br />充值</span>
                 <svg width="60px" height="60px" fill="#FFFFFF" viewBox="0 0 16 16">
@@ -70,23 +71,55 @@
             </div>
         </div>
         <div class="list box sd1">
-            <div style="display: flex;">
-                <svg width="24px" height="24px" fill="rgb(108,94,252)" viewBox="0 0 16 16">
-                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.496 6.033h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286a.237.237 0 0 0 .241.247zm2.325 6.443c.61 0 1.029-.394 1.029-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94 0 .533.425.927 1.01.927z"/>
-                </svg>
-                <p class="listText" style="margin-left: 10px">常见问题 FAQ</p>
+            <div class="li box">
+                <div class="left" style="margin-left: 10px">
+                    <svg width="24" height="24" fill="rgb(108,94,252)" viewBox="0 0 16 16">
+                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.496 6.033h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286a.237.237 0 0 0 .241.247zm2.325 6.443c.61 0 1.029-.394 1.029-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94 0 .533.425.927 1.01.927z"/>
+                    </svg>
+                    <p class="s17" style="margin-left: 10px">常见问题</p>
+                </div>
+                <div class="right" style="margin-right: 10px">
+                    <p class="s14 grey1" style="margin-right: 2px">你想知道的都在这里</p>
+                    <svg width="16" height="16" fill="#AFAFAF" viewBox="0 0 16 16" style="margin-top: 2px">
+                        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0
+                        .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </div>
             </div>
-            <p class="listText" style="text-align: right">></p>
+            <div style="width: 90%;border: 1px solid #F3F3F3;"></div>
+            <div class="li box" >
+                <div class="left" style="margin-left: 10px">
+                    <svg width="24px" height="24px" fill="rgb(108,94,252)" viewBox="0 0 16 16">
+                    <path d="M10 .5a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5.5.5 0 0 1-.5.5.5.5 0 0 0-.5.5V2a.5.5 0 0 0 .5.5h5A.5.5 0 0 0 11 2v-.5a.5.5 0 0 0-.5-.5.5.5 0 0 1-.5-.5Z"/>
+                    <path d="M4.085 1H3.5A1.5 1.5 0 0 0 2 2.5v12A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5v-12A1.5 1.5 0 0 0 12.5 1h-.585c.055.156.085.325.085.5V2a1.5 1.5 0 0 1-1.5 1.5h-5A1.5 1.5 0 0 1 4 2v-.5c0-.175.03-.344.085-.5ZM9.98 5.356 11.372 10h.128a.5.5 0 0 1 0 1H11a.5.5 0 0 1-.479-.356l-.94-3.135-1.092 5.096a.5.5 0 0 1-.968.039L6.383 8.85l-.936 1.873A.5.5 0 0 1 5 11h-.5a.5.5 0 0 1 0-1h.191l1.362-2.724a.5.5 0 0 1 .926.08l.94 3.135 1.092-5.096a.5.5 0 0 1 .968-.039Z"/>
+                </svg>
+                    <p class="s17" style="margin-left: 10px">反馈建议</p>
+                </div>
+                <div class="right" style="margin-right: 10px">
+                    <p class="s14 grey1" style="margin-right: 2px">每一条都会认真看噢</p>
+                    <svg width="16" height="16" fill="#AFAFAF" viewBox="0 0 16 16" style="margin-top: 2px">
+                        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0
+                        .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </div>
+            </div>
         </div>
         <div class="list box sd1">
-            <div style="display: flex;">
-                <svg width="24px" height="24px" fill="rgb(108,94,252)" viewBox="0 0 16 16">
-              <path d="M10 .5a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5.5.5 0 0 1-.5.5.5.5 0 0 0-.5.5V2a.5.5 0 0 0 .5.5h5A.5.5 0 0 0 11 2v-.5a.5.5 0 0 0-.5-.5.5.5 0 0 1-.5-.5Z"/>
-              <path d="M4.085 1H3.5A1.5 1.5 0 0 0 2 2.5v12A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5v-12A1.5 1.5 0 0 0 12.5 1h-.585c.055.156.085.325.085.5V2a1.5 1.5 0 0 1-1.5 1.5h-5A1.5 1.5 0 0 1 4 2v-.5c0-.175.03-.344.085-.5ZM9.98 5.356 11.372 10h.128a.5.5 0 0 1 0 1H11a.5.5 0 0 1-.479-.356l-.94-3.135-1.092 5.096a.5.5 0 0 1-.968.039L6.383 8.85l-.936 1.873A.5.5 0 0 1 5 11h-.5a.5.5 0 0 1 0-1h.191l1.362-2.724a.5.5 0 0 1 .926.08l.94 3.135 1.092-5.096a.5.5 0 0 1 .968-.039Z"/>
-            </svg>
-                <p class="listText" style="margin-left: 10px">向我们反馈建议</p>
+            <div class="li box logout">
+                <div class="left" style="margin-left: 10px">
+                    <svg width="24px" height="24px" fill="rgb(108,94,252)" class="bi bi-door-open-fill" viewBox="0 0 16 16">
+                        <path d="M1.5 15a.5.5 0 0 0 0 1h13a.5.5 0 0 0 0-1H13V2.5A1.5 1.5 0 0 0 11.5 1H11V.5a.5.5 0 0 0-.57-.495l-7 1A.5.5 0 0 0 3 1.5V15H1.5zM11 2h.5a.5.5 0 0 1 .5.5V15h-1V2zm-2.5 8c-.276 0-.5-.448-.5-1s.224-1 .5-1 .5.448.5 1-.224 1-.5 1z"/>
+                    </svg>
+                    <p class="s17" style="margin-left: 10px">退出登录</p>
+                </div>
+                <div class="right" style="margin-right: 10px">
+                    <p class="s14 grey1" style="margin-right: 2px"></p>
+                    <svg width="16" height="16" fill="#AFAFAF" viewBox="0 0 16 16" style="margin-top: 2px">
+                        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0
+                        .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </div>
             </div>
-            <p class="listText" style="text-align: right">></p>
         </div>
 
     </div>
