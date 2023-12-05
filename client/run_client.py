@@ -48,5 +48,11 @@ def user():
     return render_template('user.html')
 
 
+@app.route('/wjx/order/')
+@login_required
+def wjx_order():
+    return render_template('wjx_order.html')
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(Config['client_ip'].split(':')[-1]))

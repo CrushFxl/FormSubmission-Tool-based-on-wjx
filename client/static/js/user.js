@@ -23,10 +23,9 @@ window.onload = function () {
     /*点 问卷星活动代抢 按钮事件 上传图片*/
     $(document).on("click", "#getActivity_btn", function () {
         $input_img[0].click();
-        //window.location.assign("/activity_order/");
     });
 
-    /*前端验证上传的图片，将文件发送到后端服务器*/
+    /*问卷星图片发送到后端解析*/
     $input_img.on('change', function () {
         let file = $(this).get(0).files[0]
         if (!file || file.length === 0) {
@@ -38,8 +37,7 @@ window.onload = function () {
             $(this).get(0).value = '';
             return;
         }
-
-
+        loading_show();
         let formdata = new FormData();
         formdata.append("file", file);
         $.ajax({
@@ -50,8 +48,16 @@ window.onload = function () {
             processData: false,
             contentType: false,
             success: function(resp) {
+                loading_hide();
                 let Code = resp["Code"];
-                console.log(Code)
+                if(Code === 1000){
+                    localStorage.setItem("wjx_url", resp["wjx_url"]);
+                    localStorage.setItem("wjx_title", resp["wjx_title"]);
+                    localStorage.setItem("wjx_time", resp["wjx_time"]);
+                    window.location.assign("/wjx/order/");
+                }else{
+                    alert(resp["Message"]);
+                }
             },
         });
         $(this).get(0).value = '';
@@ -65,9 +71,8 @@ window.onload = function () {
             xhrFields: {withCredentials: true},
             type: "POST",
             dataType: "json",
-            success: function () {
-                window.location.replace("/");
-            }
+
         });
+        window.location.replace("/");
     });
 }

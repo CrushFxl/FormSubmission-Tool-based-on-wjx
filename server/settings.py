@@ -22,8 +22,8 @@ def init_app():
     })
 
     # 允许clientURL携带Cookie跨域
-    CORS(app, resources={"/*": {"origins": Config["client_ip"]}},
-         supports_credentials=True)
+    client_host = ':'.join(Config['client_ip'].split(':')[:-1])
+    CORS(app, supports_credentials=True, origins=client_host)
     return app
 
 

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>WeActive - 问卷星订单提交</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../static/css/public.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/user.css">
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js" defer></script>
+    <script src="../static/js/wjx_order.js" defer></script>
+    <script src="../static/js/public.js" defer></script>
+</head>
+<body style="background-color: #FAFAFA">
+    <p id="serverURL">{{serverURL}}</p>
+    <h1>详细信息</h1>
+    <p>活动地址：
+        <script>
+            localStorage.getItem('wjx_url');
+        </script>
+    </p>
+    <p>活动名称：
+            <script>
+                localStorage.getItem('wjx_title');
+            </script>
+        </p>
+    <p>报名开始时间：
+            <script type="text/javascript">
+                localStorage.getItem('wjx_time');
+            </script>
+        </p>
+</body>
+</html>

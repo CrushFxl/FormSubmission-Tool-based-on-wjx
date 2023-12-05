@@ -170,3 +170,33 @@ div{
 #serverURL, #clientURL{
     display: none;
 }
+
+.loading{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,30%);
+    z-index: 1000;
+}
+
+.loading_box{
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 50px;
+    margin: auto auto;
+    width: 130px;
+    height: 130px;
+    z-index: 1001;
+}
+
+.loading_text{
+    font-weight: bold;
+    color: rgb(99,90,210);
+
+}
