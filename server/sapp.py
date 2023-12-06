@@ -3,7 +3,7 @@ Python Required: 3.9.13
 """
 import re
 
-from settings import init_app, init_db, Config
+from sapp_config import init_app, init_db
 from src.SMS_SDK import send_sm
 from src.SQLiteConnectionPool import Cursor
 from flask import request, make_response
@@ -199,4 +199,5 @@ def wjx_img():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(Config['server_ip'].split(':')[-1]))
+    app.run(host="0.0.0.0", port=12345, ssl_context=('./SSL/hmc.weactive.top.pem',
+                                                     './SSL/hmc.weactive.top.key'))

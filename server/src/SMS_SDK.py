@@ -25,7 +25,7 @@ def send_sm(phone_num, code):
     req = models.SendSmsRequest()
     req.phone_numbers = phone_num;
     req.sign_name = "WeActive";
-    req.template_code = "SMS_463965798";
+    req.template_code = "SMS_464121481";
     req.template_param = '{"code":"' + str(code) + '"}';
     response = client.send_sms(req)
     result = response.body.code

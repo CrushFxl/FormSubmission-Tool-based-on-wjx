@@ -2,28 +2,34 @@ from src.SQLiteConnectionPool import SQLiteConnectionPool, Cursor
 from flask_cors import CORS
 from datetime import timedelta
 from flask import Flask
-import configparser
 import os
 
-Config = {}
-settings_path = '\\'.join(os.path.dirname(__file__).split('\\')[:-1])+"\\settings.ini"
-conf = configparser.ConfigParser()
-conf.read(settings_path, encoding='utf-8-sig')
-for k, v in conf["Config"].items():
-    Config[k] = v
+# 开发模式
+DEBUG = True
+
+# 允许跨域的域名
+CORS_DOMAIN = "https://hmc.weactive.top"
+
+# SQLite3数据库配置
+DB_NAME = "weactive.db"
+MAX_CONNECTIONS = 10
 
 
 def init_app():
     app = Flask(__name__)
-    app.config.from_mapping({
-        "DEBUG": int(Config["debug"]),
-        "TESTING": int(Config["testing"]),
-        "PERMANENT_SESSION_LIFETIME": timedelta(days=365),
-    })
-
-    # 允许clientURL携带Cookie跨域
-    client_host = ':'.join(Config['client_ip'].split(':')[:-1])
-    CORS(app, supports_credentials=True, origins=client_host)
+    if DEBUG:
+        app.config.from_mapping({
+            "DEBUG": True,
+            "TESTING": True,
+            "PERMANENT_SESSION_LIFETIME": timedelta(days=365),
+        })
+    else:
+        app.config.from_mapping({
+            "DEBUG": False,
+            "TESTING": False,
+            "PERMANENT_SESSION_LIFETIME": timedelta(days=365),
+        })
+    CORS(app, supports_credentials=True, origins=CORS_DOMAIN)
     return app
 
 
@@ -33,7 +39,7 @@ def init_db():
     """
     # 实例化数据库连接池
     db_path = os.path.dirname(__file__) + f"\\db"
-    pool = SQLiteConnectionPool(db_path + f"\\{Config['db_name']}", int(Config["max_connections"]))
+    pool = SQLiteConnectionPool(db_path + f"\\{DB_NAME}", MAX_CONNECTIONS)
 
     # 创建数据表
     if not os.path.exists(db_path):

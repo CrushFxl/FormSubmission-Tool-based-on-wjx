@@ -71,8 +71,9 @@ window.onload = function () {
             xhrFields: {withCredentials: true},
             type: "POST",
             dataType: "json",
-
+            success: function (){
+                window.location.replace("/");
+            }
         });
-        window.location.replace("/");
     });
 }
