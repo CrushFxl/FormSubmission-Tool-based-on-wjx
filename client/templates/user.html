@@ -2,14 +2,15 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>WeActive - 用户主页</title>
+    <title>WeActive - 主页</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="viewport" content="minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="../static/img/favicon.ico">
     <link rel="stylesheet" type="text/css" href="../static/css/public.css">
-    <link rel="stylesheet" type="text/css" href="../static/css/bottom_nav.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/nav.css">
     <link rel="stylesheet" type="text/css" href="../static/css/user.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/order.css">
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js" defer></script>
     <script src="../static/js/user.js" defer></script>
     <script src="../static/js/public.js" defer></script>
@@ -21,8 +22,32 @@
         <p class="tip">此功能正在加紧开发中...</p>
     </div>
     <div id="orderPage" class="page">
-        <h1>订单</h1>
-        <p class="tip">此功能正在加紧开发中...</p>
+        <div id="top_nav" class="box sd1" style="align-items: center">
+            <div id="allTab" class="top_tab">
+                <p class="top_p">全部</p>
+                <p class="dec" style="display: none"></p>
+            </div>
+            <div id="ingTab" class="top_tab">
+                <p class="top_p">进行中</p>
+                <p class="dec" style="display: none"></p>
+            </div>
+            <div id="doneTab" class="top_tab">
+                <p class="top_p">已完成</p>
+                <p class="dec" style="display: none"></p>
+            </div>
+        </div>
+        <div class="blank">(占位)</div>
+        <div id="allPage" class="od_page">
+            <div class="od_box box sd1">
+                <p class="od_sTitle">问卷星活动代抢服务</p>
+            </div>
+        </div>
+        <div id="ingPage" class="od_page">
+            <p>进行中</p>
+        </div>
+        <div id="donePage" class="od_page">
+            <p>已完成</p>
+        </div>
     </div>
     <div id="uploadPage" class="page">
         <div class="box sd1" style="flex-direction: column; padding: 15px 15px 30px 15px">
@@ -146,7 +171,7 @@
         </div>
     </div>
     <div class="blank">(占位)</div>
-    <div id="nav" class="box sd1">
+    <div id="btm_nav" class="box sd1">
 <!--        <div id="squareTab" class="tab">-->
 <!--            <svg id="squareIcon" class="icon"-->
 <!--                 width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#5f5f5f"-->
@@ -156,7 +181,7 @@
 <!--            </svg>-->
 <!--            <p id="squareText" class="ico_text">广场</p>-->
 <!--        </div>-->
-        <div id="orderTab" class="tab">
+        <div id="orderTab" class="btm_tab">
             <svg id="orderIcon" class="icon"
                  width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#5f5f5f"
                  stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -165,7 +190,7 @@
             </svg>
             <p id="orderText" class="ico_text">订单</p>
         </div>
-        <div id="uploadTab" class="tab">
+        <div id="uploadTab" class="btm_tab">
             <div>＋</div>
         </div>
 <!--        <div id="moreTab" class="tab">-->
@@ -179,7 +204,7 @@
 <!--            </svg>-->
 <!--            <p id="moreText" class="ico_text">更多</p>-->
 <!--        </div>-->
-        <div id="mineTab" class="tab">
+        <div id="mineTab" class="btm_tab">
             <svg id="mineIcon" class="icon"
                  width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#5f5f5f"
                  stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">

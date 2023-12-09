@@ -29,6 +29,7 @@ div{
 .box{
     background-color: #FFFFFF;
     border-radius: 10px;
+    
     width: 92%;
 }
 .sd1{
@@ -42,7 +43,7 @@ div{
 }
 
 .grey1{
-    color: #7F7F7F;
+    color: #8F8F8F;
 }
 .grey2{
     color: #5F5F5F;

@@ -1,13 +1,14 @@
 """
 Python Required: 3.9.13
 """
+import json
+
 from sapp_config import init_app, init_db, DEV
 from src.SMS_SDK import send_sm
 from src.SQLiteConnectionPool import Cursor
-from flask import request, make_response
+from flask import request, make_response, jsonify
 from bs4 import BeautifulSoup
 import requests
-import json
 import random
 import time
 import secrets
@@ -149,9 +150,8 @@ def login():
         record = c.fetchone()
         if record:  # 签发新的Cookie
             uid = record[0]
-            wjxset = record[4]
             sid = secrets.token_urlsafe(64)
-            resp = make_response({"Code": 1000, "wjx_set": wjxset}, 200)
+            resp = make_response({"Code": 1000}, 200)
             if keep == "true":
                 resp.set_cookie('sid', sid, max_age=31536000)
             else:
@@ -169,6 +169,26 @@ def logout():
             c.execute("DELETE FROM login_cache WHERE sid = ?", (sid,))
         return {"Code": 1000}, 200
     return {"Code": 1001}, 200
+
+
+@app.post('/orders_query/')
+def orders_query():
+    sid = request.cookies.get('sid')
+    uid = sid2uid(sid)
+    if not uid:
+        return {"Code": 2000, "Message": "登陆状态异常，请刷新网页后重试"}, 200
+
+    # 组装数据
+    orders = {}
+    with Cursor(pool) as c:
+        c.execute("SELECT * FROM orders WHERE uid =  (?) limit 10", (uid,))
+        records = c.fetchall()
+        for record in records:
+            del record[1]  # 删除uid
+            if record[3]:
+                print(record[3])
+
+    return {"Code": 1000}, 200
 
 
 @app.post('/wjx_order_pre/')
@@ -221,10 +241,10 @@ def wjx_order_pre():
     nowtime = time.localtime()
     with Cursor(pool) as c:
         c.execute("SELECT wjx_set FROM users WHERE uid = ?", (uid,))
-        wjx_set = c.fetchone()[0]
+        wjx_set = json.loads(c.fetchone()[0])
 
     # 生成订单信息
-    oid = str(int(time.time() * 1000)) +'01'+str(uid)[-3:]+str(random.randint(10, 99))
+    oid = str(int(time.time() * 1000)) + '01' + str(uid)[-3:] + str(random.randint(10, 99))
     uid = uid
     state = "待付款"
     ctime = time.strftime('%Y-%m-%d %H:%M:%S', nowtime)
@@ -236,18 +256,12 @@ def wjx_order_pre():
         "wjx_option": []
     })
     price = 0.5
-
     # 写入数据库
     with Cursor(pool) as c:
         c.execute("INSERT INTO orders(oid,uid,state,ctime,info,price) VALUES (?,?,?,?,?,?)",
                   (oid, uid, state, ctime, str(info), price))
-
-    # 剔除不必要数据，发回前端
-    del info["wjx_set"]
-    del info["wjx_option"]
-    del info["wjx_url"]
-    order = {"oid": oid, "ctime": ctime, "info": info, "price": price}
-    return {"Code": 1000, "order": json.dumps(order)}, 200
+    order = {"oid": oid, "uid": uid, "state": state, "ctime": ctime, "info": info, "price": price}
+    return {"Code": 1000, "order": order}, 200
 
 
 @app.post('/wjx_order_buy/')
@@ -256,7 +270,10 @@ def wjx_order_buy():
     uid = sid2uid(sid)
     if not uid:
         return {"Code": 2000, "Message": "登陆状态异常，请刷新网页后重试"}, 200
-
+    with Cursor(pool) as c:
+        c.execute("SELECT balance FROM users WHERE uid =  (?)", (uid,))
+        balance = c.fetchone()[0]
+    return make_response({"Code": 1000}, 200)
 
 
 @app.post('/wjx_set/')

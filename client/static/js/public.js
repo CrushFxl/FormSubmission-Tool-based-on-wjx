@@ -86,11 +86,24 @@ function error_logout(){
     });
 }
 
-function changePage(pageName){
+function changeTab(obj){
+    let tabName = $(obj).attr("id").slice(0, -3);
+    sessionStorage.setItem("tab", tabName);
+    $(".dec").hide();
+    $(".od_page").hide();
+    $(".top_p").css("color", "#8F8F8F");
+    $("#"+tabName+"Page").show();
+    $(obj).children(".dec").show();
+    $(obj).children(".top_p").css("color", "rgb(108,94,252)");
+}
+
+function changePage(obj){
+    let pageName = $(obj).attr("id").slice(0, -3);
+    sessionStorage.setItem("page", pageName);
     $(".page").hide();
+    $("#"+pageName+"Page").show();
     $(".icon").attr("stroke","#3f3f3f");
     $(".ico_text").css("color", "#3f3f3f");
-    $("#"+pageName+"Page").show();
-    $("#"+pageName+"Icon").attr("stroke","rgb(108,94,252)");
-    $("#"+pageName+"Text").css("color", "rgb(108,94,252)");
+    $(obj).children("p").css("color","rgb(108,94,252)");
+    $(obj).children("svg").attr("stroke","rgb(108,94,252)");
 }

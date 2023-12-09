@@ -12,7 +12,7 @@ window.onload = function () {
 
     /*填充订单信息和代填设置*/
     const order = JSON.parse(sessionStorage.getItem('order'));
-    const wjx_set = JSON.parse(localStorage.getItem('wjx_set'));
+    const wjx_set = order["info"]["wjx_set"];
     $("#wjx_title").text(order["info"]["wjx_title"]);
     $("#wjx_time").text(order["info"]["wjx_time"]);
     for(let i in wjx_set){
@@ -37,14 +37,14 @@ window.onload = function () {
 
     /*点击 提交订单 按钮*/
     $(document).on("click", "#buy_btn", function () {
-        // $.ajax({
-        //     url: serverURL + "/wjx_order_buy/",
-        //     xhrFields: {withCredentials: true},
-        //     type: "POST",
-        //     dataType: "json",
-        //     success: function (){
-        //         window.location.replace("/");
-        //     }
-        // });
+        $.ajax({
+            url: serverURL + "/orders_query/",
+            xhrFields: {withCredentials: true},
+            type: "POST",
+            dataType: "json",
+            success: function (){
+                window.location.replace("/users/");
+            }
+        });
     });
 }
