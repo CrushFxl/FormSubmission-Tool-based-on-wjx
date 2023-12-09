@@ -1,13 +1,3 @@
-function buildURL(params) {
-    const searchParams = new URLSearchParams();
-    for (const key in params) {
-        if (params.hasOwnProperty(key)) {
-            searchParams.set(key, encodeURI(params[key]));
-        }
-    }
-    return searchParams.toString();
-}
-
 function loading_show(){
     let $body = $("body")
     $body.append('<div class="loading">' +
@@ -78,4 +68,29 @@ function loading_show(){
 
 function loading_hide(){
     $(".loading").hide()
+}
+
+function error_logout(){
+    loading_show();
+    $.ajax({
+        url: serverURL + "/logout/",
+        xhrFields: {withCredentials: true},
+        type: "POST",
+        dataType: "json",
+        success: function (){
+            localStorage.clear();
+            alert("登陆状态异常，请重新登录");
+            loading_hide();
+            window.location.replace("/");
+        }
+    });
+}
+
+function changePage(pageName){
+    $(".page").hide();
+    $(".icon").attr("stroke","#3f3f3f");
+    $(".ico_text").css("color", "#3f3f3f");
+    $("#"+pageName+"Page").show();
+    $("#"+pageName+"Icon").attr("stroke","rgb(108,94,252)");
+    $("#"+pageName+"Text").css("color", "rgb(108,94,252)");
 }

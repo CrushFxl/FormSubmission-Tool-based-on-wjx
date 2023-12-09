@@ -6,6 +6,8 @@ import os
 # 从系统环境变量读取AccessKey
 ALI_ACCESS_KEY_ID = os.getenv('ALI_ACCESS_KEY_ID')
 ALI_ACCESS_KEY_SECRET = os.getenv('ALI_ACCESS_KEY_SECRET')
+if ALI_ACCESS_KEY_ID is None or ALI_ACCESS_KEY_SECRET is None:
+    raise AssertionError("阿里云短信接口环境变量未设置！")
 
 config = open_api_models.Config(
     access_key_id=ALI_ACCESS_KEY_ID,

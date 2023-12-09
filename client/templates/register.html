@@ -20,7 +20,7 @@
 </head>
 
 <body class="index_bg" style="justify-content: center;">
-    <p id="serverURL">{{serverURL}}</p>
+    <p id="serverURL" class="hide">{{serverURL}}</p>
     <div id="form1" class="box container sd3">
         <h1>用户注册</h1>
         <form style="width: 95%">
@@ -49,19 +49,19 @@
     <div id="form2" class="box container sd3">
         <h1 style="margin-bottom: 5px">完善用户信息</h1>
         <form action="/" method="POST" style="width: 95%">
-            <p class="tip grey2 sz1" style="margin-bottom: 20px;">为了实现自动报名等功能，我们需要您补充下列信息。
+            <p class="tip grey2 s14" style="margin-bottom: 20px;">为了实现自动报名等功能，我们需要您补充下列信息。
                 您稍后也可在个人主页中修改。</p>
             <div class="input_container">
                 <p class="info" style="margin: 0 0 5px 0;">当问卷出现<span class="grey3 bold s16">班级</span>时，自动填入：</p>
-                <input class="input class_id_input" type="text">
+                <input id="bj" class="input" type="text">
             </div>
             <div class="input_container">
                 <p class="info">当问卷出现<span class="grey3 bold s16">姓名</span>时，自动填入：</p>
-                <input class="input real_name_input" type="text">
+                <input id="xm" class="input" type="text">
             </div>
             <div class="input_container">
                 <p class="info">当问卷出现<span class="grey3 bold s16">学号</span>时，自动填入：</p>
-                <input class="input stu_id_input" type="text">
+                <input id="xh" class="input" type="text">
             </div>
         </form>
         <input type="button" class="btn1 next2" value="下一步" style="width: 95%; margin-top: 15px">

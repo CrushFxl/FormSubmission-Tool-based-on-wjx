@@ -1,19 +1,21 @@
 """
 Python Required: 3.9.13
 """
-import re
-
-from sapp_config import init_app, init_db
+from sapp_config import init_app, init_db, DEV
 from src.SMS_SDK import send_sm
 from src.SQLiteConnectionPool import Cursor
 from flask import request, make_response
 from bs4 import BeautifulSoup
 import requests
+import json
 import random
 import time
 import secrets
 import cv2
+import re
 import numpy as np
+
+WJX_BASIC_PRICE = 0.5  # 问卷星代抢服务基础定价
 
 valid_chr = ("0123456789ABCEDFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
              "!@#$%^&*()_+.-/<>,';:=`~|\\")
@@ -25,6 +27,16 @@ headers = {
 
 app = init_app()
 pool = init_db()
+
+
+def sid2uid(sid):
+    with Cursor(pool) as c:
+        c.execute("SELECT uid FROM login_cache WHERE sid = ?", (sid,))
+        uid = c.fetchone()
+        if uid:
+            return uid[0]
+        else:
+            return None
 
 
 @app.post('/phone/')
@@ -116,33 +128,35 @@ def register():
     return {"Code": 1002}, 200
 
 
-@app.post('/login/')
-def login():
+@app.post('/verify/')
+def verify():
     # 验证携带的SID Cookie
     sid = request.cookies.get('sid')
-    if sid:
-        with Cursor(pool) as c:
-            c.execute("SELECT uid FROM login_cache WHERE sid = ?", (sid,))
-            uid = c.fetchone()
-            if uid:
-                return make_response({"Code": 1000, "UID": uid[0]}, 200)
+    if sid2uid(sid):
+        return make_response({"Code": 1000}, 200)
+    return make_response({"Code": 1001}, 200)
 
+
+@app.post('/login/')
+def login():
     # 验证账号密码
     phoneNumber = request.form.get("Phone")
     password = request.form.get("Password")
     keep = request.form.get("Keep")
     with Cursor(pool) as c:
-        c.execute("SELECT uid FROM users WHERE phone = ? AND password = ?",
+        c.execute("SELECT * FROM users WHERE phone = ? AND password = ?",
                   (phoneNumber, password,))
-        uid = c.fetchone()
-        if uid:  # 签发新的Cookie
+        record = c.fetchone()
+        if record:  # 签发新的Cookie
+            uid = record[0]
+            wjxset = record[4]
             sid = secrets.token_urlsafe(64)
-            resp = make_response({"Code": 1000, "UID": uid[0]}, 200)
+            resp = make_response({"Code": 1000, "wjx_set": wjxset}, 200)
             if keep == "true":
                 resp.set_cookie('sid', sid, max_age=31536000)
             else:
                 resp.set_cookie('sid', sid)
-            c.execute("REPLACE INTO login_cache(uid,sid) VALUES (?,?)", (uid[0], sid))
+            c.execute("REPLACE INTO login_cache(uid,sid) VALUES (?,?)", (uid, sid))
             return resp
     return make_response({"Code": 1001}, 200)
 
@@ -157,13 +171,22 @@ def logout():
     return {"Code": 1001}, 200
 
 
-@app.post('/wjx/img/')
-def wjx_img():
-    # 读取传输的图片
+@app.post('/wjx_order_pre/')
+def wjx_order_pre():
+    sid = request.cookies.get('sid')
+    uid = sid2uid(sid)
+    if not uid:
+        return {"Code": 2000, "Message": "登陆状态异常，请刷新网页后重试"}, 200
     if 'file' not in request.files:
         return {"Code": 1001, "Message": "图片上传失败，请检查网络设置"}, 200
 
-    # 识别图片中的二维码
+    # # API扫描二维码
+    # api_url = ("https://sapi.k780.com/?app=qr.read&datas=&datas_format=base64&"
+    #            "appkey=71526&sign=bea97985a151663b0eb5556eec1943d6")
+    # resp = requests.post(api_url)
+    # print(resp.text,type(resp.text))
+
+    # 扫描图片
     try:
         file_bytes = request.files['file'].read()  # 转二进制流
         file_array = np.array(bytearray(file_bytes), dtype='uint8')  # 转数组
@@ -171,16 +194,18 @@ def wjx_img():
         ret, img = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY);  # 图像二值化
         det = cv2.QRCodeDetector()  # 检测二维码
         wjx_url, pts, st_code = det.detectAndDecode(img)  # 返回url结果
+        # cv2.imshow('Image', img)
+        #
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
     except cv2.error:
         return {"Code": 1002, "Message": "上传的文件类型无法识别"}, 200
     if wjx_url == '':
         return {"Code": 1003, "Message": "扫描不到二维码，换个清晰点的图片试试？"}, 200
-
-    # 检查二维码的URL地址
     if "https://www.wjx." not in wjx_url:
         return {"Code": 1004, "Message": "二维码非问卷星网站，请检查图片是否正确"}, 200
 
-    # 访问URL获取活动信息
+    # 数据预处理
     res = requests.get(wjx_url, headers=headers)
     res.encoding = 'utf-8'
     soup = BeautifulSoup(res.text, 'html.parser')
@@ -193,11 +218,62 @@ def wjx_img():
         m = re.search(r"(\d+)分", sttime.text).groups()[0]
     except AttributeError:
         m = 0
-    wjx_time = f"{y}年{M}月{d}日 {m}:00"
-    wjx_title = soup.title.text
-    return {"Code": 1000, "wjx_url": wjx_url, "wjx_title": wjx_title, "wjx_time": wjx_time}, 200
+    nowtime = time.localtime()
+    with Cursor(pool) as c:
+        c.execute("SELECT wjx_set FROM users WHERE uid = ?", (uid,))
+        wjx_set = c.fetchone()[0]
+
+    # 生成订单信息
+    oid = str(int(time.time() * 1000)) +'01'+str(uid)[-3:]+str(random.randint(10, 99))
+    uid = uid
+    state = "待付款"
+    ctime = time.strftime('%Y-%m-%d %H:%M:%S', nowtime)
+    info = dict({
+        "wjx_url": wjx_url,
+        "wjx_title": soup.title.text,
+        "wjx_time": f"{y}-{int(M):02d}-{int(d):02d} {int(h):02d}:00:00",
+        "wjx_set": wjx_set,
+        "wjx_option": []
+    })
+    price = 0.5
+
+    # 写入数据库
+    with Cursor(pool) as c:
+        c.execute("INSERT INTO orders(oid,uid,state,ctime,info,price) VALUES (?,?,?,?,?,?)",
+                  (oid, uid, state, ctime, str(info), price))
+
+    # 剔除不必要数据，发回前端
+    del info["wjx_set"]
+    del info["wjx_option"]
+    del info["wjx_url"]
+    order = {"oid": oid, "ctime": ctime, "info": info, "price": price}
+    return {"Code": 1000, "order": json.dumps(order)}, 200
+
+
+@app.post('/wjx_order_buy/')
+def wjx_order_buy():
+    sid = request.cookies.get('sid')
+    uid = sid2uid(sid)
+    if not uid:
+        return {"Code": 2000, "Message": "登陆状态异常，请刷新网页后重试"}, 200
+
+
+
+@app.post('/wjx_set/')
+def wjx_set_set():
+    sid = request.cookies.get('sid')
+    uid = sid2uid(sid)
+    if uid:
+        with Cursor(pool) as c:
+            wjxset = request.form.get("wjx_set")
+            c.execute("UPDATE users SET wjx_set = (?) WHERE uid =  (?)", (wjxset, uid))
+        return make_response({"Code": 1000}, 200)
+    return make_response({"Code": 1001}, 200)
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=12345, ssl_context=('./SSL/hmc.weactive.top.pem',
-                                                     './SSL/hmc.weactive.top.key'))
+    if DEV:
+        app.run(host="0.0.0.0", port=12345)
+    else:
+        app.run(host="0.0.0.0", port=12345,
+                ssl_context=('./SSL/hmc.weactive.top.pem', './SSL/hmc.weactive.top.key'))

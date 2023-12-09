@@ -1,6 +1,5 @@
 import functools
-
-from capp_config import create_app, SERVER_DOMAIN
+from capp_config import create_app, SERVER_DOMAIN, DEV
 from flask import request, render_template, redirect
 import requests
 
@@ -11,13 +10,12 @@ app = create_app()
 def login_required(func):
     @functools.wraps(func)
     def inner():
-        sid = request.cookies.get("sid")  # 获取本地Cookie
-        resp = requests.post(SERVER_DOMAIN + "/login", cookies={"sid": sid}, verify=False)
+        sid = request.cookies.get("sid")
+        resp = requests.post(SERVER_DOMAIN + "/verify", cookies={"sid": sid})
         if resp.json()["Code"] == 1000:
             return func()
         else:
-            return redirect('/')
-
+            return redirect('/login/')
     return inner
 
 
@@ -27,12 +25,17 @@ def inject_global_variables():
     return {'serverURL': SERVER_DOMAIN}
 
 
-@app.route('/', methods=['GET', 'POST'])
-def login():
-    sid = request.cookies.get("sid")  # 获取本地Cookie
-    resp = requests.post(SERVER_DOMAIN + "/login", cookies={"sid": sid}, verify=False)  # 后端请求验证
+@app.route('/')
+def index():
+    sid = request.cookies.get("sid")
+    resp = requests.post(SERVER_DOMAIN + "/verify", cookies={"sid": sid})
     if resp.json()["Code"] == 1000:
         return redirect("/user")
+    return redirect("/login")
+
+
+@app.route('/login/')
+def login():
     return render_template("login.html")
 
 
@@ -47,12 +50,16 @@ def user():
     return render_template('user.html')
 
 
-@app.route('/wjx/order/')
+@app.route('/wjx_order/')
 @login_required
 def wjx_order():
     return render_template('wjx_order.html')
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=443, ssl_context=('./SSL/hmc.weactive.top.pem',
-                                                   './SSL/hmc.weactive.top.key'))
+    if DEV:
+        app.run(host="0.0.0.0", port=80)
+    else:
+        app.run(host="0.0.0.0", port=443,
+                ssl_context=('./SSL/hmc.weactive.top.pem', './SSL/hmc.weactive.top.key'))
+

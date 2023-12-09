@@ -7,6 +7,7 @@ window.onload = function () {
     let Phone, Code, Password;
     $("#form1, #footer").fadeIn(500);
 
+    /*点击发送验证码按钮*/
     $(document).on("click", ".send_code_btn", function() {
         Phone = $phone.val();
         $phone_wrong.hide();
@@ -57,6 +58,7 @@ window.onload = function () {
         });
     });
 
+    /*点击下一步 前后端验证手机号验证码密码*/
     $(document).on("click", ".next1", function(){
         let error = false;
         $phone_wrong.hide();
@@ -91,7 +93,7 @@ window.onload = function () {
         if(!error){
             $.ajax({
             url: serverURL + "/register/",
-            xhrFields:{withCredentials: true},
+            xhrFields: {withCredentials: true},
             data: {"Phone": Phone, "Code":Code, "Password":Password},
             type: "POST",
             dataType: "json",
@@ -113,28 +115,28 @@ window.onload = function () {
         }
     });
 
+    /*补充用户信息*/
     $(document).on("click", ".next2", function(){
-        let class_id = $(".class_id_input").val();
-        let real_name = $(".real_name_input").val();
-        let stu_id = $(".stu_id_input").val();
+        let wjx_set = [
+            {"type": "blank", "keyword": "班级", "answer": $("#bj").val()},
+            {"type": "blank", "keyword": "姓名", "answer": $("#xm").val()},
+            {"type": "blank", "keyword": "学号", "answer": $("#xh").val()},
+        ]
         $.ajax({
-            url: serverURL + "/register/",
-            data: {"Phone": Phone, "Code": Code, "Password": Password},
+            url: serverURL + "/wjx_set/",
+            xhrFields:{withCredentials: true},
+            data: {"Phone": Phone, "Code": Code, "Password": Password,"wjx_set":JSON.stringify(wjx_set)},
             type: "POST",
-            dataType: "text",
-            success: function(data) {
-                let res = data.responseText;
-                if(res === "1000"){
-                    $("#form1").fadeOut(200, function (){
-                        $("#form2").fadeIn(200);
-                    });
-                }else if(res === "1001"){
-                    $("#w1").text("用户名设置过长，至多设置20位长度。");
+            dataType: "json",
+            success: function(resp) {
+                let Code = resp["Code"];
+                if(Code === 1000){
+                    localStorage.setItem("wjx_set", JSON.stringify(wjx_set));
+                    $("#form2").fadeOut(200, function (){
+                        $("#form3").fadeIn(200);
+                    })
                 }
             }
-        });
-        $("#form2").fadeOut(200, function (){
-            $("#form3").fadeIn(200);
         });
     });
 

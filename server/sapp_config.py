@@ -4,11 +4,12 @@ from datetime import timedelta
 from flask import Flask
 import os
 
-# 开发模式
-DEBUG = True
-
-# 允许跨域的域名
-CORS_DOMAIN = "https://hmc.weactive.top"
+DEV = int(os.getenv('WEACTIVE_SERVER_DEV'))
+if DEV:
+    # 允许跨域的域名
+    CORS_DOMAIN = "http://127.0.0.1"
+else:
+    CORS_DOMAIN = "https://hmc.weactive.top"
 
 # SQLite3数据库配置
 DB_NAME = "weactive.db"
@@ -17,7 +18,7 @@ MAX_CONNECTIONS = 10
 
 def init_app():
     app = Flask(__name__)
-    if DEBUG:
+    if DEV:
         app.config.from_mapping({
             "DEBUG": True,
             "TESTING": True,
@@ -51,7 +52,9 @@ def init_db():
                         uid TEXT PRIMARY KEY NOT NULL,
                         phone TEXT NOT NULL,
                         password TEXT NOT NULL,
-                        balance REAL NOT NULL);''')
+                        balance REAL NOT NULL,
+                        wjx_set TEXT
+                        );''')
 
             # 定义register_cache表
             c.execute('''CREATE TABLE register_cache(
@@ -59,11 +62,23 @@ def init_db():
                         try_times INT NOT NULL,
                         datetime TEXT NOT NULL,
                         phone TEXT NOT NULL,
-                        code INT NOT NULL);''')
+                        code INT NOT NULL
+                        );''')
 
             # 定义login_cache表
             c.execute('''CREATE TABLE login_cache(
                                     uid TEXT PRIMARY KEY NOT NULL,
-                                    sid TEXT NOT NULL);''')
+                                    sid TEXT NOT NULL
+                                    );''')
+
+            # 定义orders表
+            c.execute('''CREATE TABLE orders(
+                                                oid TEXT PRIMARY KEY NOT NULL,
+                                                uid TEXT,
+                                                state TEXT,
+                                                ctime TEXT,
+                                                info TEXT,
+                                                price REAL
+                                                );''')
 
     return pool

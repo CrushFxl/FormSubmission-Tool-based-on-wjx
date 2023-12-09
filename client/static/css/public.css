@@ -56,9 +56,7 @@ div{
 .red{
     color:red;
 }
-.sz1{
-    font-size: 14px;
-}
+
 .bold{
     font-weight: bold;
 }
@@ -146,6 +144,9 @@ div{
 .s17{
     font-size: 17px;
 }
+.s18{
+    font-size: 18px;
+}
 
 .alert_bg{
     display: none;
@@ -164,10 +165,6 @@ div{
 }
 
 .hide{
-    display: none;
-}
-
-#serverURL, #clientURL{
     display: none;
 }
 
@@ -198,5 +195,9 @@ div{
 .loading_text{
     font-weight: bold;
     color: rgb(99,90,210);
+}
 
+.blank {
+    min-height: 50px;
+    visibility: hidden;
 }

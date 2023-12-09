@@ -24,6 +24,7 @@ window.onload = function () {
             success: function(resp) {
                 let Code = resp["Code"];
                 if(Code === 1000){
+                    localStorage.setItem("wjx_set", resp["wjx_set"]);
                     window.location.replace("/user/");
                 }else{
                     $info_wrong.show();
