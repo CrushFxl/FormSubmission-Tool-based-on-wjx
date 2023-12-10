@@ -19,12 +19,12 @@ window.onload = function () {
         let type = wjx_set[i]["type"];
         if (type === "blank") {
             $("#" + type).append('<li class="od_text mar">遇到' +
-                '<span class="label">' + String(wjx_set[i]["keyword"]) + '</span>时，' +
-                '填写<span class="label">' + String(wjx_set[i]["answer"]) + '</span></li>');
+                '<span class="label orange_bg s14">' + String(wjx_set[i]["keyword"]) + '</span>时，' +
+                '填写<span class="label orange_bg s14">' + String(wjx_set[i]["answer"]) + '</span></li>');
         }else if(type === "single" || type === "multi"){
             $("#" + type).append('<li class="od_text mar">遇到' +
-                '<span class="label">' + String(wjx_set[i]["keyword"]) + '</span>时，' +
-                '选择含<span class="label">' + String(wjx_set[i]["answer"]) + '</span>的选项</li>');
+                '<span class="label orange_bg s14">' + String(wjx_set[i]["keyword"]) + '</span>时，' +
+                '选择含<span class="label orange_bg s14">' + String(wjx_set[i]["answer"]) + '</span>的选项</li>');
         }
     }
 

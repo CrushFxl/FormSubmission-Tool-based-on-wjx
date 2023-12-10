@@ -79,9 +79,8 @@ body{
     align-items: flex-start;
     width: 90%;
     max-width: 500px;
-    padding: 30px 10px 10px 10px;#getActivity_btn, #getVideo_btn{
+    padding: 30px 10px 10px 10px;
     margin: 10px;
-    padding: 18px 30px;
 }
 
 .text_wrapper{
@@ -89,9 +88,7 @@ body{
     margin-left: 15px;
     width: 70%;
 }
-    margin: 0;
-    box-sizing: border-box;
-}
+
 
 
 /*上传页面*/

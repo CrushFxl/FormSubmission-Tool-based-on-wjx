@@ -72,24 +72,6 @@
     margin: 2px 14px 0 0
 }
 
-.label{
-    background-color: #cb5ec4;
-    border-radius: 3px;
-    color: #FFFFFF;
-    font-size: 14px;
-    padding: 0 2px;
-    margin: 0 4px;
-}
-
-.slabel{
-    background-color: #e7851f;
-    border-radius: 2px;
-    color: #FFFFFF;
-    font-size: 12px;
-    padding: 0 1px;
-    margin: 0 4px;
-}
-
 .od_li{
     margin: 0 10px;
     padding: 0;
