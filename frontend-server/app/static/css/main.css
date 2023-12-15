@@ -1,0 +1,165 @@
+body{
+    display: flex;
+    align-items: center;
+    align-content: center;
+    padding-bottom: 50px;
+}
+
+.bg{
+    background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
+    width: 100%;
+    height: 200px;
+    padding-top: 30px;
+    margin-bottom: -40px;
+}
+
+.h1, .h2{
+    color: #FFFFFF;
+    padding: 0 0 0 15px;
+    margin: 0 0 5px 0;
+    font-weight: bolder;
+    font-size: 28px;
+}
+
+.h2{
+    margin: 0;
+    font-size: 21px;
+}
+
+.od_page, .page{
+    display: none;
+    align-items: center;
+    flex-direction: column;
+    width: 100vw;
+}
+
+#uploadPage{
+    justify-content: center;
+    height: 100vh;
+}
+
+#block1{
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 18px;
+    max-width: 470px;
+}
+
+.num{
+    padding: 0;
+    margin: 0;
+    font-size: 24px;
+    font-weight: bolder;
+    color: #4F4F4F;
+}
+
+.bar_tip{
+    margin: 0;
+    padding: 0;
+    font-size: 13px;
+    color: #5F5F5F;
+}
+
+.item{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.line{
+    height: 40px;
+    background-color: #BFBFBF;
+    width: 1px;
+}
+
+.title {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 90%;
+    max-width: 500px;
+    padding: 30px 10px 10px 10px;
+    margin: 10px;
+}
+
+.text_wrapper{
+    flex-direction: column;
+    margin-left: 15px;
+    width: 70%;
+}
+
+
+
+/*上传页面*/
+.menuBox{
+    justify-content: center;
+    margin-top: 20px;
+}
+#getActivity_btn, #getVideo_btn{
+    margin: 10px;
+    padding: 16px;
+}
+.text_wrapper{
+    flex-direction: column;
+    margin-left: 15px;
+    width: 70%;
+}
+.menu{
+    align-items: center;
+    background-image: linear-gradient(to right, #8847ce 0%, #5b93f3 100%);
+    border-radius: 10px;
+    padding: 10px 10px 10px 15px;
+}
+.menu:hover{
+    transition: all, 300ms;
+    background-image: linear-gradient(to right, #8038ce 0%, #3a7ef3 100%);
+    cursor: pointer;
+}
+.subText {
+    font-size: 24px;
+    font-weight: bolder;
+    color: #FFFFFF;
+}
+.menu_svg{
+    height: 54px;
+    fill: #FFFFFF;
+    width: 25%;
+}
+
+
+
+.list{
+    flex-direction: column;
+    align-items: center;
+    margin: 10px 0;
+    padding: 0;
+}
+
+.li{
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    padding: 11px 0;
+}
+
+.li:hover,.order:hover{
+    transition: all, 300ms;
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+
+.liText{
+    font-size: 17px;
+}
+
+.liTip{
+    margin-right: 2px;
+}
+
+.sep{
+    width: 90%;
+    margin: 10px 0;
+    border: 1px solid #F3F3F3;
+}
