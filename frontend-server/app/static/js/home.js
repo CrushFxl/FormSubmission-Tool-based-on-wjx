@@ -66,7 +66,7 @@ window.onload = function () {
     });
 
     $(document).on("click", "#uploadTab", function () {
-        changePage(this)
+        changePage(this);
 
         /*点击弹出上传界面*/
         $(document).on("click", "#getActivity_btn", function () {
@@ -91,15 +91,21 @@ window.onload = function () {
                 xhrFields: {withCredentials: true},
                 method: 'POST',
                 data: formdata,
+                dataType: "json",
                 processData: false,
                 contentType: false,
                 success: function(resp) {
                     loading_hide();
-                    if(resp["code"] === 1000){
-                        let oid = resp['oid']
-                        window.location.assign("/wjx_order_pre?oid="+oid);
+                    let code = resp["code"];
+                    if(code === 1000){
+                        let order = JSON.stringify(resp["order"]);
+                        sessionStorage.setItem('order', order);
+                        window.location.assign("/wjx_order_pre");
                     }else{
                         alert(resp["msg"]);
+                        if(code === 3000){
+                            window.location.replace("/login");
+                        }
                     }
                 },
             });

@@ -3,7 +3,7 @@ from datetime import timedelta
 
 
 class BaseConfig:
-    HOST = "127.0.0.1"
+    HOST = "0.0.0.0"
     PORT = 12345
     PERMANENT_SESSION_LIFETIME = timedelta(days=365)
     SQLALCHEMY_TRACK_MODIFICATIONS = False

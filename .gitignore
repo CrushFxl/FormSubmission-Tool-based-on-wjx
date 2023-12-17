@@ -1,8 +1,8 @@
 /.idea
-/server/SecretKey.ini
-/server/API Document.md
-/server/db/weactive.db
-/client/venv
-/server/venv
-/client/SSL/
-/server/SSL/
+/backend-server/.idea
+/backend-server/venv
+/backend-server/API Document.md
+/front-server/venv
+/front-server/.idea
+/front-server/doc
+/venv

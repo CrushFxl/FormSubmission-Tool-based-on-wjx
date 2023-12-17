@@ -130,7 +130,6 @@ window.onload = function () {
             dataType: "json",
             success: function(resp) {
                 if(resp["code"] === 1000){
-                    localStorage.setItem("wjx_set", JSON.stringify(wjx_set));
                     $("#form2").fadeOut(200, function (){
                         $("#form3").fadeIn(200);
                     })

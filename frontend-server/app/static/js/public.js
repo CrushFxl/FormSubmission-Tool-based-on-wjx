@@ -66,6 +66,64 @@ function loading_show(){
 
 }
 
+/*渲染页面信息*/
+function render_wjx_order(order){
+
+    /*订单基本信息*/
+    let state = order['state'];
+    let state_text = '';
+    if(state === '进行中'){
+        state_text = "我们已收到您的付款，订单正在进行";
+    }
+    else if(state === '待付款'){
+        $('nav_bar').append()
+        state_text = "待付款，15分钟后订单将自动取消";
+    }
+    else if(state === '已关闭'){
+        let extra = order['extra'];
+        if(extra === 0){
+            state_text = "由于超时未付款，此订单已被自动关闭";
+        }else if(extra === 1){
+            state_text = "订单已取消，若已付款，款项将原路返回";
+        }
+    }
+    else if(state === '已完成'){
+        state_text = "订单已完成，感谢您选择WeActive活动托管平台";
+    }
+
+    $("#state").text('订单'+state);
+    $("#state_text").text(state_text);
+    $("#oid").text(order['oid']);
+    $("#ctime").text(order['ctime']);
+    $("#ptime").text(order['ptime']);
+    $("#dtime").text(order['dtime']);
+
+    /*价格计算*/
+    const basic_price = order["price"].toFixed(2);
+    function cal_price(){
+        $("#wjx_price").text(basic_price);
+    }
+    cal_price();
+
+    /*问卷星相关*/
+    const wjx_set = order["info"]["wjx_set"];
+    $("#wjx_title").text(order["info"]["title"]);
+    $("#wjx_time").text(order["info"]["time"]);
+    for(let i in wjx_set){
+        let type = wjx_set[i]["type"];
+        if (type === "blank") {
+            $("#" + type).append('<p class="od_text mar">遇到' +
+                '<span class="label orange_bg s14">' + String(wjx_set[i]["keyword"]) + '</span>时，' +
+                '填写<span class="label orange_bg s14">' + String(wjx_set[i]["answer"]) + '</span></p>');
+        }else if(type === "single" || type === "multi"){
+            $("#" + type).append('<p class="od_text mar">遇到' +
+                '<span class="label orange_bg s14">' + String(wjx_set[i]["keyword"]) + '</span>时，' +
+                '选择含<span class="label orange_bg s14">' + String(wjx_set[i]["answer"]) + '</span>的选项</p>');
+        }
+    }
+}
+
+
 function loading_hide(){
     $(".loading").hide()
 }

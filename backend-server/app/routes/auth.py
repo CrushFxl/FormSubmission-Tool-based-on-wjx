@@ -49,6 +49,7 @@ def send():
     code = random.randint(123456, 987654)
     result = send_sm(mob, code)
     if result == "OK":
+        # noinspection PyArgumentList
         register_cache = rCache(ip=ip, time=ctime, mob=mob, code=code)
         db.session.add(register_cache)
         db.session.commit()
@@ -85,6 +86,7 @@ def register():
                 uid = random.randint(10000, 1000000000)
                 if not User.query.filter(User.uid==uid).first():
                     break
+            # noinspection PyArgumentList
             db.session.add(User(uid=uid, mob=mob, pwd=pwd))
             db.session.commit()
             session['uid'] = uid

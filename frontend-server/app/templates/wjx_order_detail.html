@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>WeActive - 订单详情</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="../static/img/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="../static/css/public.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/order.css">
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js" defer></script>
+    <script src="../static/sdk/confetti.min.js"></script>
+    <script src="../static/js/wjx_order_detail.js" defer></script>
+    <script src="../static/js/public.js" defer></script>
+</head>
+<body style="background-color: #FAFAFA">
+
+    <p id="URL" class="hide">{{URL}}</p>
+    <div class="box dt_banner" style="border-radius: 0">
+        <div class="dt_title">
+            <h1 id="state" class="white" style="margin: 5px 10px; font-size: 28px"></h1>
+            <p id="state_text" class="s14 white" style="margin: 5px 10px 10px 10px"></p>
+        </div>
+    </div>
+    <div class="dt_box">
+        <div class="od_box box sd0">
+            <p class="od_title" style="margin-bottom: 10px">问卷星活动代抢服务</p>
+            <div class="dt_item">
+                <p class="s16 grey3 dt_gap">活动名称</p>
+                <p id="wjx_title" class="s16 grey2 hidet"></p>
+            </div>
+            <div class="dt_item">
+                <p class="s16 grey3 dt_gap">报名时间</p>
+                <p id="wjx_time" class="s16 grey2"></p>
+            </div>
+            <div class="od_line"></div>
+            <div class="dt_item" style="justify-content: space-between">
+                <p class="s16 grey3 dt_gap">标准</p>
+                <p class="s16 grey2">￥0.50</p>
+            </div>
+            <div style="justify-content: end; margin-top: 10px">
+                <p>合计：<span class="bold s18">￥</span><span id="wjx_price" class="bold s17"></span></p>
+            </div>
+        </div>
+        <div class="od_box box sd0">
+            <div style="flex-direction: column">
+                <p id="blank"></p>
+                <p id="single"></p>
+                <p id="multi"></p>
+            </div>
+        </div>
+        <div class="od_box box sd0">
+            <div class="dt_item">
+                <p class="s16 grey3 dt_gap">订单编号</p>
+                <p id="oid" class="s16 grey2"></p>
+            </div>
+            <div class="dt_item">
+                <p class="s16 grey3 dt_gap">创建时间</p>
+                <p id="ctime" class="s16 grey2"></p>
+            </div>
+            <div class="dt_item">
+                <p class="s16 grey3 dt_gap">付款时间</p>
+                <p id="ptime" class="s16 grey2"></p>
+            </div>
+            <div class="dt_item">
+                <p class="s16 grey3 dt_gap">完成时间</p>
+                <p id="dtime" class="s16 grey3"></p>
+            </div>
+        </div>
+        <p class="blank">(占位)</p>
+        <div id="btm_nav" class="od_nav box sd1">
+            <input id="return_btn" type="button" class="btn2" style="margin-right: 15px" value="取消订单">
+            <input id="refund_btn" type="button" class="btn1" style="margin-right: 20px" value="返回主页">
+        </div>
+    </div>
+
+</body>
+</html>

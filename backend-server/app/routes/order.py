@@ -1,4 +1,3 @@
-import json
 import random
 import re
 import time
@@ -9,6 +8,7 @@ import requests
 from bs4 import BeautifulSoup
 from flask import Blueprint, request, session
 
+from app.models import to_json
 from app.routes.filters import login_required
 from app.models import db
 from app.models.User import User
@@ -24,8 +24,8 @@ headers = {
 }
 
 
-@login_required
 @order_bk.post('/query')
+@login_required
 def query():
     uid = session.get('uid')
     oid = request.form.get('oid')
@@ -35,8 +35,8 @@ def query():
     return {"code": 1001}
 
 
-@login_required
 @order_bk.post('/wjx/pre')
+@login_required
 def wjx_pre():
 
     # 检查上传的图片
@@ -89,8 +89,39 @@ def wjx_pre():
     price = 0.5
 
     # 写入数据库
-    order =Order(oid=oid, uid=uid, type=type, state=state,
-                 ctime=ctime, info=info, price=price)
+    # noinspection PyArgumentList
+    order = Order(oid=oid, uid=uid, type=type, state=state,
+                  ctime=ctime, info=info, price=price)
     db.session.add(order)
     db.session.commit()
-    return {"code": 1000, "oid": oid}, 200
+    return {"code": 1000, "order": to_json(order)}, 200
+
+
+@order_bk.post('wjx/commit')
+@login_required
+def wjx_commit():
+    uid = session.get('uid')
+    oid = request.form.get('oid')
+    user = User.query.filter(User.uid==uid).first()
+    order = Order.query.filter(Order.uid==uid, Order.oid==oid).first()
+
+    User.query.filter(User.uid==uid).with_for_update(read=False, nowait=False)  # 锁行
+    if order.state != '待付款':
+        return {"code": 1002}
+
+    ctime = time.mktime(time.strptime(order.ctime, '%Y-%m-%d %H:%M:%S'))
+    current_time = time.time()
+    if current_time - ctime > 900:
+        order.state = '已关闭'
+        order.extra = 0
+        db.session.commit()
+        return {"code": 1003, "order": to_json(order)}
+
+    if order.price > user.balance:
+        return {"code": 1001, "msg": '付款失败，账户余额不足', "order": to_json(order)}
+    User.query.filter(User.uid == uid).update({'balance': user.balance - order.price})
+    order.ptime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+    order.state = '进行中'
+    db.session.commit()
+    return {"code": 1000, "order": to_json(order)}
+

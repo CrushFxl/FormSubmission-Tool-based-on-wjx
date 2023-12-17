@@ -1,7 +1,7 @@
-from . import db, EntityBase
+from . import db
 
 
-class RegisterCache(db.Model, EntityBase):
+class RegisterCache(db.Model):
     __tablename__ = 'register_cache'
     id = db.Column(db.INTEGER, primary_key=True, autoincrement=True)
     ip = db.Column('ip', db.TEXT, nullable=False)

@@ -1,7 +1,7 @@
-from . import db, EntityBase
+from . import db
 
 
-class User(db.Model, EntityBase):
+class User(db.Model):
     __tablename__ = 'users'
     uid = db.Column('uid', db.Integer, primary_key=True, unique=True, index=True, nullable=False)
     mob = db.Column('mob', db.Integer, unique=True, nullable=False)
