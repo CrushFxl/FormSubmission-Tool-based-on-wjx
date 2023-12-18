@@ -24,17 +24,6 @@ headers = {
 }
 
 
-@order_bk.post('/query')
-@login_required
-def query():
-    uid = session.get('uid')
-    oid = request.form.get('oid')
-    order = Order.query.filter(Order.oid==oid, Order.uid==uid).first()
-    if order:
-        return {"code": 1000, "order": order.to_json()}
-    return {"code": 1001}
-
-
 @order_bk.post('/wjx/pre')
 @login_required
 def wjx_pre():
@@ -76,7 +65,6 @@ def wjx_pre():
     oid = (str(int(time.time() * 1000)) + '01'
            + str(uid)[-3:] + str(random.randint(10, 99)))
     type = "wjx"
-    state = "待付款"
     ctime = time.strftime('%Y-%m-%d %H:%M:%S', current_time)
     user = User.query.filter(User.uid==uid).first()
     info = dict({
@@ -90,11 +78,10 @@ def wjx_pre():
 
     # 写入数据库
     # noinspection PyArgumentList
-    order = Order(oid=oid, uid=uid, type=type, state=state,
-                  ctime=ctime, info=info, price=price)
+    order = Order(oid=oid, uid=uid, type=type, ctime=ctime, info=info, price=price)
     db.session.add(order)
     db.session.commit()
-    return {"code": 1000, "order": to_json(order)}, 200
+    return {"code": 1000, "order": to_json(order)}
 
 
 @order_bk.post('wjx/commit')
@@ -106,22 +93,25 @@ def wjx_commit():
     order = Order.query.filter(Order.uid==uid, Order.oid==oid).first()
 
     User.query.filter(User.uid==uid).with_for_update(read=False, nowait=False)  # 锁行
-    if order.state != '待付款':
-        return {"code": 1002}
+
+    if order.state != 100:
+        return {"code": 1002}   # 防止订单重复支付
 
     ctime = time.mktime(time.strptime(order.ctime, '%Y-%m-%d %H:%M:%S'))
     current_time = time.time()
     if current_time - ctime > 900:
-        order.state = '已关闭'
-        order.extra = 0
+        order.state = 200
         db.session.commit()
-        return {"code": 1003, "order": to_json(order)}
+        return {"code": 1003, "order": to_json(order),
+                "msg": "由于长时间未支付，订单已自动关闭"}
 
     if order.price > user.balance:
-        return {"code": 1001, "msg": '付款失败，账户余额不足', "order": to_json(order)}
+        return {"code": 1001, "order": to_json(order),
+                "msg": '付款失败，账户余额不足'}
+
     User.query.filter(User.uid == uid).update({'balance': user.balance - order.price})
     order.ptime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
-    order.state = '进行中'
+    order.state = 400
     db.session.commit()
-    return {"code": 1000, "order": to_json(order)}
+    return {"code": 1000}
 

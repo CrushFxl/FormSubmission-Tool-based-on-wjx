@@ -10,20 +10,29 @@
     <link rel="stylesheet" type="text/css" href="../static/css/public.css">
     <link rel="stylesheet" type="text/css" href="../static/css/order.css">
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js" defer></script>
-    <script src="../static/sdk/confetti.min.js"></script>
-    <script src="../static/js/wjx_order_detail.js" defer></script>
     <script src="../static/js/public.js" defer></script>
+    <script src="../static/sdk/confetti.min.js"></script>
+    <script src="../static/js/order.js" defer></script>
+    <script src="../static/js/order_detail.js" defer></script>
 </head>
 <body style="background-color: #FAFAFA">
-
     <p id="URL" class="hide">{{URL}}</p>
+    <div id="top_nav" class="box" style="align-items: center">
+        <div id="back" style="margin: 15px 10px">
+            <svg width="17px" height="17px" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"></path>
+            </svg>
+        </div>
+        <p class="s18  grey2">订单详情</p>
+    </div>
+        <div class="blank">(占位)</div>
     <div class="box dt_banner" style="border-radius: 0">
         <div class="dt_title">
-            <h1 id="state" class="white" style="margin: 5px 10px; font-size: 28px"></h1>
-            <p id="state_text" class="s14 white" style="margin: 5px 10px 10px 10px"></p>
+            <h1 id="title" class="white" style="margin: 5px 10px; font-size: 28px"></h1>
+            <p id="subtitle" class="s14 white" style="margin: 5px 10px 10px 10px"></p>
         </div>
     </div>
-    <div class="dt_box">
+    <div class="dt_box" style="padding-top: 10px">
         <div class="od_box box sd0">
             <p class="od_title" style="margin-bottom: 10px">问卷星活动代抢服务</p>
             <div class="dt_item">
@@ -69,9 +78,10 @@
             </div>
         </div>
         <p class="blank">(占位)</p>
-        <div id="btm_nav" class="od_nav box sd1">
-            <input id="return_btn" type="button" class="btn2" style="margin-right: 15px" value="取消订单">
-            <input id="refund_btn" type="button" class="btn1" style="margin-right: 20px" value="返回主页">
+        <div class="od_nav box sd1">
+            <input id="refund_btn" class="btn" type="button" value="取消订单">
+            <input id="commit_btn" class="btn" type="button" value="立即支付">
+            <input id="feedback_btn" class="btn" type="button" value="问题反馈">
         </div>
     </div>
 

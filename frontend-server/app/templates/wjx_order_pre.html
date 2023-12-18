@@ -10,8 +10,9 @@
     <link rel="stylesheet" type="text/css" href="../static/css/public.css">
     <link rel="stylesheet" type="text/css" href="../static/css/order.css">
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js" defer></script>
-    <script src="../static/js/wjx_order_pre.js" defer></script>
     <script src="../static/js/public.js" defer></script>
+    <script src="../static/js/order.js" defer></script>
+    <script src="../static/js/order_pre.js" defer></script>
 </head>
 <body style="background-color: #FAFAFA">
     <p id="URL" class="hide">{{URL}}</p>
@@ -88,13 +89,13 @@
         </div>
     </div>
     <p class="blank">(占位)</p>
-    <div id="btm_nav" class="od_nav box sd1">
+    <div class="od_nav box sd1">
         <div class="od_price">
             <p class="s15 bold grey3" style="margin: 2px 5px 0 0">小计: </p>
             <span class="s15 bold" style="margin-top: 5px;color:rgb(99,90,210);">￥</span>
-            <span id="wjx_price" class="bold" style="color:rgb(99,90,210);font-size: 24px;"></span>
+            <span id="wjx_price" class="bold" style="color:rgb(99,90,210);font-size: 23px;"></span>
         </div>
-        <input id="commit_btn" type="button" class="btn1" value="提交订单">
+        <input id="commit_btn" type="button" class="btn1" value="立即付款">
     </div>
 </body>
 </html>

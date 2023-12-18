@@ -43,19 +43,13 @@
 .od_nav{
     z-index: 10;
     width: 100%;
-    height: 55px;
+    height: 50px;
     justify-content: flex-end;
     align-items: center;
     position: fixed;
     bottom: 0;
     padding: 5px 0;
     border-radius: 0;
-}
-
-#commit_btn{
-    width: 120px;
-    margin: 0 4% 0 0;
-    border-radius: 20px;
 }
 
 .od_price{
@@ -113,7 +107,53 @@
     min-width: 65px;
 }
 
-#refund_btn, #return_btn{
+#back{
+    position: absolute;
+    left: 5%;
+}
+
+#back:hover{
+    cursor: pointer;
+}
+
+
+.btn{
+    display: none
+}
+
+#refund_btn, #feedback_btn{
+    border-radius: 5px;
+    border: rgb(108,94,252) 2px solid;
+    background-color: #FFFFFF;
+    color:rgb(108,94,252);
+    font-size: 100%;
+    height: 37px;
     width: 100px;
-    border-radius: 10px;
+    justify-content: center;
+    -webkit-appearance: none;
+    margin: 0 25px 0 -8px;
+}
+#refund_btn:hover, #feedback_btn:hover{
+    color: #FFFFFF;
+    transition: all, 300ms;
+    background-color: rgb(108,94,252);
+    cursor: pointer;
+}
+
+#commit_btn{
+    border: none;
+    background-color: rgb(108,94,252);
+    color:#FFFFFF;
+    font-size: 100%;
+    height: 37px;
+    justify-content: center;
+    -webkit-appearance: none;
+    width: 100px;
+    margin: 0 25px 0 -8px;
+    border-radius: 5px;
+}
+#commit_btn:hover{
+    transition: all, 300ms;
+    background-color: rgb(86, 70, 245);
+    cursor: pointer;
 }
