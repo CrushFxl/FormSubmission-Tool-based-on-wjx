@@ -81,7 +81,7 @@ def wjx_pre():
     order = Order(oid=oid, uid=uid, type=type, ctime=ctime, info=info, price=price)
     db.session.add(order)
     db.session.commit()
-    return {"code": 1000, "order": to_json(order)}
+    return {"code": 1000, "oid": oid}
 
 
 @order_bk.post('wjx/commit')
@@ -89,10 +89,10 @@ def wjx_pre():
 def wjx_commit():
     uid = session.get('uid')
     oid = request.form.get('oid')
+    User.query.filter(User.uid == uid).with_for_update(read=False, nowait=False)  # 锁行
+
     user = User.query.filter(User.uid==uid).first()
     order = Order.query.filter(Order.uid==uid, Order.oid==oid).first()
-
-    User.query.filter(User.uid==uid).with_for_update(read=False, nowait=False)  # 锁行
 
     if order.state != 100:
         return {"code": 1002}   # 防止订单重复支付
@@ -109,9 +109,39 @@ def wjx_commit():
         return {"code": 1001, "order": to_json(order),
                 "msg": '付款失败，账户余额不足'}
 
-    User.query.filter(User.uid == uid).update({'balance': user.balance - order.price})
+    user.ing += 1
+    user.balance -= order.price
     order.ptime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
     order.state = 400
+    db.session.commit()
+    return {"code": 1000}
+
+
+@order_bk.post('/cancel')
+@login_required
+def cancel():
+    uid = session.get('uid')
+    oid = request.form.get('oid')
+    User.query.filter(User.uid == uid).with_for_update(read=False, nowait=False)  # 锁行
+
+    user = User.query.filter(User.uid==uid).first()
+    order = Order.query.filter(Order.uid==uid, Order.oid==oid).first()
+
+    state = str(order.state)[0]
+    # 记录取消订单时的订单状态
+    if state == '1':        # 待付款时
+        order.state = 201
+    elif state == '3':      # 排队中时
+        user.ing -= 1
+        order.state = 202
+        user.balance += order.price
+    elif state == '4':      # 进行中时
+        order.state = 203
+        user.ing -= 1
+        user.balance += order.price
+    else:                   # 不允许退款
+        return {"code": 1001}
+    order.dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
     db.session.commit()
     return {"code": 1000}
 

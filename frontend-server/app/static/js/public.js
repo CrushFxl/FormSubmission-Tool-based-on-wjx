@@ -1,3 +1,4 @@
+
 function loading_show(){
     let $body = $("body")
     let $loading = $('.loading')
@@ -97,4 +98,11 @@ function changePage(obj){
     $(obj).children("p").css("color","rgb(108,94,252)");
     $(obj).children("svg").attr("stroke","rgb(108,94,252)");
     return pageName;
+}
+
+window.onload = function (){
+
+    /*实现od_box折叠展开*/
+    $(document).on("click", "#setTitle", function () {$("#setFolder").toggle(200);});
+    $(document).on("click", "#ssetTitle", function () {$("#ssetFolder").toggle(200);});
 }

@@ -8,3 +8,5 @@ class User(db.Model):
     pwd = db.Column('pwd', db.Text, nullable=False)
     balance = db.Column('balance', db.Float, nullable=False, default=1.0)
     wjx_set = db.Column('wjx_set', db.JSON, nullable=True)
+    ing = db.Column('ing_ods', db.JSON, nullable=False, default=0)
+    done = db.Column('done_ods', db.JSON, nullable=False, default=0)

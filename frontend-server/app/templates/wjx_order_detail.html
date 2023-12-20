@@ -10,13 +10,13 @@
     <link rel="stylesheet" type="text/css" href="../static/css/public.css">
     <link rel="stylesheet" type="text/css" href="../static/css/order.css">
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js" defer></script>
-    <script src="../static/js/public.js" defer></script>
+    <script src="../static/js/public.js"></script>
     <script src="../static/sdk/confetti.min.js"></script>
-    <script src="../static/js/order.js" defer></script>
-    <script src="../static/js/order_detail.js" defer></script>
+    <script src="../static/js/order.js"></script>
 </head>
 <body style="background-color: #FAFAFA">
     <p id="URL" class="hide">{{URL}}</p>
+    <script>if(window.location.search.includes('show')) show_firework();</script>
     <div id="top_nav" class="box" style="align-items: center">
         <div id="back" style="margin: 15px 10px">
             <svg width="17px" height="17px" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
@@ -25,8 +25,8 @@
         </div>
         <p class="s18  grey2">订单详情</p>
     </div>
-        <div class="blank">(占位)</div>
-    <div class="box dt_banner" style="border-radius: 0">
+    <div class="blank">(占位)</div>
+    <div class="box dt_banner" style="border-radius: 0; margin-top: -6px">
         <div class="dt_title">
             <h1 id="title" class="white" style="margin: 5px 10px; font-size: 28px"></h1>
             <p id="subtitle" class="s14 white" style="margin: 5px 10px 10px 10px"></p>
@@ -84,6 +84,5 @@
             <input id="feedback_btn" class="btn" type="button" value="问题反馈">
         </div>
     </div>
-
 </body>
 </html>

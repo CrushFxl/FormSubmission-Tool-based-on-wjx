@@ -13,7 +13,6 @@ body{
     box-sizing: border-box;
     height: 100vh;
     overflow-x: hidden;
-    scrollbar-width: none;
     -ms-overflow-style: none;
 }
 
@@ -45,7 +44,7 @@ div{
 .red{color:red;}
 
 .pur{
-    color:rgb(108,94,252);
+    color: rgb(117,105,245);
 }
 
 .bold{
@@ -186,7 +185,7 @@ div{
 }
 
 .blank {
-    min-height: 50px;
+    min-height: 56px;
     visibility: hidden;
 }
 

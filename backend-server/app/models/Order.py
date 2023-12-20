@@ -12,4 +12,3 @@ class Order(db.Model):
     dtime = db.Column('dtime', db.TEXT, nullable=True, default='-')
     info = db.Column('info', db.JSON, nullable=False)
     price = db.Column('price', db.FLOAT, nullable=False)
-    extra = db.Column('extra', db.TEXT, nullable=True)

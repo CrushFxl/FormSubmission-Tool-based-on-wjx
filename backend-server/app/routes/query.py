@@ -3,6 +3,8 @@ from flask import Blueprint, request, session
 from app.models import to_json
 from app.routes.filters import login_required
 from app.models.Order import Order
+from app.models.User import User
+
 
 query_bk = Blueprint('query', __name__, url_prefix='/query')
 
@@ -38,6 +40,22 @@ def query_orders():
     ordersObj = pageObj.items
     orders = []
     for i in ordersObj:
-        orders.append(to_json(i));
+        i = to_json(i)
+        # 删除无用数据
+        del i['info']['wjx_set']
+        del i['uid']
+        orders.append(i)
     max_pn = pageObj.pages
     return {"code": 1000, "orders": orders, "max_pn": max_pn}
+
+
+@query_bk.post('/user')
+@login_required
+def query_user():
+    uid = session.get('uid')
+    user = User.query.filter(User.uid == uid).first()
+    mob = str(user.mob)
+    return {"code": 1000, "user": {"mob": mob[0:4]+'***'+mob[-4:],
+                                   "balance": user.balance,
+                                   "ing": user.ing,
+                                   "done": user.done}}

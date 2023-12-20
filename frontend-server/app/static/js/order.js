@@ -1,9 +1,20 @@
-/*返回按钮事件*/
-localStorage.setItem('page', 'order');
-localStorage.setItem('tab', 'all');
-$(document).on("click", "#back", function () {
-        window.location.replace('/home')
+/*向服务器请求订单信息（Promise）*/
+function request_order(oid){
+    return new Promise((resolve) => {
+        $.ajax({
+            url: URL + "/query/order?oid=" + oid,
+            xhrFields: {withCredentials: true},
+            type: "GET",
+            dataType: "json",
+            success: function (resp){
+                const code = resp['code']
+                if(code === 1000){
+                    resolve(resp['order']);
+                }
+            }
+        });
     });
+}
 
 
 /*提交订单*/
@@ -34,12 +45,12 @@ function show_firework() {
     function frame() {
         confetti({
             particleCount: 2, angle: 60, spread: 55,
-            origin: {x: 0, y: 0.7},
+            origin: {x: 0, y: 0.65},
             colors: colors,
         });
         confetti({
             particleCount: 2, angle: 120, spread: 55,
-            origin: {x: 1, y: 0.7},
+            origin: {x: 1, y: 0.65},
             colors: colors,
         });
         if (Date.now() < end) {
@@ -51,35 +62,33 @@ function show_firework() {
 
 /*渲染确认订单页和详情页*/
 function render_wjx_order(order){
-    let state = order['state'];
+    const state = order['state'];
+    const s = state.toString()[0]
     let title = '';
     let subtitle = '';
-    if(state === 100){
+    if(s === '1'){
         title = '待付款';
         subtitle = '待付款，15分钟后订单将自动取消'
         $('#commit_btn').show();
         $('#refund_btn').show();
-    }else if(state === 200){
+    }else if(s === '2'){
         title = '已关闭';
-        subtitle = '由于超时未付款，此订单已自动关闭'
         $('#feedback_btn').show();
-    }else if(state === 201){
-        title = '已关闭';
-        subtitle = '订单已取消，资金将原路退回'
-        $('#feedback_btn').show();
-    }else if(state === 300){
+        if(state === 200) subtitle = '由于超时未付款，此订单已自动关闭'
+        else subtitle = '订单已成功取消，资金将原路退回'
+    }else if(s === '3'){
         title = '排队中';
         subtitle = '当前下单人数过多，您的订单正在排队中，预计需要?小时'
         $('#refund_btn').show();
-    }else if(state === 400){
+    }else if(s === '4'){
         title = '进行中';
         subtitle = '我们已收到您的付款，订单任务开始进行'
         $('#refund_btn').show();
-    }else if(state === 500){
+    }else if(s === '5'){
         title = '已完成';
         subtitle = '订单已完成，感谢您选择WeActive活动托管平台'
         $('#refund_btn').show();
-    }else if(state === 900){
+    }else if(s === '9'){
         title = '发生错误';
         subtitle = '很抱歉，订单执行过程中遇到技术错误，我们已为您退款'
         $('#feedback_btn').show();
@@ -113,4 +122,49 @@ function render_wjx_order(order){
                 '选择含<span class="label orange_bg s14">' + String(wjx_set[i]["answer"]) + '</span>的选项</p>');
         }
     }
+}
+
+window.onload = function () {
+    window.URL = $("#URL").text();
+    /*请求订单信息并渲染页面*/
+    const params = new URLSearchParams(window.location.search);
+    const oid = params.get('oid');
+    const p = request_order(oid);
+    p.then(order => {render_wjx_order(order)});
+
+    /*绑定返回按钮事件*/
+    $(document).on("click", "#back", function () {
+        window.location.replace('/home');
+    });
+    /*提交订单按钮绑定*/
+    $(document).on("click", "#commit_btn", function () {
+        loading_show();
+        commit_btn(oid);
+    });
+    /*取消订单按钮绑定*/
+    $(document).on("click", "#refund_btn", function () {
+        if(confirm("您确实要取消订单吗")){
+            loading_show();
+            $.ajax({
+                url: URL + "/order/cancel",
+                xhrFields: {withCredentials: true},
+                type: "POST",
+                dataType: "json",
+                data: {"oid": oid},
+                success: function (resp){
+                    const code = resp['code'];
+                    if(code === 1000){
+                        window.location.replace('/wjx_order_detail/?oid='+oid);
+                    }else if(code === 1001){
+                        alert("订单状态异常，无法退款");
+                    }
+            }
+    });
+
+        }
+    });
+    /*问题反馈按钮绑定*/
+    $(document).on("click", "#feedback_btn", function () {
+        alert('反馈？开发中');
+    });
 }
