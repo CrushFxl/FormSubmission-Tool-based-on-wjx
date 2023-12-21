@@ -2,6 +2,7 @@ let $input_img = $('.input-img')
 const URL = $("#URL").text()
 
 function request_orderlist(tabName, pn){
+    $('#'+tabName+'Page').append('<p class="s14 grey1" style="margin: 5px 0">正在努力加载...</p>');
     return new Promise(function (resolve, reject) {
         $.ajax({
             url: URL + "/query/orders" + '?type=' + tabName + '&pn=' + pn,
@@ -23,8 +24,10 @@ function request_orderlist(tabName, pn){
 }
 
 function render_orderlist(tabName, orders){
+    let $tabPage = $('#'+tabName+'Page');
+    $tabPage.empty();
     if(orders.length === 0){    //显示"木大"icon
-        $('#'+tabName+'Page').append('' +
+        $tabPage.append('' +
             '<div style="flex-direction: column;align-items: center">\n' +
             '    <svg style="margin: 50px 0 10px 0" width="75px" height="75px" fill="#AAAAAA" class="bi bi-box-seam-fill" viewBox="0 0 16 16">\n' +
             '        <path fill-rule="evenodd" d="M15.528 2.973a.75.75 0 0 1 .472.696v8.662a.75.75 0 0 1-.472.696l-7.25 2.9a.75.75 0 0 1-.557 0l-7.25-2.9A.75.75 0 0 1 0 12.331V3.669a.75.75 0 0 1 .471-.696L7.443.184l.01-.003.268-.108a.75.75 0 0 1 .558 0l.269.108.01.003 6.97 2.789ZM10.404 2 4.25 4.461 1.846 3.5 1 3.839v.4l6.5 2.6v7.922l.5.2.5-.2V6.84l6.5-2.6v-.4l-.846-.339L8 5.961 5.596 5l6.154-2.461L10.404 2Z"></path>\n' +
@@ -50,7 +53,7 @@ function render_orderlist(tabName, orders){
         else if(500<=state && state<=599){state = '已完成';bg = '#70f18d'}
         else{state = '发生错误';bg = '#f15c57'}
 
-        $('#'+tabName+'Page').append('<div id="oid'+ oid +'" class="order od_box box sd1">\n' +
+        $tabPage.append('<div id="oid'+ oid +'" class="order od_box box sd1">\n' +
         '                <div style="justify-content: space-between; margin-bottom: 5px">\n' +
         '                    <p class="s16 pur bold">问卷星活动代抢服务</p>\n' +
         '                    <p class="label s14" style="margin: 0; background-color: '+ bg +'">'+ state +'</p>\n' +
@@ -68,7 +71,7 @@ function render_orderlist(tabName, orders){
         '            </div>')
     }
     if(orders.length >= 10){
-        $('#'+tabName+'Page').append(
+        $tabPage.append(
             '<p class="s14 grey1" style="margin: 5px 0">只能查询最近十条记录噢~</p>');
     }
 }
@@ -165,22 +168,38 @@ window.onload = function () {
         /*请求获取用户信息*/
         $.ajax({
             url: URL + "/query/user",
-            data: {"order_type": sessionStorage.getItem('tab')},
             xhrFields: {withCredentials: true},
             type: "POST",
             dataType: "json",
             success: function (resp) {
                 if (resp["code"] === 1000) {
                     const user = resp['user'];
+                    const $mine_welcome = $('#mine_balance');
                     $('#mine_welcome').text('你好，'+user['mob']);
                     $('#mine_ing').text(user['ing']);
-                    $('#mine_balance').text(user['balance'].toFixed(2));
+                    $mine_welcome.text(user['balance'].toFixed(2));
+                    $mine_welcome.append('<span class="s15">￥</span>')
                     $('#mine_done').text(user['done']);
                 }
             }
         });
 
-        /*绑定退出登录按钮*/
+        /*余额充值按钮*/
+        $(document).on("click", "#recharge_btn", function () {
+            window.location.assign("/recharge");
+        });
+
+        /*配置修改按钮*/
+        $(document).on("click", "#config_btn", function () {
+            window.location.assign("/config");
+        });
+
+        /*反馈建议按钮*/
+        $(document).on("click", ".feedback", function () {
+            window.location.assign("/feedback");
+        });
+
+        /*退出登录按钮*/
         $(document).on("click", ".logout", function () {
             localStorage.clear();
             sessionStorage.clear();

@@ -8,10 +8,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="../static/img/favicon.ico">
     <link rel="stylesheet" type="text/css" href="../static/css/public.css">
-    <link rel="stylesheet" type="text/css" href="../static/css/login.css">
-    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
-    <script src="../static/js/login.js"></script>
-    <style>span{color: red; font-size: 14px}.info{margin: 0 0 5px 0;}</style>
+    <style>
+        .container{flex-direction: column;align-items: center;padding: 30px 20px;max-width: 400px}
+        .logo_container{margin-bottom: 30px;justify-content: center;}
+        #logo{width: 80px;height: 80px;filter:drop-shadow(0 0 2px #9f9f9f);margin-right: 15px;}
+        .title{font-size: 40px;}
+        .des{font-size: 17px;}
+        span{color: red; font-size: 14px}.info{margin: 0 0 5px 0;}
+    </style>
 </head>
 <body class="index_bg" style="justify-content: center;">
     <p id="URL" class="hide">{{URL}}</p>
@@ -48,4 +52,38 @@
     <p class="s14 white" style="margin-top: 12px"> Powered by：杭医信工CrushFxl</p>
     <a class="s14 white" style="margin-top:2px" href="https://beian.miit.gov.cn/">浙ICP备2023042075号</a>
 </body>
+<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+<script>
+    window.onload = function (){
+    const URL = $("#URL").text()
+    let $mob = $("#mob"), $pwd = $("#pwd"), $keep = $("#keep"), $pwd_tip = $("#pwd_tip")
+    $(document).on("click", "#login_btn", function() {
+        //数据校验
+        let mob = $mob.val();
+        let pwd = $pwd.val();
+        const phoneNumRegExp = new RegExp("^1[356789]\\d{9}$");
+        $pwd_tip.hide();
+        if(!phoneNumRegExp.test(mob) || pwd.length>18 || pwd.length<8){
+            $pwd_tip.show();
+            return;
+        }
+        let isChecked = $keep.prop("checked");
+        $.ajax({
+            url: URL + "/auth/login",
+            xhrFields:{withCredentials: true},
+            data: {"mob": mob, "pwd": pwd, "keep": isChecked},
+            type: "POST",
+            dataType: "json",
+            success: function(resp) {
+                let Code = resp["code"];
+                if(Code === 1000){
+                    window.location.replace("/home/");
+                }else{
+                    $pwd_tip.show(resp['message']);
+                }
+            }
+        });
+    });
+}
+</script>
 </html>

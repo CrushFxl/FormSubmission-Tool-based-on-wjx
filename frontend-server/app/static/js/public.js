@@ -1,4 +1,3 @@
-
 function loading_show(){
     let $body = $("body")
     let $loading = $('.loading')
@@ -100,9 +99,9 @@ function changePage(obj){
     return pageName;
 }
 
-window.onload = function (){
+/*点击返回按钮*/
+$(document).on("click", "#back", function () {history.back();});
 
-    /*实现od_box折叠展开*/
-    $(document).on("click", "#setTitle", function () {$("#setFolder").toggle(200);});
-    $(document).on("click", "#ssetTitle", function () {$("#ssetFolder").toggle(200);});
-}
+/*实现od_box折叠展开*/
+$(document).on("click", "#setTitle", function () {$("#setFolder").toggle(200);});
+$(document).on("click", "#ssetTitle", function () {$("#ssetFolder").toggle(200);});

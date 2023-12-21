@@ -131,11 +131,6 @@ window.onload = function () {
     const oid = params.get('oid');
     const p = request_order(oid);
     p.then(order => {render_wjx_order(order)});
-
-    /*绑定返回按钮事件*/
-    $(document).on("click", "#back", function () {
-        window.location.replace('/home');
-    });
     /*提交订单按钮绑定*/
     $(document).on("click", "#commit_btn", function () {
         loading_show();
@@ -158,13 +153,12 @@ window.onload = function () {
                     }else if(code === 1001){
                         alert("订单状态异常，无法退款");
                     }
-            }
-    });
-
+                }
+            });
         }
     });
     /*问题反馈按钮绑定*/
     $(document).on("click", "#feedback_btn", function () {
-        alert('反馈？开发中');
+        window.location.assign('/feedback')
     });
 }

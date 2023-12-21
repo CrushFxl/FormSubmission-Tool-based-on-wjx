@@ -107,16 +107,6 @@
     min-width: 65px;
 }
 
-#back{
-    position: absolute;
-    left: 5%;
-}
-
-#back:hover{
-    cursor: pointer;
-}
-
-
 .btn{
     display: none
 }

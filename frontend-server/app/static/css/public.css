@@ -28,7 +28,6 @@ div{
 .box{
     background-color: #FFFFFF;
     border-radius: 10px;
-    
     width: 92%;
 }
 
@@ -277,4 +276,13 @@ div{
 .top_p{
     color: #8F8F8F;
     margin-top: 15px;
+}
+
+#back{
+    position: absolute;
+    left: 5%;
+}
+
+#back:hover{
+    cursor: pointer;
 }

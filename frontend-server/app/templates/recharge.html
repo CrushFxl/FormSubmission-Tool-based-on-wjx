@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>WeActive - 余额充值</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="../static/img/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="../static/css/public.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/order.css">
+    <style>
+        #price_box{
+            display: grid;
+            grid-template-columns: auto auto;
+            grid-gap: 10px;
+        }
+        #price1, #price3, #price5, #price10{
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            margin: 8px 0;
+            border-radius: 10px;
+            background-color: #FFFFFF;
+            box-shadow: 0 0 15px #EEEEEE;
+            width: 100%;
+            min-width: 120px;
+            height: 100%;
+            min-height: 60px;
+        }
+        .mg3{margin-bottom: 3px}
+        #payment_box{
+            align-content: center;
+            justify-content: center;
+            margin: 4px 0;
+            background-color: #FFFFFF;
+            box-shadow: 0 0 15px #EEEEEE;
+            border-radius: 10px;
+            width: 100%;
+        }
+        #alipay, #wechatpay{
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            margin: 3px 10px;
+            padding: 0;
+        }
+        .plist{
+            margin: 5px;
+            align-items: center;
+        }
+        #recharge_btn{
+            position: fixed;
+            bottom: 20px;
+            width: 90%;
+            max-width: 450px;
+        }
+    </style>
+</head>
+<body style="background-color: #FAFAFA;">
+    <p id="URL" class="hide">{{URL}}</p>
+    <div id="top_nav" class="box sd0" style="align-items: center">
+        <div id="back" style="margin: 15px 10px">
+            <svg width="17px" height="17px" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"></path>
+            </svg>
+        </div>
+        <p class="s18  grey3">余额充值</p>
+    </div>
+    <div class="blank">(占位)</div>
+    <div class="od_box" style="width: 100%">
+        <p class="s18 bold grey3" style="margin-bottom: 5px">选择充值金额</p>
+        <div id="price_box">
+            <div id="price1" class="price pt"><p class="p s18 mg3">1元</p><p class="pp s14 grey1">赏一包辣条</p></div>
+            <div id="price3" class="price pt"><p class="p s18 mg3">3元</p><p class="pp s14 grey1">赏一瓶汽水</p></div>
+            <div id="price5" class="price pt"><p class="p s18 mg3">5元</p><p class="pp s14 grey1">赏一桶泡面</p></div>
+            <div id="price10" class="price pt"><p class="p s18 mg3">10元</p><p class="pp s14 grey1">赏一杯奶茶</p></div>
+        </div>
+    </div>
+    <div class="od_box" style="width: 100%">
+        <p class="s18 bold grey3" style="margin: 10px 0">选择付款方式</p>
+        <div id="payment_box" style="flex-direction: column;padding: 5px">
+            <div id="wechatpay" class="od_box pt">
+                <div class="plist">
+                    <svg viewBox="0 0 1024 1024" width="28px" height="28px" style="margin: 0 14px 0 -2px">
+                        <path d="M404.511405 600.865957c-4.042059 2.043542-8.602935 3.223415-13.447267 3.223415-11.197016 0-20.934798-6.169513-26.045189-15.278985l-1.959631-4.296863-81.56569-178.973184c-0.880043-1.954515-1.430582-4.14746-1.430582-6.285147 0-8.251941 6.686283-14.944364 14.938224-14.944364 3.351328 0 6.441713 1.108241 8.94165 2.966565l96.242971 68.521606c7.037277 4.609994 15.433504 7.305383 24.464181 7.305383 5.40101 0 10.533914-1.00284 15.328104-2.75167l452.645171-201.459315C811.496653 163.274644 677.866167 100.777241 526.648117 100.777241c-247.448742 0-448.035176 167.158091-448.035176 373.361453 0 112.511493 60.353576 213.775828 154.808832 282.214547 7.582699 5.405103 12.537548 14.292518 12.537548 24.325012 0 3.312442-0.712221 6.358825-1.569752 9.515724-7.544837 28.15013-19.62599 73.202209-20.188808 75.314313-0.940418 3.529383-2.416026 7.220449-2.416026 10.917654 0 8.245801 6.692423 14.933107 14.944364 14.933107 3.251044 0 5.89015-1.202385 8.629541-2.7793l98.085946-56.621579c7.377014-4.266164 15.188934-6.89913 23.790846-6.89913 4.577249 0 9.003048 0.703011 13.174044 1.978051 45.75509 13.159718 95.123474 20.476357 146.239666 20.476357 247.438509 0 448.042339-167.162184 448.042339-373.372709 0-62.451354-18.502399-121.275087-51.033303-173.009356L407.778822 598.977957 404.511405 600.865957z" fill="#00C800"></path>
+                    </svg>
+                    <p class="s16 mg3 grey3">微信</p>
+                </div>
+                <div><input id='wechatpay_btn' type="radio" name="payment" checked></div>
+            </div>
+            <div id="alipay" class="od_box pt">
+                <div class="plist">
+                    <svg viewBox="0 0 1024 1024" width="25px" height="25px" style="margin-right: 15px">
+                        <path d="M860.16 0H163.84A164.512 164.512 0 0 0 0 164.192V859.84A164.448 164.448 0 0 0 163.872 1024h696.32a164.48 164.48 0 0 0 163.84-164.16v-6.176s-266.208-110.816-401.408-176.448c-90.048 110.816-206.816 178.496-327.648 178.496-202.784 0-272.416-178.496-176-295.488a214.176 214.176 0 0 1 112.576-63.616c88.064-22.592 227.2 12.32 356.384 55.424a730.336 730.336 0 0 0 57.312-141.6H243.712v-41.024h206.848V299.616H200.768V258.592h249.824V153.92a18.048 18.048 0 0 1 18.4-18.432h100.384v121.024h247.808V297.6h-247.808v71.808h202.72a875.392 875.392 0 0 1-86.048 215.488c61.472 22.592 116.736 43.104 157.696 57.6A1351.232 1351.232 0 0 0 1024 695.648V164.192A164.48 164.48 0 0 0 860.16 0zM249.856 556.128a201.216 201.216 0 0 0-100.352 36.896c-80 69.792-32.768 195.008 126.976 195.008 92.16 0 184.32-59.52 260.128-153.92-104.48-51.2-192.512-88.224-286.752-77.952z m0 0" fill="#3988FF"></path>
+                    </svg>
+                    <p class="s16 mg3 grey3">支付宝</p>
+                </div>
+                <div><input id='alipay_btn' type="radio" name="payment"></div>
+            </div>
+        </div>
+    </div>
+    <div class="od_box" style="width: 100%">
+        <p class="s14 grey3 bold" style="margin: 0 0 5px 0">想说的话</p>
+        <p class="s13 grey3" style="margin: 0 0 2px 5px">1. 致力于<span class=" grey2 bold">为杭医提供轻量化、一站式的活动托管解决方案</span>，化繁为简，助力提高生产力！</p>
+        <p class="s13 grey3" style="margin: 0 0 2px 5px">2. 服务器租赁、网站运行都需要一定成本，个人也投入了大量精力完成程序开发，因此服务无法做到完全免费，请您谅解。</p>
+        <p class="s13 grey3" style="margin-left: 5px">3. 若充值遇到问题，烦请加入QQ群 620145348 联系群主解决。</p>
+    </div>
+    <div class="blank" style="height: 60px">(占位)</div>
+    <button id='recharge_btn' class="btn1">立即充值</button>
+
+</body>
+<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+<script src="../static/js/public.js"></script>
+<script src="../static/js/recharge.js"></script>
+</html>

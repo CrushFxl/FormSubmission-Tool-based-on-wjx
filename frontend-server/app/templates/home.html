@@ -10,9 +10,6 @@
     <link rel="stylesheet" type="text/css" href="../static/css/public.css">
     <link rel="stylesheet" type="text/css" href="../static/css/home.css">
     <link rel="stylesheet" type="text/css" href="../static/css/order.css">
-    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js" defer></script>
-    <script src="../static/js/public.js" defer></script>
-    <script src="../static/js/home.js" defer></script>
 </head>
 <body style="background-color: #FAFAFA">
     <p id="URL" class="hide">{{URL}}</p>
@@ -78,22 +75,22 @@
         </div>
         <div id="block1" class="box sd1">
             <div class="item">
-                <span id="mine_ing" class="num"></span>
-                <span class="s13 grey2">进行中</span>
+                <p id="mine_ing" class="num"></p>
+                <p class="s13 grey2">进行中</p>
             </div>
             <div class="line"></div>
             <div class="item">
-                <span id="mine_balance" class="num"><span class="s15">￥</span></span>
-                <span class="s13 grey2">余额 ></span>
+                <p id="mine_balance" class="num"></p>
+                <p class="s13 grey2">余额 ></p>
             </div>
             <div class="line"></div>
             <div class="item">
-                <span id="mine_done" class="num"></span>
-                <span class="s13 grey2">已完成</span>
+                <p id="mine_done" class="num"></p>
+                <p class="s13 grey2">已完成</p>
             </div>
         </div>
         <div class="menuBox box" style="margin-bottom: 15px; background-color: #F8F8F8">
-            <div class="menu box sd1" style="margin-right: 8px; justify-content: space-between;">
+            <div id="recharge_btn" class="menu box sd1" style="margin-right: 8px; justify-content: space-between;">
                 <span class="subText">余额<br />充值</span>
                 <svg width="60px" height="60px" fill="#FFFFFF" viewBox="0 0 16 16">
                   <path fill-rule="evenodd" d="M11 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm5-4a5 5 0 1 1-10 0 5 5 0 0 1 10 0z"></path>
@@ -102,7 +99,7 @@
                   <path d="M9.998 5.083 10 5a2 2 0 1 0-3.132 1.65 5.982 5.982 0 0 1 3.13-1.567z"></path>
                 </svg>
             </div>
-            <div class="menu box sd1" style= "margin-left: 8px; justify-content: space-between;">
+            <div id="config_btn" class="menu box sd1" style= "margin-left: 8px; justify-content: space-between;">
                 <span class="subText">配置<br />修改</span>
                 <svg width="64px" height="64px" fill="#FFFFFF" viewBox="0 0 16 16">
                   <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"></path>
@@ -126,7 +123,7 @@
                 </div>
             </div>
             <div style="width: 90%;border: 1px solid #F3F3F3;"></div>
-            <div class="li box" >
+            <div class="li box feedback">
                 <div class="left" style="margin-left: 10px">
                     <svg width="24px" height="24px" fill="rgb(108,94,252)" viewBox="0 0 16 16">
                     <path d="M10 .5a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5.5.5 0 0 1-.5.5.5.5 0 0 0-.5.5V2a.5.5 0 0 0 .5.5h5A.5.5 0 0 0 11 2v-.5a.5.5 0 0 0-.5-.5.5.5 0 0 1-.5-.5Z"></path>
@@ -206,4 +203,7 @@
         </div>
     </div>
 </body>
+<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js" defer></script>
+<script src="../static/js/public.js" defer></script>
+<script src="../static/js/home.js" defer></script>
 </html>

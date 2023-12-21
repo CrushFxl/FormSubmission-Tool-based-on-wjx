@@ -12,9 +12,9 @@ from app.models import to_json
 from app.routes.filters import login_required
 from app.models import db
 from app.models.User import User
-from app.models.Order import Order
+from app.models.BusinessOrder import BusinessOrder as Order
 
-order_bk = Blueprint('order', __name__, url_prefix='/order')
+business_order = Blueprint('order', __name__, url_prefix='/order')
 
 
 headers = {
@@ -24,7 +24,7 @@ headers = {
 }
 
 
-@order_bk.post('/wjx/pre')
+@business_order.post('/wjx/pre')
 @login_required
 def wjx_pre():
 
@@ -84,7 +84,7 @@ def wjx_pre():
     return {"code": 1000, "oid": oid}
 
 
-@order_bk.post('wjx/commit')
+@business_order.post('wjx/commit')
 @login_required
 def wjx_commit():
     uid = session.get('uid')
@@ -117,7 +117,7 @@ def wjx_commit():
     return {"code": 1000}
 
 
-@order_bk.post('/cancel')
+@business_order.post('/cancel')
 @login_required
 def cancel():
     uid = session.get('uid')

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>WeActive - 问题反馈</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="../static/img/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="../static/css/public.css">
+    <style>
+        .feedback_box{
+            margin: 6px;
+            padding: 10px 20px;
+            flex-direction: column;
+            height: auto;
+        }
+        .feedback_input{
+            text-align: unset;
+            margin: 10px 0 15px 0;
+            padding: 10px;
+            height: 200px;
+            resize: none;
+            box-sizing: border-box;
+            font-family: "PingFang SC", "Microsoft YaHei", "sans-serif";
+            text-indent: 0;
+        }
+        #feedback_btn{
+            position: fixed;
+            bottom: 20px;
+            width: 90%;
+            max-width: 450px;
+        }
+    </style>
+</head>
+<body style="background-color: #FAFAFA;">
+    <p id="URL" class="hide">{{URL}}</p>
+    <div id="top_nav" class="box sd0" style="align-items: center">
+        <div id="back" style="margin: 15px 10px">
+            <svg width="17px" height="17px" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"></path>
+            </svg>
+        </div>
+        <p class="s18 grey3">问题反馈</p>
+    </div>
+    <div class="blank">(占位)</div>
+    <div class="feedback_box" style="width: 100%">
+        <p class="s18 bold grey3" style="margin-bottom: 5px">写下您的问题或建议</p>
+        <p class="s14 grey3">我们重视每一位用户建议，感谢您帮助我们改进产品。</p>
+        <textarea id='text' class='input feedback_input'  maxlength="300" placeholder="在此写下你的问题或建议..." onchange="this.value=this.value.substring(0, 300)" onkeydown="this.value=this.value.substring(0, 300)" onkeyup="this.value=this.value.substring(0, 300)"></textarea>
+        <input id='info' type="text" class="input" maxlength="30" placeholder="联系方式 (选填)">
+    </div>
+    <button id='feedback_btn' class="btn1">提交反馈</button>
+</body>
+<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+<script src="../static/js/public.js"></script>
+<script>
+    $(document).on("click", "#feedback_btn", function () {
+        let $text = $('#text');
+        if($text.val().length === 0){
+            alert('还没有填写反馈内容哦');
+            return;
+        }
+        loading_show();
+        $.ajax({
+            url: $('#URL').text() + "/user/feedback",
+            xhrFields: {withCredentials: true},
+            type: "POST",
+            dataType: "json",
+            data: {"text": $text.val(), "info": $('#info').val()},
+            success: function (resp){
+                const code = resp['code'];
+                if(code === 1000){
+                    loading_hide();
+                    alert('反馈已提交，我们将尽快处理！');
+                    window.location.reload();
+                }
+            }
+        });
+    });
+</script>
+</html>

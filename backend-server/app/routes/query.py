@@ -2,7 +2,7 @@ from flask import Blueprint, request, session
 
 from app.models import to_json
 from app.routes.filters import login_required
-from app.models.Order import Order
+from app.models.BusinessOrder import BusinessOrder as bOrder
 from app.models.User import User
 
 
@@ -14,7 +14,7 @@ query_bk = Blueprint('query', __name__, url_prefix='/query')
 def query_order():
     uid = session.get('uid')
     oid = request.args['oid']
-    order = Order.query.filter(Order.oid == oid, Order.uid == uid).first()
+    order = bOrder.query.filter(bOrder.oid == oid, bOrder.uid == uid).first()
     if order:
         return {"code": 1000, "order": to_json(order)}
     return {"code": 1001}
@@ -33,10 +33,10 @@ def query_orders():
         sRange = [400, 499]
     elif type == 'done':
         sRange = [500, 599]
-    pageObj = (Order.query.filter(Order.uid == uid,
-                                  Order.state >= sRange[0],
-                                  Order.state <= sRange[1])
-               .order_by(Order.ctime.desc()).paginate(page=pn, per_page=10))
+    pageObj = (bOrder.query.filter(bOrder.uid == uid,
+                                   bOrder.state >= sRange[0],
+                                   bOrder.state <= sRange[1])
+               .order_by(bOrder.ctime.desc()).paginate(page=pn, per_page=10))
     ordersObj = pageObj.items
     orders = []
     for i in ordersObj:
@@ -55,7 +55,7 @@ def query_user():
     uid = session.get('uid')
     user = User.query.filter(User.uid == uid).first()
     mob = str(user.mob)
-    return {"code": 1000, "user": {"mob": mob[0:4]+'***'+mob[-4:],
+    return {"code": 1000, "user": {"mob": mob[0:3]+'****'+mob[-4:],
                                    "balance": user.balance,
                                    "ing": user.ing,
                                    "done": user.done}}

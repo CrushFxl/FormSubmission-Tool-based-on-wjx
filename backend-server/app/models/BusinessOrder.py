@@ -1,8 +1,8 @@
 from . import db
 
 
-class Order(db.Model):
-    __tablename__ = 'orders'
+class BusinessOrder(db.Model):
+    __tablename__ = 'business_orders'
     oid = db.Column('oid', db.TEXT, primary_key=True, unique=True, index=True, nullable=False)
     uid = db.Column('uid', db.INTEGER, nullable=False)
     type = db.Column('type', db.TEXT, nullable=False)
