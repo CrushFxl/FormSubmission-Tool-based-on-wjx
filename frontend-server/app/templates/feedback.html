@@ -73,7 +73,7 @@
                 if(code === 1000){
                     loading_hide();
                     alert('反馈已提交，我们将尽快处理！');
-                    window.location.reload();
+                    window.history.go(-1)
                 }
             }
         });

@@ -14,14 +14,13 @@
         span{color: red; font-size: 14px}
         h1{margin:10px 0 25px 0;}
         .info{margin: 0 0 5px 0;}
-        .tip{margin: 5px 0 30px 0;}
     </style>
 </head>
 
 <body class="index_bg" style="justify-content: center;">
     <p id="URL" class="hide">{{URL}}</p>
     <div id="form1" class="box container sd3">
-        <h1>用户注册</h1>
+        <h1 class="grey3">新用户注册</h1>
         <form style="width: 95%">
             <div class="input_container">
                 <p class="info">注册手机号</p>
@@ -33,7 +32,7 @@
             </div>
             <div class="input_container">
                 <p class="info">短信验证码</p>
-                <input id="code" class="input" type="text" placeholder="六位数字">
+                <input id="code" class="input" type="text" placeholder="输入六位数字">
                 <span id="code_tip" class="hide">无效的验证码</span>
             </div>
             <div class="input_container">
@@ -45,32 +44,20 @@
         <input type="button" class="btn1 next1 sd1" value="下一步" style="width: 95%; margin-top: 20px">
     </div>
     <div id="form2" class="box container sd3">
-        <h1 style="margin-bottom: 5px">完善用户信息</h1>
-        <form action="/" method="POST" style="width: 95%">
-            <p class="tip grey2 s14" style="margin-bottom: 20px;">为了实现自动报名等功能，我们需要您补充下列信息。
-                您稍后也可在个人主页中修改。</p>
+        <h1 class="grey3">完善用户信息</h1>
+        <form style="width: 95%">
             <div class="input_container">
-                <p class="info" style="margin: 0 0 5px 0;">当问卷出现<span class="grey3 bold s16">班级</span>时，自动填入：</p>
-                <input id="bj" class="input" type="text">
-            </div>
-            <div class="input_container">
-                <p class="info">当问卷出现<span class="grey3 bold s16">姓名</span>时，自动填入：</p>
-                <input id="xm" class="input" type="text">
-            </div>
-            <div class="input_container">
-                <p class="info">当问卷出现<span class="grey3 bold s16">学号</span>时，自动填入：</p>
-                <input id="xh" class="input" type="text">
+                <p class="info">用户昵称</p>
+                <input id="nick" class="input" type="text" placeholder="起个有趣的名字吧">
+                <span id="nick_tip" class="hide">昵称过长或过短（需在2-15字符间）</span>
             </div>
         </form>
-        <input type="button" class="btn1 next2" value="下一步" style="width: 95%; margin-top: 15px">
+        <input type="button" class="btn1 next2 sd1" value="下一步" style="width: 95%; margin-top: 20px">
     </div>
     <div id="form3" class="box container sd3">
-        <h1>注册完成</h1>
-        <p class="info" style="margin-bottom: 15px;">
-            感谢！我们已<span class="grey3 bold s16">免费赠送您1.00￥</span>体验余额</p>
-        <p class="info" style="margin-bottom: 40px;">
-            告别闹钟踩点 一键托管 一秒提交 速来~</p>
-        <input type="button" class="btn1 next3" value="进入主页">
+        <h1 class="grey3">注册完成</h1>
+        <p class="s16" style="margin-bottom: 30px;">感谢！我们已<span class="grey3 bold s16">免费赠送您1.00￥</span>体验余额</p>
+        <input type="button" class="btn1 next3" value="马上体验">
     </div>
     <p class="s14 white" style="margin-top: 12px"> Powered by：杭医信工CrushFxl</p>
     <a class="s14 white" style="margin-top:2px" href="https://beian.miit.gov.cn/">浙ICP备2023042075号</a>

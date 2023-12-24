@@ -22,7 +22,7 @@ class DevelopmentConfig(BaseConfig):
     DEBUG = True
     TESTING = True
     SQLALCHEMY_DATABASE_URI = "sqlite:///C:\\Users\\24289\\Desktop\\weactive.db"
-    SQLALCHEMY_ECHO = True
+    SQLALCHEMY_ECHO = False
     CORS_DOMAIN = "http://127.0.0.1"
 
 

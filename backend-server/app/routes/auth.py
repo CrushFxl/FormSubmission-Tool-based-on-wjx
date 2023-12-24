@@ -33,6 +33,15 @@ def login():
     return {"code": 1001, "msg": "用户名或密码错误"}
 
 
+@auth_bk.post('/logout')
+def logout():
+    uid = session.get('uid')
+    if uid:
+        session.clear()
+        return {'code': 1000, 'msg': 'ok'}
+    return {'code': 1001}
+
+
 @auth_bk.post('/send')
 def send():
     ip = request.remote_addr
@@ -71,7 +80,7 @@ def register():
         return {"code": 1001}
 
     # 检查是否已被注册
-    if User.query.filter(User.mob==mob).first():
+    if User.query.filter(User.mob == mob).first():
         return {"code": 1002}
 
     # 检查注册信息

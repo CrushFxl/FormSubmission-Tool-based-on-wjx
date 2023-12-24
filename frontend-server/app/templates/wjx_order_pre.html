@@ -31,7 +31,7 @@
                 <path d="M12 9h2V8h-2z"></path>
             </svg>
             <div style="flex-direction: column; width: 70%;">
-                <p class="od_title" style="font-size: 18px; margin-bottom: 4px">问卷星活动代抢服务</p>
+                <p id="type" class="od_title" style="font-size: 18px; margin-bottom: 4px"></p>
                 <div style="align-items: center; align-content: center;">
                     <p class="od_sTitle s15" style="margin-right: 10px">活动名称</p>
                     <p id="wjx_title" class="s15 grey3 hidet"></p>
@@ -41,6 +41,11 @@
                     <p id="wjx_time" class="s15 grey3 hidet"></p>
                 </div>
             </div>
+        </div>
+        <div class="od_line"></div>
+        <div id='options' style="flex-direction: column"></div>
+        <div style="justify-content: end; margin-top: 10px">
+            <p>小计：<span class="bold s16"></span><span class="bold s17 price"></span>￥</p>
         </div>
     </div>
     <div id="setBox" class="od_box box sd1">
@@ -58,20 +63,12 @@
         <div id="setFolder" style="flex-direction: column;">
             <div class="od_line"></div>
             <div class="od_ex">
-                <p class="od_title" style="font-size: 18px; margin-bottom: 2px">填空题</p>
-                <p id="blank" class="od_li"></p>
-                <p class="s14 grey3 mar" style="margin: 5px">*若无匹配项，默认填写<span class="label pink_bg s13">啥玩意</span></p>
-                <p>
-            </div>
-            <div class="od_ex">
-                <p class="od_title" style="font-size: 18px; margin-bottom: 2px">单选题</p>
-                <p id="single" class="od_li"></p>
-                <p class="s14 grey3 mar" style="margin: 5px">*若无匹配项，默认<span class="label pink_bg s13">[随机选择]</span></p>
-            </div>
-            <div class="od_ex">
-                <p class="od_title" style="font-size: 18px; margin-bottom: 2px">多选题</p>
-                <p id="multi" class="od_li"></p>
-                <p class="s14 grey3 mar" style="margin: 5px">*若无匹配项，默认<span class="label pink_bg s13">[随机选择1个]</span></p>
+                <p id="wjx_set" class="od_li"></p>
+                <p class="s14 grey3 mar" style="margin: 10px 0 0 10px">
+                    *若遇到未知问题，默认采取
+                    <span id="strategy" class="label pink_bg s13"></span>
+                    策略
+                </p>
             </div>
         </div>
     </div>
@@ -94,9 +91,9 @@
     <p class="blank">(占位)</p>
     <div class="od_nav box sd1">
         <div class="od_price">
-            <p class="s15 bold grey3" style="margin: 2px 5px 0 0">小计: </p>
+            <p class="s15 bold grey3" style="margin: 2px 5px 0 0">合计: </p>
             <span class="s15 bold" style="margin-top: 5px;color:rgb(99,90,210);">￥</span>
-            <span id="wjx_price" class="bold" style="color:rgb(99,90,210);font-size: 23px;"></span>
+            <span class="bold price" style="color:rgb(99,90,210);font-size: 23px;"></span>
         </div>
         <input id="commit_btn" type="button" class="btn1" value="立即付款">
     </div>

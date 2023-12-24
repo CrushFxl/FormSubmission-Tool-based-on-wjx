@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>WeActive - 配置修改</title>
@@ -8,8 +8,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="../static/img/favicon.ico">
     <link rel="stylesheet" type="text/css" href="../static/css/public.css">
+    <style>
+        .conf_box{
+            align-content: center;
+            margin: 8px 10px;
+            padding: 10px 20px;
+            flex-direction: column;
+        }
+        .conf_input{
+            height: 24px;
+            margin: 0 6px;
+            flex: 1;
+            max-width: 200px;
+        }
+        .text_box{
+            position: relative;
+            width: 100%;
+            margin: 7px 0 7px 6px;
+            box-sizing: border-box;
+        }
+        .tip{margin: 0 0 5px 6px}
+        #save_btn{
+            position: fixed;
+            bottom: 20px;
+            width: 90%;
+            max-width: 450px;
+        }
+    </style>
 </head>
-<body style="background-color: #FAFAFA;">
+<body style="background-color: #FAFAFA">
     <p id="URL" class="hide">{{URL}}</p>
     <div id="top_nav" class="box sd0" style="align-items: center">
         <div id="back" style="margin: 15px 10px">
@@ -20,8 +47,94 @@
         <p class="s18 grey3">配置修改</p>
     </div>
     <div class="blank">(占位)</div>
-
+    <p class="s14 grey3">我们重视您的隐私安全，下列信息将只用于相关业务</p>
+    <div id='wjx_set' class="conf_box box sd0" style="">
+        <p class="s18 bold grey3" style="margin-bottom: 10px">问卷星活动代抢设置</p>
+        <div id="banji" class="s16 text_box" style="align-items: center">
+            <p>当遇到<span class="label orange_bg side">班级</span>时，填写</p>
+            <input type="text" class="conf_input input">
+        </div>
+        <div id="xingming" class="s16 text_box" style="align-items: center">
+            <p>当遇到<span class="label orange_bg">姓名</span>时，填写</p>
+            <input type="text" class="conf_input input">
+        </div>
+        <div id="xuehao" class="s16 text_box" style="align-items: center">
+            <p>当遇到<span class="label orange_bg">学号</span>时，填写</p>
+            <input type="text" class="conf_input input">
+        </div>
+        <div id="xiaoqu" class="s16 text_box" style="align-items: center">
+            <p>当遇到<span class="label orange_bg">校区</span>时，填写</p>
+            <input type="text" class="conf_input input">
+        </div>
+        <div id="xingbie" class="s16 text_box" style="align-items: center">
+            <p>当遇到<span class="label orange_bg">性别</span>时，填写</p>
+            <input type="text" class="conf_input input">
+        </div>
+        <div id="shouji" class="s16 text_box" style="align-items: center">
+            <p>当遇到<span class="label orange_bg">手机</span>时，填写</p>
+            <input type="text" class="conf_input input">
+        </div>
+        <!-- 有新选项时可以直接在这ctrl+CV -->
+        <p class="s15 text_box grey3" style="align-items: center; margin: 10px 0 3px 6px">
+            若遇到未知问题，采取
+            <select id="strategy" class="conf_input input" style="width: 83px; text-indent: 2px">
+                <option>智能回答</option>
+                <option>放弃报名</option>
+            </select>策略
+        </p>
+        <p id="ai" class="s14 grey2 tip hide">- 智能回答：将由AI理解问题并作出回答</p>
+        <p id="fail" class="s14 grey2 tip hide">- 放弃报名：终止任务，订单将退款给您</p>
+    </div>
+    <div class="blank" style="height: 60px">(占位)</div>
+    <button id='save_btn' class="btn1 sd2">保存配置</button>
 </body>
 <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
 <script src="../static/js/public.js"></script>
+<script>
+    /*渲染问卷星代抢设置内容*/
+    let wjx_set = localStorage.getItem('wjx_set')
+    if(wjx_set === null){
+        wjx_set = {};
+        $('#ai').show();
+    }else{
+        wjx_set = JSON.parse(wjx_set);
+        for(let key in wjx_set){
+            if(key === 'strategy'){     //渲染策略
+                let obj = document.getElementById('strategy');
+                if(wjx_set[key] === 'ai') {$('#ai').show();obj.options[0].selected = true;}
+                else {$('#fail').show();obj.options[1].selected = true;}
+            }else{                      //渲染输入框
+                let span = $("span:contains('"+key+"')").get(0);
+                try{span.parentNode.parentNode.querySelector('input').value = wjx_set[key];}
+                catch (e){delete wjx_set[key]}
+            }
+        }
+    }
+
+    /*动态切换策略的小提示*/
+    $(document).on("change", "#strategy", function () {
+        let selectedIndex = this.selectedIndex;
+        $('.tip').hide();
+        if(selectedIndex === 0){$('#ai').show();}
+        else{$('#fail').show();}
+    });
+
+    /*点击保存按钮*/
+    $(document).on("click", "#save_btn", function () {
+        //获取输入框内容
+        document.querySelectorAll("#wjx_set > div").forEach(function (item){
+            let key = item.querySelector('span').textContent
+            wjx_set[key] = item.querySelector('input').value
+        })
+        //获取策略设置
+        if (document.getElementById("strategy").selectedIndex === 0) {
+            wjx_set['strategy'] = "ai";
+        } else {
+            wjx_set['strategy'] = "fail";
+        }
+        //保存到本地
+        localStorage.setItem('wjx_set', JSON.stringify(wjx_set));
+        alert("保存成功");
+    });
+</script>
 </html>

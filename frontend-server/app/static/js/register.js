@@ -1,7 +1,8 @@
 window.onload = function () {
     const URL = $("#URL").text()
-    let $mob = $("#mob"), $code = $("#code"), $pwd = $("#pwd");
-    let $mob_tip = $("#mob_tip"), $code_tip = $("#code_tip"), $pwd_tip = $("#pwd_tip");
+    let $mob = $("#mob"), $code = $("#code"), $pwd = $("#pwd"), $nick = $("#nick");
+    let $mob_tip = $("#mob_tip"), $code_tip = $("#code_tip");
+    let $nick_tip = $("#nick_tip"), $pwd_tip = $("#pwd_tip");
     let $send_btn = $("#send_btn");
     let mob, code, pwd;
     $("#form1, #footer").fadeIn(500);
@@ -115,30 +116,39 @@ window.onload = function () {
         }
     });
 
-    /*补充用户信息*/
+    /*点击下一步*/
     $(document).on("click", ".next2", function(){
-        let wjx_set = [
-            {"type": "blank", "keyword": "班级", "answer": $("#bj").val()},
-            {"type": "blank", "keyword": "姓名", "answer": $("#xm").val()},
-            {"type": "blank", "keyword": "学号", "answer": $("#xh").val()},
-        ]
-        $.ajax({
-            url: URL + "/user/wjx_set",
-            xhrFields:{withCredentials: true},
-            data: {"wjx_set":JSON.stringify(wjx_set)},
+        let error = false;
+        $nick_tip.hide();
+
+        const nick = $nick.val();
+        const matchChinese = /[\u4e00-\u9fa5]/g;
+        const matchEnglish = /[a-zA-Z]/g;
+        const len = (nick.match(matchChinese) || []).length * 2 + (nick.match(matchEnglish) || []).length;
+        if(len < 2 || len > 15){
+            $nick_tip.show(1);
+            error = true;
+        }
+
+        if(!error) {
+            $.ajax({
+            url: URL + "/user/nick",
+            xhrFields: {withCredentials: true},
+            data: {"nick": nick},
             type: "POST",
             dataType: "json",
             success: function(resp) {
-                if(resp["code"] === 1000){
+                let code = resp["code"];
+                if(code === 1000){
                     $("#form2").fadeOut(200, function (){
                         $("#form3").fadeIn(200);
-                    })
+                    });
                 }
-            }
-        });
+            }});
+        }
     });
 
     $(document).on("click", ".next3", function(){
-        window.location.replace("/home/");
+        window.location.replace("/home");
     });
 }

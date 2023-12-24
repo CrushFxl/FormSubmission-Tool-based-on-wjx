@@ -10,6 +10,18 @@ from app.models.Feedback import Feedback
 
 user_bk = Blueprint('user', __name__, url_prefix='/user')
 
+@login_required
+@user_bk.post('/nick')
+def nick():
+    uid = session.get('uid')
+    nickName = request.form.get("nick")
+    length = len(nickName.encode('gbk'))
+    if length < 2 or length > 18:
+        return {"code": 1001}
+    User.query.filter(User.uid==uid).update({"nick": nickName})
+    db.session.commit()
+    return {"code": 1000}
+
 
 @login_required
 @user_bk.post('/wjx_set')
@@ -19,6 +31,7 @@ def set_wjx():
     User.query.filter(User.uid==uid).update({"wjx_set": wjx_set})
     db.session.commit()
     return {"code": 1000}
+
 
 @login_required
 @user_bk.post('/feedback')

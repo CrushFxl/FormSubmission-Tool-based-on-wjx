@@ -1,12 +1,13 @@
+import json
 import random
 import re
 import time
-
 import cv2
 import numpy as np
 import requests
 from bs4 import BeautifulSoup
 from flask import Blueprint, request, session
+from sqlalchemy.orm.attributes import flag_modified
 
 from app.models import to_json
 from app.routes.filters import login_required
@@ -59,26 +60,31 @@ def wjx_pre():
     except AttributeError:
         m = 0
 
-    # 生成订单信息
+    # 预生成订单信息
     current_time = time.localtime()
     uid = session.get('uid')
     oid = (str(int(time.time() * 1000)) + '01'
            + str(uid)[-3:] + str(random.randint(10, 99)))
     type = "wjx"
     ctime = time.strftime('%Y-%m-%d %H:%M:%S', current_time)
-    user = User.query.filter(User.uid==uid).first()
-    info = dict({
+    config = dict({
         "url": wjx_url,
         "title": soup.title.text,
         "time": f"{y}-{int(M):02d}-{int(d):02d} {int(h):02d}:{int(m):02d}:00",
-        "wjx_set": user.wjx_set,
-        "option": ['标准']
+        "wjx_set": {},
+        "wjx_result": []
     })
-    price = 0.5
+
+    # 计算订单价格
+    options = [{"标准": 0.5}, {"内测用户优惠": -0.4}]
+    price = 0
+    for i in options:
+        for k, v in i.items():
+            price += v
 
     # 写入数据库
-    # noinspection PyArgumentList
-    order = Order(oid=oid, uid=uid, type=type, ctime=ctime, info=info, price=price)
+    order = Order(oid=oid, uid=uid, type=type, ctime=ctime, config=config,
+                  options=options, price=price)
     db.session.add(order)
     db.session.commit()
     return {"code": 1000, "oid": oid}
@@ -89,30 +95,34 @@ def wjx_pre():
 def wjx_commit():
     uid = session.get('uid')
     oid = request.form.get('oid')
+    wjx_set = json.loads(request.form.get('wjx_set'))
     User.query.filter(User.uid == uid).with_for_update(read=False, nowait=False)  # 锁行
 
     user = User.query.filter(User.uid==uid).first()
     order = Order.query.filter(Order.uid==uid, Order.oid==oid).first()
 
-    if order.state != 100:
-        return {"code": 1002}   # 防止订单重复支付
+    if order.state not in [0, 100]:
+        return {"code": 1002, "msg": "当前订单正在进行或已被关闭，无法付款"}
 
     ctime = time.mktime(time.strptime(order.ctime, '%Y-%m-%d %H:%M:%S'))
     current_time = time.time()
     if current_time - ctime > 900:
         order.state = 200
         db.session.commit()
-        return {"code": 1003, "order": to_json(order),
-                "msg": "由于长时间未支付，订单已自动关闭"}
+        return {"code": 1003, "msg": "由于长时间未支付，订单已自动关闭"}
 
     if order.price > user.balance:
-        return {"code": 1001, "order": to_json(order),
-                "msg": '付款失败，账户余额不足'}
+        order.state = 100
+        db.session.commit()
+        return {"code": 1001, "msg": '付款失败，账户余额不足'}
 
-    user.ing += 1
-    user.balance -= order.price
-    order.ptime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
-    order.state = 400
+    user.balance -= order.price         # 扣款
+    user.ing += 1                       # 进行中订单计数
+    order.config['wjx_set'] = wjx_set   # 添加问卷星订单设置
+    flag_modified(order, "config")      # (该句提交部分json更改)
+    order.ptime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())   # 添加时间戳
+    pass    # TODO:发送给业务服务器
+    order.state = 400            # 修改订单状态
     db.session.commit()
     return {"code": 1000}
 
@@ -140,7 +150,7 @@ def cancel():
         user.ing -= 1
         user.balance += order.price
     else:                   # 不允许退款
-        return {"code": 1001}
+        return {"code": 1001, "msg": "当前订单不允许退款"}
     order.dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
     db.session.commit()
     return {"code": 1000}

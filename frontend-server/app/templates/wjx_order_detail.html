@@ -39,20 +39,20 @@
                 <p id="wjx_time" class="s16 grey2"></p>
             </div>
             <div class="od_line"></div>
-            <div class="dt_item" style="justify-content: space-between">
-                <p class="s16 grey3 dt_gap">标准</p>
-                <p class="s16 grey2">￥0.50</p>
-            </div>
+            <div id="options" class="dt_item" style="flex-direction: column"></div>
             <div style="justify-content: end; margin-top: 10px">
-                <p>合计：<span class="bold s18">￥</span><span id="wjx_price" class="bold s17"></span></p>
+                <p>合计：<span class="bold s18">
+                </span><span class="bold s17 price"></span>￥</p>
             </div>
         </div>
         <div class="od_box box sd0">
-            <div style="flex-direction: column">
-                <p id="blank"></p>
-                <p id="single"></p>
-                <p id="multi"></p>
-            </div>
+            <p class="od_title" style="margin-bottom: 10px">代填设置快照</p>
+            <div id="wjx_set" style="flex-direction: column; margin-left: 10px"></div>
+            <p class="s14 grey3 mar" style="margin: 10px 0 5px 10px">
+                *若遇到未知问题，默认采取
+                <span id="strategy" class="label pink_bg s13"></span>
+                策略
+            </p>
         </div>
         <div class="od_box box sd0">
             <div class="dt_item">

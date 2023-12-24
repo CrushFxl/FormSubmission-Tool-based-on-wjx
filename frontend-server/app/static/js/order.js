@@ -16,7 +16,6 @@ function request_order(oid){
     });
 }
 
-
 /*提交订单*/
 function commit_btn(oid){
     $.ajax({
@@ -24,7 +23,7 @@ function commit_btn(oid){
         xhrFields: {withCredentials: true},
         type: "POST",
         dataType: "json",
-        data: {"oid": oid},
+        data: {"oid": oid, "wjx_set":localStorage.getItem('wjx_set')},
         success: function (resp){
             const code = resp['code']
             if(code === 1000){
@@ -36,7 +35,6 @@ function commit_btn(oid){
         }
     });
 }
-
 
 /*显示烟花特效*/
 function show_firework() {
@@ -62,6 +60,8 @@ function show_firework() {
 
 /*渲染确认订单页和详情页*/
 function render_wjx_order(order){
+
+    /*渲染订单状态*/
     const state = order['state'];
     const s = state.toString()[0]
     let title = '';
@@ -93,34 +93,67 @@ function render_wjx_order(order){
         subtitle = '很抱歉，订单执行过程中遇到技术错误，我们已为您退款'
         $('#feedback_btn').show();
     }
-
     $("#title").text('订单'+title);
     $("#subtitle").text(subtitle);
+
+    /*渲染订单主要信息*/
+    if(order["type"] === 'wjx') {
+        $('#type').text('问卷星活动代抢服务');
+        $("#wjx_title").text(order["config"]["title"]);
+        $("#wjx_time").text(order["config"]["time"]);
+    }
+
+    /*渲染订单价格信息*/
+    const options = order['options'];
+    for(let i=0;i<options.length;i++){
+        let option = options[i];
+        let name = Object.keys(option)[0];
+        let price = Object.values(option)[0].toFixed(2);
+        if(price < 0){
+            $('#options').append('<div style="justify-content: space-between">\n' +
+            '                <p class="s16 grey3 dt_gap">'+ name +'</p>\n' +
+            '                <p class="s16 grey3 red">'+ price +'￥</p>\n' +
+            '            </div>'
+            )
+        }else{
+            $('#options').append('<div style="justify-content: space-between">\n' +
+            '                <p class="s16 grey3 dt_gap">'+ name +'</p>\n' +
+            '                <p class="s16 grey3">'+ price +'￥</p>\n' +
+            '            </div>'
+            )
+        }
+    }
+    const price = order["price"].toFixed(2);
+    $(".price").text(price);
+
+    /*渲染订单详细信息*/
     $("#oid").text(order['oid']);
     $("#ctime").text(order['ctime']);
     $("#ptime").text(order['ptime']);
     $("#dtime").text(order['dtime']);
 
-    const basic_price = order["price"].toFixed(2);
-    function cal_price(){
-        $("#wjx_price").text(basic_price);
-    }
-    cal_price();
+    /* =================== 具体业务 =================== */
 
-    const wjx_set = order["info"]["wjx_set"];
-    $("#wjx_title").text(order["info"]["title"]);
-    $("#wjx_time").text(order["info"]["time"]);
-    for(let i in wjx_set){
-        let type = wjx_set[i]["type"];
-        if (type === "blank") {
-            $("#" + type).append('<p class="od_text mar">遇到' +
-                '<span class="label orange_bg s14">' + String(wjx_set[i]["keyword"]) + '</span>时，' +
-                '填写<span class="label orange_bg s14">' + String(wjx_set[i]["answer"]) + '</span></p>');
-        }else if(type === "single" || type === "multi"){
-            $("#" + type).append('<p class="od_text mar">遇到' +
-                '<span class="label orange_bg s14">' + String(wjx_set[i]["keyword"]) + '</span>时，' +
-                '选择含<span class="label orange_bg s14">' + String(wjx_set[i]["answer"]) + '</span>的选项</p>');
-        }
+    //从订单或本地读取代填设置
+    let wjx_set;
+    console.log(order)
+    if(JSON.stringify(order['config']['wjx_set']) === '{}') {
+        console.log('本地')
+        wjx_set = JSON.parse(localStorage.getItem('wjx_set'));
+    }else{
+        console.log('订单')
+        wjx_set = order['config']['wjx_set'];
+    }
+    //渲染代填设置
+    let obj = document.getElementById('strategy');
+    if(wjx_set['strategy'] === 'ai'){obj.textContent = '智能填写'}
+    else{obj.textContent = '放弃报名'}
+    delete wjx_set['strategy'];
+    for(let key in wjx_set){
+        if(key === 'strategy'){continue;}
+        $("#wjx_set").append('<p class="od_text mar">遇到' +
+            '<span class="label orange_bg s14">' + key + '</span>时，' +
+            '填写<span class="label orange_bg s14">' + wjx_set[key] + '</span></p>');
     }
 }
 

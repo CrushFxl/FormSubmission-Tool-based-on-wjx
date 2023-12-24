@@ -42,7 +42,7 @@ def query_orders():
     for i in ordersObj:
         i = to_json(i)
         # 删除无用数据
-        del i['info']['wjx_set']
+        del i['config']['wjx_set']
         del i['uid']
         orders.append(i)
     max_pn = pageObj.pages
@@ -54,8 +54,7 @@ def query_orders():
 def query_user():
     uid = session.get('uid')
     user = User.query.filter(User.uid == uid).first()
-    mob = str(user.mob)
-    return {"code": 1000, "user": {"mob": mob[0:3]+'****'+mob[-4:],
+    return {"code": 1000, "user": {"nick": user.nick,
                                    "balance": user.balance,
                                    "ing": user.ing,
                                    "done": user.done}}
