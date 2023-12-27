@@ -1,6 +1,5 @@
 import os
-import requests
-from flask import Blueprint, request, redirect, render_template, session
+from flask import Blueprint, render_template
 
 from .filters import login_required
 from app.config import config

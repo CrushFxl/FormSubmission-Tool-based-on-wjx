@@ -9,7 +9,6 @@ from bs4 import BeautifulSoup
 from flask import Blueprint, request, session
 from sqlalchemy.orm.attributes import flag_modified
 
-from app.models import to_json
 from app.routes.filters import login_required
 from app.models import db
 from app.models.User import User

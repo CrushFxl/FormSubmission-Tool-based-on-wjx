@@ -3,12 +3,14 @@ from flask import Blueprint, request, session
 from app.models import to_json
 from app.routes.filters import login_required
 from app.models.BusinessOrder import BusinessOrder as bOrder
+from app.models.RechargeOrder import RechargeOrder as rOrder
 from app.models.User import User
 
 
 query_bk = Blueprint('query', __name__, url_prefix='/query')
 
 
+# 查询业务订单
 @query_bk.get('/order')
 @login_required
 def query_order():
@@ -20,6 +22,7 @@ def query_order():
     return {"code": 1001}
 
 
+# 查询业务订单列表
 @query_bk.post('/orders')
 @login_required
 def query_orders():
@@ -49,6 +52,7 @@ def query_orders():
     return {"code": 1000, "orders": orders, "max_pn": max_pn}
 
 
+# 查询用户主页信息
 @query_bk.post('/user')
 @login_required
 def query_user():
@@ -58,3 +62,13 @@ def query_user():
                                    "balance": user.balance,
                                    "ing": user.ing,
                                    "done": user.done}}
+
+
+# 查询充值订单支付状态
+@query_bk.post('/recharge')
+@login_required
+def query_recharge_order():
+    uid = session.get('uid')
+    user = User.query.filter(User.uid == uid).first()
+    # rOrder.query.filter(rOrder.)
+    print("已执行查单")

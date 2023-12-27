@@ -18,7 +18,7 @@ def home():
 @home_ft.get('/recharge/')
 @login_required
 def recharge():
-    return render_template("recharge.html")
+    return render_template("recharge/index.html")
 
 
 @home_ft.get('/feedback/')

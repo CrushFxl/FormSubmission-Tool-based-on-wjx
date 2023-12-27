@@ -64,7 +64,20 @@
 <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
 <script>
     //查询支付状态
-    let isPayed = true;
+    let isPayed = false;
+    window.addEventListener('pageshow', function () {
+        let inter = setInterval(function () {
+            if (window.queryPayStatus) {
+                clearInterval(inter);
+                setInterval(window.queryPayStatus,2000);
+            }
+         }, 1000);
+    });
+
+
+function queryPayStatus(){
+
+}
 
     //渲染结果
     if(isPayed){
