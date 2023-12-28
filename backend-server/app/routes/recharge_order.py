@@ -24,7 +24,7 @@ headers = {
 app_id = 2312208768
 H5PAY_KEY = os.getenv('H5PAY_KEY')
 description = "WeActive充值订单"
-notify_url = 'https://hmc.weactive.top:12345/recharge/callback'
+notify_url = 'https://api.weactive.top/recharge/callback'
 out_trade_no = "123"
 
 
@@ -52,10 +52,13 @@ def callback():
         return "拒绝访问"
 
     # 更新订单信息
-    order.status = "paid"
-    order.h5id = request.form.get("trade_no")
-    order.payid = request.form.get("in_trade_no")
-    order.ptime = request.form.get("pay_time")
+    if order.status == "wait":
+        order.status = "paid"
+        order.h5id = request.form.get("trade_no")
+        order.payid = request.form.get("in_trade_no")
+        order.ptime = request.form.get("pay_time")
+    else:
+        return "success"  # 防止重复通知
 
     # 账户累加充值金额
     uid = order.uid
@@ -92,7 +95,6 @@ def commit():
                          data=json.dumps(data))
     resp = resp.json()
     if resp["msg"] != "success" or resp['code'] != 200:
-        print(resp['msg'])
         return {"code": 1001,
                 "msg": "拉起支付接口失败，内部错误代码："+str(resp['code'])}
 

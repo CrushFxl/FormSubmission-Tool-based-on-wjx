@@ -11,6 +11,7 @@
     font-size: 20px;
     margin-right: 10px;
     min-width: 80px;
+    margin-bottom: 5px
 }
 
 .od_sTitle{
@@ -63,7 +64,7 @@
 }
 
 .mar{
-    margin: 5px 0 0 0
+    margin: 0 0 5px 0
 }
 
 .od_li{
@@ -103,7 +104,7 @@
 }
 
 .dt_gap{
-    margin: 0 15px 0 10px;
+    margin: 0 15px 0 0;
     min-width: 65px;
 
 }
