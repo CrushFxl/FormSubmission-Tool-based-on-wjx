@@ -1,3 +1,4 @@
 flask~=3.0.0
 requests~=2.31.0
 flask_sslify~=0.1.5
+CherryPy~=18.9.0

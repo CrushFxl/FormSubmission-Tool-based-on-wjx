@@ -70,20 +70,20 @@
         let isChecked = $keep.prop("checked");
         $.ajax({
             url: URL + "/auth/login",
-            xhrFields:{withCredentials: true},
+            xhrFields: {withCredentials: true},
             data: {"mob": mob, "pwd": pwd, "keep": isChecked},
             type: "POST",
             dataType: "json",
-            success: function(resp) {
-                let Code = resp["code"];
-                if(Code === 1000){
+            success: function (resp) {
+                let code = resp["code"];
+                if (code === 1000) {
                     window.location.replace("/home/");
-                }else{
+                } else {
                     $pwd_tip.show(resp['message']);
                 }
             }
         });
-    });
+    })
 }
 </script>
 </html>

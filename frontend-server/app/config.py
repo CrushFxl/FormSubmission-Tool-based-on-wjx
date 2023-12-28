@@ -1,17 +1,17 @@
-class BaseConfig:
-    HOST = "0.0.0.0"
+class ProductionConfig:
+    CORS_DOMAIN = "https://api.weactive.top"
+    CHERRYPY = {
+        'server.socket_host': '0.0.0.0',
+        'server.socket_port': 15261,
+    }
 
-class ProductionConfig(BaseConfig):
-    PORT = 443
-    SSL_CONTEXT = ('app/misc/hmc.weactive.top.key', 'app/misc/hmc.weactive.top.pem')
-    CORS_DOMAIN = "https://hmc.weactive.top:12345"
 
-
-class DevelopmentConfig(BaseConfig):
-    PORT = 80
-    DEBUG = True
-    TESTING = True
-    CORS_DOMAIN = "http://127.0.0.1:12345"
+class DevelopmentConfig:
+    CORS_DOMAIN = "http://127.0.0.1:15262"
+    CHERRYPY = {
+        'server.socket_host': '0.0.0.0',
+        'server.socket_port': 80,
+    }
 
 
 config = {
