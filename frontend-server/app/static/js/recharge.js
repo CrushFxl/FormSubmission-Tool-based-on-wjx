@@ -15,12 +15,12 @@ function choosePrice(idName){
 window.onload = function (){
 
     //判断浏览器环境
-    const ua = navigator.userAgent
+    const ua = navigator.userAgent.toLowerCase()
     let env = ''
-    if(ua.includes('Windows')){
+    if(ua.includes('windows')){
         env = 'native'
     }else{
-        if(ua.includes('Android') || ua.includes('iPhone')){
+        if(ua.includes('android') || ua.includes('iphone')){
             if(ua.includes('micromessenger')){
                 env = 'jsapi'
             }else{
@@ -66,14 +66,19 @@ window.onload = function (){
             dataType: "json",
             success: function (resp) {
                 if (resp["code"] === 1000) {
-                    let deep_link = resp['deep_link']
-                    sessionStorage.setItem('deep_link', deep_link);
-                    // 跳转微信支付
-                    window.location.assign(deep_link);
-                    // 跳转支付结果页
-                    setTimeout(function (){
-                        window.location.assign('/recharge/result/?oid=' + resp['oid'])
-                    }, 500)
+                    let link = resp['link']
+                    //h5支付：拉起支付页并跳转自定义结果页
+                    if(env === 'h5'){
+                        sessionStorage.setItem('link', link);
+                        window.location.assign(link);
+                        setTimeout(function (){
+                            window.location.assign('/recharge/result/?oid=' + resp['oid'])
+                        }, 500)
+                    }
+                    //JSAPI支付：使用微信内支付页
+                    else if(env === 'jsapi'){
+                        window.location.assign(link);
+                    }
                 }else{
                     alert(resp['msg']);
                 }

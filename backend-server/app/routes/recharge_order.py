@@ -69,7 +69,9 @@ def commit():
     resp = requests.post('https://open.h5zhifu.com/api/' + env,
                          headers=headers,
                          data=json.dumps(data))
+    print("\n请求拉起resp：", resp.text, "\n")
     resp = resp.json()
+    jump_url = resp['data']['jump_url']
     if resp['msg'] != "success" or resp['code'] != 200:
         return {"code": 1001,
                 "msg": "拉起支付接口失败，内部错误代码：" + str(resp['code'])}
@@ -81,14 +83,21 @@ def commit():
     db.session.add(order)
     db.session.commit()
 
-    # 解析跳转中间页，少掉一层跳转，拿到DeepLink
-    jump_url = resp['data']['jump_url']
-    h5_resp = requests.get(jump_url, headers=headers)
-    wx_url = re.search(r'top.location.href = "(.*?)"', h5_resp.text).groups()[0]
-    headers['Referer'] = 'https://service-bejmsi0z-1252021128.sh.apigw.tencentcs.com/'  # 伪装请求头
-    wx_resp = requests.get(wx_url, headers=headers)
-    deep_link = re.findall(r'deeplink : "(.*?)"', wx_resp.text)[1]
-    return {"code": 1000, "msg": "ok", "deep_link": deep_link, "oid": oid}
+    # 微信H5支付：通过爬虫去掉中间页回调，返回deep_link
+    if env == 'h5':
+        h5_resp = requests.get(jump_url, headers=headers)
+        print("\n中转h5_resp：", h5_resp.text, "\n")
+        wx_url = re.search(r'top.location.href = "(.*?)"', h5_resp.text).groups()[0]
+        headers['Referer'] = 'https://service-bejmsi0z-1252021128.sh.apigw.tencentcs.com/'  # 伪装请求头
+        wx_resp = requests.get(wx_url, headers=headers)
+        print("\n微信wx_resp：", wx_resp.text, "\n")
+        deep_link = re.findall(r'deeplink : "(.*?)"', wx_resp.text)[1]
+        print("\ndeep_link：", deep_link, "\n")
+        return {"code": 1000, "msg": "ok", "link": deep_link, "oid": oid}
+
+    # 微信内JSAPI支付：直接返回jump_url
+    elif env == 'jsapi':
+        return {"code": 1000, "msg": "ok", "link": jump_url, "oid": oid}
 
 
 # 接收订单支付成功通知

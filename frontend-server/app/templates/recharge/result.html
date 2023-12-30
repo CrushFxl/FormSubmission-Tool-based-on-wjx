@@ -78,20 +78,18 @@
                     $('#success').show();
                     clearInterval(inter);
                 }
-                console.log('查单')
-                console.log(resp['status'])
             }
         });
     }, 500);    // 查询间隔
 
     //点击重新支付按钮
     $(document).on("click", "#repay_btn", function () {
-        window.location.assign(sessionStorage.getItem('deep_link'))
+        window.location.assign(sessionStorage.getItem('link'))
     });
     //点击取消支付按钮
     $(document).on("click", "#back_btn", function () {
         sessionStorage.removeItem('deep_link');
-        window.location.replace('/recharge');
+        history.back();
     });
 </script>
 </html>
