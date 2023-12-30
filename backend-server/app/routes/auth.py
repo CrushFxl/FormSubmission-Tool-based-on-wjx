@@ -35,11 +35,8 @@ def login():
 
 @auth_bk.post('/logout')
 def logout():
-    uid = session.get('uid')
-    if uid:
-        session.clear()
-        return {'code': 1000, 'msg': 'ok'}
-    return {'code': 1001}
+    session.clear()
+    return {'code': 1000, 'msg': 'ok'}
 
 
 @auth_bk.post('/send')

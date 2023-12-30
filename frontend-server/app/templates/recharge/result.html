@@ -32,22 +32,18 @@
 <body style="background-color: #FAFAFA;">
     <p id="URL" class="hide">{{URL}}</p>
     <div id="top_nav" class="box sd0" style="align-items: center">
-        <div id="back" style="margin: 15px 10px">
-            <svg width="17px" height="17px" fill="currentColor" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"></path>
-            </svg>
-        </div>
         <p class="s18 grey3">支付结果</p>
     </div>
     <div class="blank">(占位)</div>
-    <div id="fail" class="info_box box sd1 hide">
+    <div id="fail" class="info_box box sd1">
         <div style="align-items: center;justify-content: center;justify-items: center">
             <svg style="margin: 0 3px" width="30" height="30" fill="#3f3f3f" viewBox="0 0 16 16">
                 <path d="M6 .5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1H9v1.07a7.001 7.001 0 0 1 3.274 12.474l.601.602a.5.5 0 0 1-.707.708l-.746-.746A6.97 6.97 0 0 1 8 16a6.97 6.97 0 0 1-3.422-.892l-.746.746a.5.5 0 0 1-.707-.708l.602-.602A7.001 7.001 0 0 1 7 2.07V1h-.5A.5.5 0 0 1 6 .5zm2.5 5a.5.5 0 0 0-1 0v3.362l-1.429 2.38a.5.5 0 1 0 .858.515l1.5-2.5A.5.5 0 0 0 8.5 9V5.5zM.86 5.387A2.5 2.5 0 1 1 4.387 1.86 8.035 8.035 0 0 0 .86 5.387zM11.613 1.86a2.5 2.5 0 1 1 3.527 3.527 8.035 8.035 0 0 0-3.527-3.527z"/>
             </svg>
             <p class="title bold grey3">订单待支付</p>
         </div>
-        <p class="subtitle grey3">用户取消支付，请尝试重新发起支付</p>
+        <p class="subtitle grey3" style="margin-bottom: 1px">您未完成支付，请尝试重新发起支付</p>
+        <p class="subtitle red">如遇充值未到账，请加售后Q群：620145348</p>
     </div>
     <div id="success" class="info_box box sd1 hide">
         <div style="align-items: center;justify-content: center;justify-items: center">
@@ -58,41 +54,44 @@
         </div>
         <p class="subtitle grey3">付款成功，余额已发放到您的帐户</p>
     </div>
-    <button id="repay_btn" class="btn btn2 sd1 hide">重新支付</button>
-    <button id="back_btn" class="btn btn1 sd1">返回主页</button>
+    <button id="repay_btn" class="btn btn2">重新支付</button>
+    <button id="back_btn" class="btn btn1">返回上页</button>
 </body>
 <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
 <script>
-    //查询支付状态
-    let isPayed = false;
-    window.addEventListener('pageshow', function () {
-        let inter = setInterval(function () {
-            if (window.queryPayStatus) {
-                clearInterval(inter);
-                setInterval(window.queryPayStatus,2000);
+    const params = new URLSearchParams(window.location.search);
+    const oid = params.get('oid');
+
+    // 循环查单
+    window.URL = $("#URL").text();
+    let inter = setInterval(function () {
+        $.ajax({
+            url: URL + "/query/recharge",
+            data: {"oid": oid},
+            xhrFields: {withCredentials: true},
+            type: "POST",
+            dataType: "json",
+            success: function(resp) {
+                if(resp["code"] === 1000 && resp['status'] === 'paid'){
+                    $('#fail').hide();
+                    $('#repay_btn').hide();
+                    $('#success').show();
+                    clearInterval(inter);
+                }
+                console.log('查单')
+                console.log(resp['status'])
             }
-         }, 1000);
-    });
+        });
+    }, 500);    // 查询间隔
 
-
-function queryPayStatus(){
-
-}
-
-    //渲染结果
-    if(isPayed){
-        $('#success').show();
-    }else{
-        $('#fail').show();
-        $('#repay_btn').show();
-    }
     //点击重新支付按钮
     $(document).on("click", "#repay_btn", function () {
-        alert("你点击了重新支付按钮");
+        window.location.assign(sessionStorage.getItem('deep_link'))
     });
-    //点击返回主页按钮
+    //点击取消支付按钮
     $(document).on("click", "#back_btn", function () {
-        window.location.replace('/home');
+        sessionStorage.removeItem('deep_link');
+        window.location.replace('/recharge');
     });
 </script>
 </html>

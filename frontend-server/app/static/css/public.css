@@ -94,9 +94,7 @@ div{
 }
 .btn2:hover{
     transition: all, 300ms;
-    border: none;
-    background-color: rgb(108,94,252);
-    color:#ffffff;
+    background-color: rgb(245, 245, 255);
     cursor: pointer;
 }
 .btn2{
@@ -279,8 +277,9 @@ div{
 }
 
 #back{
+    padding: 15px 10px;
     position: absolute;
-    left: 5%;
+    left: 4%;
 }
 
 #back:hover{

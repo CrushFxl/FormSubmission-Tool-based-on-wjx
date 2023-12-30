@@ -4,6 +4,7 @@ from .index import index_ft
 from .auth import auth_ft
 from .order import order_ft
 from .home import home_ft
+from .recharge import recharge_ft
 from .. import config
 
 
@@ -12,7 +13,8 @@ routes = [
     index_ft,
     auth_ft,
     order_ft,
-    home_ft
+    home_ft,
+    recharge_ft
 ]
 
 

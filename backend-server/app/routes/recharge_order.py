@@ -1,6 +1,7 @@
 import hashlib
 import json
 import os
+import re
 import time
 import random
 
@@ -25,12 +26,11 @@ app_id = 2312208768
 H5PAY_KEY = os.getenv('H5PAY_KEY')
 description = "WeActive充值订单"
 notify_url = 'https://api.weactive.top/recharge/callback'
-out_trade_no = "123"
 
 
 # 签名算法
 def sign(attributes, key):
-    attributes_new = {k: attributes[k] for k in sorted(attributes.keys())}
+    attributes_new = {k: attributes[k] for k in sorted(attributes.keys()) if attributes[k]}
     sign_str = "&".join(
         [f"{key}={attributes_new[key]}" for key in attributes_new.keys()]
     )
@@ -39,33 +39,6 @@ def sign(attributes, key):
         .hexdigest()
         .upper()
     )
-
-
-# 接收订单支付成功通知
-@recharge_order_bk.post('/callback')
-def callback():
-    # 验证签名
-    oid = request.form.get('oid')
-    order = Order.query.filter(Order.oid==oid).first()
-    signed = request.form.get('sign')
-    if order.sign != signed:
-        return "拒绝访问"
-
-    # 更新订单信息
-    if order.status == "wait":
-        order.status = "paid"
-        order.h5id = request.form.get("trade_no")
-        order.payid = request.form.get("in_trade_no")
-        order.ptime = request.form.get("pay_time")
-    else:
-        return "success"  # 防止重复通知
-
-    # 账户累加充值金额
-    uid = order.uid
-    amount = order.price
-    User.query.filter(User.uid==uid).first().balance += amount
-    print("\n\n\n已收到回调通知")
-    return "success"
 
 
 # 拉起支付接口
@@ -78,37 +51,71 @@ def commit():
     pay_type = request.form.get('payment')
 
     # 组装数据
+    oid = str(int(time.time() * 1000)) + '00' + str(uid)[-3:] + str(random.randint(10, 99))
     data = {
         "app_id": app_id,
-        "out_trade_no": out_trade_no,
+        "out_trade_no": oid,
         "description": description,
         "pay_type": pay_type,
         "amount": amount,
         "notify_url": notify_url,
     }
-    signed = sign(data, key=H5PAY_KEY)  # 进行签名
+
+    # 进行签名
+    signed = sign(data, key=H5PAY_KEY)
     data['sign'] = signed
 
-    # 请求拉起支付接口
+    # 请求拉起支付跳转
     resp = requests.post('https://open.h5zhifu.com/api/' + env,
                          headers=headers,
                          data=json.dumps(data))
     resp = resp.json()
-    if resp["msg"] != "success" or resp['code'] != 200:
+    if resp['msg'] != "success" or resp['code'] != 200:
         return {"code": 1001,
-                "msg": "拉起支付接口失败，内部错误代码："+str(resp['code'])}
+                "msg": "拉起支付接口失败，内部错误代码：" + str(resp['code'])}
 
     # 生成支付订单
-    current_time = time.localtime()
-    oid = (str(int(time.time() * 1000)) + '00'
-           + str(uid)[-3:] + str(random.randint(10, 99)))
-    ctime = time.strftime('%Y-%m-%d %H:%M:%S', current_time)
-    order = Order(oid=oid, uid=uid, payment=pay_type,
-                  price=amount/100, ctime=ctime, sign=signed)
+    h5id = resp['data']['trade_no']
+    ctime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+    order = Order(oid=oid, h5id=h5id, uid=uid, payment=pay_type, price=amount / 100, ctime=ctime)
     db.session.add(order)
     db.session.commit()
 
-    # 返回支付地址
-    jump_url = resp['jump_url']
-    print(resp, "\n\n\n已生成支付订单")
-    return {"code": 1000, "msg": "ok", "url": jump_url}
+    # 解析跳转中间页，少掉一层跳转，拿到DeepLink
+    jump_url = resp['data']['jump_url']
+    h5_resp = requests.get(jump_url, headers=headers)
+    wx_url = re.search(r'top.location.href = "(.*?)"', h5_resp.text).groups()[0]
+    headers['Referer'] = 'https://service-bejmsi0z-1252021128.sh.apigw.tencentcs.com/'  # 伪装请求头
+    wx_resp = requests.get(wx_url, headers=headers)
+    deep_link = re.findall(r'deeplink : "(.*?)"', wx_resp.text)[1]
+    return {"code": 1000, "msg": "ok", "deep_link": deep_link, "oid": oid}
+
+
+# 接收订单支付成功通知
+@recharge_order_bk.post('/callback')
+def callback():
+    # 验证签名
+    req = request.get_json()
+    received_sign = req['sign']
+    req['sign'] = ''
+    correct_sign = sign(req, H5PAY_KEY)
+    if correct_sign != received_sign:
+        return "拒绝访问"
+
+    # 更新订单信息
+    oid = req['out_trade_no']
+    order = Order.query.filter(Order.oid == oid).first()
+    if order.status == "wait":
+        order.status = "paid"
+        order.h5id = req["trade_no"]
+        order.payid = req["in_trade_no"]
+        order.ptime = req["pay_time"]
+    else:
+        return "success"  # 防止重复通知
+
+    # 账户累加充值金额
+    uid = order.uid
+    amount = order.price
+    User.query.filter(User.uid == uid).first().balance += amount
+    db.session.commit()
+    return "success"

@@ -11,7 +11,9 @@ function choosePrice(idName){
     $(idName).children().css('color', '#6c5efc');
 }
 
+
 window.onload = function (){
+
     //判断浏览器环境
     const ua = navigator.userAgent
     let env = ''
@@ -26,6 +28,7 @@ window.onload = function (){
             }
         }
     }
+
     /*改变付款方式*/
     let payment = 'wechat'; // 默认微信
     $(document).on("click", "#alipay", function () {
@@ -36,6 +39,7 @@ window.onload = function (){
         $('#wechatpay_btn').prop("checked", true);
         payment = 'wechat';
     });
+
     /*改变充值金额*/
     let price = 1;      //默认金额
     choosePrice('#price1');
@@ -44,15 +48,16 @@ window.onload = function (){
         choosePrice(idName);
         price = idName.slice(6);
     });
+
     /*点击立即充值按钮*/
     $(document).on("click", "#recharge_btn", function () {
         if(env === 'native'){
             alert("抱歉，暂不支持PC端付款，请在手机上完成付款操作");
             return;
         }
-        //拉起支付请求
+        //申请创建订单
         loading_show();
-        const URL = $("#URL").text()
+        window.URL = $("#URL").text();
         $.ajax({
             url: URL + "/recharge",
             data: {"env": env, "price": price, "payment": payment},
@@ -60,12 +65,19 @@ window.onload = function (){
             type: "POST",
             dataType: "json",
             success: function (resp) {
-                loading_hide();
                 if (resp["code"] === 1000) {
-                    window.location.assign(resp['jump_url']);
+                    let deep_link = resp['deep_link']
+                    sessionStorage.setItem('deep_link', deep_link);
+                    // 跳转微信支付
+                    window.location.assign(deep_link);
+                    // 跳转支付结果页
+                    setTimeout(function (){
+                        window.location.assign('/recharge/result/?oid=' + resp['oid'])
+                    }, 500)
                 }else{
                     alert(resp['msg']);
                 }
+                loading_hide();
             }
         });
     });

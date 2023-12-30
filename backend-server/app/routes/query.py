@@ -69,6 +69,8 @@ def query_user():
 @login_required
 def query_recharge_order():
     uid = session.get('uid')
-    user = User.query.filter(User.uid == uid).first()
-    # rOrder.query.filter(rOrder.)
-    print("已执行查单")
+    oid = request.form.get('oid')
+    recharge_order = rOrder.query.filter(rOrder.oid == oid).first()
+    if recharge_order.uid != str(uid):
+        return {"code": 2000, "msg": '拒绝访问'}
+    return {"code": 1000, "msg": 'ok', 'status': recharge_order.status}
