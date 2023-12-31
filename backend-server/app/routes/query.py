@@ -37,8 +37,8 @@ def query_orders():
     elif type == 'done':
         sRange = [500, 599]
     pageObj = (bOrder.query.filter(bOrder.uid == uid,
-                                   bOrder.state >= sRange[0],
-                                   bOrder.state <= sRange[1])
+                                   bOrder.status >= sRange[0],
+                                   bOrder.status <= sRange[1])
                .order_by(bOrder.ctime.desc()).paginate(page=pn, per_page=10))
     ordersObj = pageObj.items
     orders = []

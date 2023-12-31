@@ -76,14 +76,6 @@ body{
     margin: 10px 10px 10px 0;
 }
 
-.text_wrapper{
-    flex-direction: column;
-    margin-left: 15px;
-    width: 70%;
-}
-
-
-
 /*上传页面*/
 .menuBox{
     justify-content: center;
@@ -96,11 +88,18 @@ body{
 .text_wrapper{
     flex-direction: column;
     margin-left: 15px;
-    width: 70%;
+    width: 80%;
 }
 .menu{
     align-items: center;
     background-image: linear-gradient(to right, #8847ce 0%, #5b93f3 100%);
+    border-radius: 10px;
+    padding: 10px 10px 10px 15px;
+}
+
+.temp_menu{
+    align-items: center;
+    background-image: linear-gradient(to right, #6f6479 0%, #576881 100%);
     border-radius: 10px;
     padding: 10px 10px 10px 15px;
 }
@@ -117,7 +116,7 @@ body{
 .menu_svg{
     height: 54px;
     fill: #FFFFFF;
-    width: 25%;
+    width: 20%;
 }
 
 

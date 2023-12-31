@@ -15,6 +15,12 @@ def home():
     return render_template("home.html")
 
 
+@home_ft.get('/balance/')
+@login_required
+def balance():
+    return render_template("balance.html")
+
+
 @home_ft.get('/feedback/')
 @login_required
 def feedback():

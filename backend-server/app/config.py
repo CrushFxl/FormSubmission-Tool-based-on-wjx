@@ -13,7 +13,7 @@ class BaseConfig:
 
 class ProductionConfig(BaseConfig):
     CORS_DOMAIN = "https://hmc.weactive.top"
-    # TASK_SERVER_DOMAIN = "https://hmc.weactive.top:15261"
+    TASK_SERVER_DOMAIN = "https://service.weactive.top"
     SESSION_COOKIE_DOMAIN = ".weactive.top"
     SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')
     SECRET_KEY = os.getenv('SECRET_KEY')
@@ -22,7 +22,7 @@ class ProductionConfig(BaseConfig):
 
 class DevelopmentConfig(BaseConfig):
     CORS_DOMAIN = "http://127.0.0.1"
-    # TASK_SERVER_DOMAIN = "http://127.0.0.1:15261"
+    TASK_SERVER_DOMAIN = "http://127.0.0.1:10086"
     SQLALCHEMY_DATABASE_URI = "sqlite:///C:\\Users\\24289\\Desktop\\weactive.db"
     CHERRYPY = {
         'server.socket_host': '0.0.0.0',

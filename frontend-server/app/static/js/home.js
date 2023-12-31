@@ -40,14 +40,14 @@ function render_orderlist(tabName, orders){
     for(let i in orders){
         //提取订单状态
         const order = orders[i];
-        let state = order['state'];
+        let status = order['status'];
         let bg = ''
-        if(100<=state && state<=199) {state = '待付款';bg = '#f5a74a'}
-        else if(200<=state && state<=299){state = '已关闭';bg = '#a6a6a6'}
-        else if(300<=state && state<=399){state = '排队中';bg = '#f184f1'}
-        else if(400<=state && state<=499){state = '进行中';bg = '#9072ee'}
-        else if(500<=state && state<=599){state = '已完成';bg = '#70f18d'}
-        else{state = '发生错误';bg = '#f15c57'}
+        if(100<=status && status<=199) {status = '待付款';bg = '#f5a74a'}
+        else if(200<=status && status<=299){status = '已关闭';bg = '#a6a6a6'}
+        else if(300<=status && status<=399){status = '待接单';bg = '#e181e1'}
+        else if(400<=status && status<=499){status = '进行中';bg = '#9072ee'}
+        else if(500<=status && status<=599){status = '已完成';bg = '#70f18d'}
+        else{status = '发生错误';bg = '#f15c57'}
         //提取订单信息
         const oid = order['oid'];
         const title = order['config']['title'];
@@ -68,13 +68,13 @@ function render_orderlist(tabName, orders){
         $tabPage.append('<div id="oid'+ oid +'" class="order od_box box sd1">\n' +
         '                <div style="justify-content: space-between; margin-bottom: 5px">\n' +
         '                    <p class="s16 pur bold">' + type + '</p>\n' +
-        '                    <p class="label s14" style="margin: 0; background-color: '+ bg +'">'+ state +'</p>\n' +
+        '                    <p class="label s14" style="margin: 0; background-color: '+ bg +'">'+ status +'</p>\n' +
         '                </div>\n' +
         '                <div style="height:45px; justify-content: space-between;align-items: center">\n' +
-        '                    <svg style="height: 40px;width: 40px;fill:#6c5efc;" viewBox="0 0 16 16">\n' +
+        '                    <div style="height: 40px; width: 40px"><svg style="height: 40px;width: 40px;fill:#6c5efc;" viewBox="0 0 16 16">\n' +
         '                        <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"></path>\n' +
-        '                    </svg>\n' +
-        '                    <div class="hidet" style="flex-direction:column;justify-content:center;flex-grow:1;margin: 0 20px 0 10px">\n' +
+        '                    </svg></div>\n' +
+        '                    <div class="hidet" style="flex-direction:column;justify-content:center;flex-grow:1;margin: 0 10px">\n' +
         '                        <p class="s15 grey3 hidet">'+ title +'</p>\n' +
         '                        <p class="s13 grey1">'+ options +'</p>\n' +
         '                    </div>\n' +
@@ -155,8 +155,8 @@ window.onload = function () {
     $input_img.on('change', function () {
         let file = $(this).get(0).files[0]
         if (!file || file.length === 0) return;
-        const isLt2M = file.size / 1024 / 1024 < 5;
-        if(!isLt2M) {
+        const isLt5M = file.size / 1024 / 1024 < 5;
+        if(!isLt5M) {
             alert('上传的图片大小不能超过5MB');
             $(this).get(0).value = '';
             return;
@@ -185,6 +185,9 @@ window.onload = function () {
                     }
                 }
             },
+            error: function (xhr, status, err){
+                alert(xhr.status)
+            }
         });
         $(this).get(0).value = '';
     });
@@ -212,6 +215,11 @@ window.onload = function () {
                 }
             }
         });
+    });
+
+    /*点击余额*/
+    $(document).on("click", "#balance", function () {
+        window.location.assign("/balance");
     });
 
     /*余额充值按钮*/

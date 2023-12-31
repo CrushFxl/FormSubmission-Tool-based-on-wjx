@@ -215,6 +215,7 @@ div{
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 0 15px;
     z-index: -1;
 }
 
@@ -230,7 +231,7 @@ div{
 }
 
 .ico_text{
-    margin: 2px 0 0 0;
+    margin: 1px 0 0 0;
     padding: 0;
     font-size: 11px;
     color: #3f3f3f;
@@ -279,7 +280,7 @@ div{
 #back{
     padding: 15px 10px;
     position: absolute;
-    left: 4%;
+    left: 3%;
 }
 
 #back:hover{

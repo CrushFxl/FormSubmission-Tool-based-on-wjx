@@ -9,6 +9,7 @@
     <link rel="shortcut icon" href="../static/img/favicon.ico">
     <link rel="stylesheet" type="text/css" href="../static/css/public.css">
     <link rel="stylesheet" type="text/css" href="../static/css/order.css">
+    <style>.od_title{margin-bottom: 0}</style>
 </head>
 <body style="background-color: #FAFAFA">
     <p id="URL" class="hide">{{URL}}</p>
@@ -22,16 +23,18 @@
     </div>
     <div class="blank">(占位)</div>
     <div id="orderBox" class="od_box box sd1">
-        <div style="margin: 5px">
-            <svg style="width: 90px; margin-right: 10px" width="75px" height="75px" fill="rgb(108,94,252)" viewBox="0 0 16 16">
-                <path d="M0 .5A.5.5 0 0 1 .5 0h3a.5.5 0 0 1 0 1H1v2.5a.5.5 0 0 1-1 0zm12 0a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0V1h-2.5a.5.5 0 0 1-.5-.5M.5 12a.5.5 0 0 1 .5.5V15h2.5a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1 0-1H15v-2.5a.5.5 0 0 1 .5-.5M4 4h1v1H4z"></path>
-                <path d="M7 2H2v5h5zM3 3h3v3H3zm2 8H4v1h1z"></path>
-                <path d="M7 9H2v5h5zm-4 1h3v3H3zm8-6h1v1h-1z"></path>
-                <path d="M9 2h5v5H9zm1 1v3h3V3zM8 8v2h1v1H8v1h2v-2h1v2h1v-1h2v-1h-3V8zm2 2H9V9h1zm4 2h-1v1h-2v1h3zm-4 2v-1H8v1z"></path>
-                <path d="M12 9h2V8h-2z"></path>
-            </svg>
-            <div style="flex-direction: column; width: 70%;">
-                <p id="type" class="od_title" style="font-size: 18px; margin-bottom: 4px"></p>
+        <div style="margin: 5px 0">
+            <div style="height:72px; width:72px">
+                <svg style="margin-right: 10px" width="70px" height="70px" fill="rgb(108,94,252)" viewBox="0 0 16 16">
+                    <path d="M0 .5A.5.5 0 0 1 .5 0h3a.5.5 0 0 1 0 1H1v2.5a.5.5 0 0 1-1 0zm12 0a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0V1h-2.5a.5.5 0 0 1-.5-.5M.5 12a.5.5 0 0 1 .5.5V15h2.5a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1 0-1H15v-2.5a.5.5 0 0 1 .5-.5M4 4h1v1H4z"></path>
+                    <path d="M7 2H2v5h5zM3 3h3v3H3zm2 8H4v1h1z"></path>
+                    <path d="M7 9H2v5h5zm-4 1h3v3H3zm8-6h1v1h-1z"></path>
+                    <path d="M9 2h5v5H9zm1 1v3h3V3zM8 8v2h1v1H8v1h2v-2h1v2h1v-1h2v-1h-3V8zm2 2H9V9h1zm4 2h-1v1h-2v1h3zm-4 2v-1H8v1z"></path>
+                    <path d="M12 9h2V8h-2z"></path>
+                </svg>
+            </div>
+            <div style="flex-direction: column; width: calc(100% - 72px)">
+                <p id="type" class="od_title" style="font-size: 18px"></p>
                 <div style="align-items: center; align-content: center;">
                     <p class="od_sTitle s15" style="margin-right: 10px">活动名称</p>
                     <p id="wjx_title" class="s15 grey3 hidet"></p>
@@ -44,7 +47,7 @@
         </div>
         <div class="od_line"></div>
         <div id='options' style="flex-direction: column"></div>
-        <div style="justify-content: end; margin-top: 10px">
+        <div style="justify-content: end; margin-top: 10px; width: 100%">
             <p>小计：<span class="bold s16"></span><span class="bold s17 price"></span>￥</p>
         </div>
     </div>
@@ -57,7 +60,7 @@
                 <svg class="pt" width="16" height="16" fill="rgb(99,90,210)" viewBox="0 0 16 16" style="margin-top: 2px;">
                         <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0
                         .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"></path>
-                    </svg>
+                </svg>
             </div>
         </div>
         <div id="setFolder" style="flex-direction: column;">

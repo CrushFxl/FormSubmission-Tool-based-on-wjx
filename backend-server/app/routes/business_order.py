@@ -1,4 +1,5 @@
 import json
+import os
 import random
 import re
 import time
@@ -13,10 +14,14 @@ from app.routes.filters import login_required
 from app.models import db
 from app.models.User import User
 from app.models.BusinessOrder import BusinessOrder as Order
+from app.config import config as env_conf
 
 business_order = Blueprint('order', __name__, url_prefix='/order')
 
-
+det = cv2.QRCodeDetector()
+ENV = os.getenv('ENV') or 'production'
+TASK_SERVER_KEY = os.getenv('TASK_SERVER_KEY')
+TASK_SERVER_DOMAIN = env_conf[ENV].TASK_SERVER_DOMAIN  # 读取业务服务器地址
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) '
                   'AppleWebKit/537.36 (KHTML, like Gecko) '
@@ -27,17 +32,15 @@ headers = {
 @business_order.post('/wjx/pre')
 @login_required
 def wjx_pre():
-
     # 检查上传的图片
     if 'file' not in request.files:
         return {"code": 1001}
     try:
-        file_bytes = request.files['file'].read()  # 转二进制流
-        file_array = np.array(bytearray(file_bytes), dtype='uint8')  # 转数组
-        img = cv2.imdecode(file_array, cv2.IMREAD_UNCHANGED)  # 转cv2对象
-        ret, img = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY);  # 图像二值化
-        det = cv2.QRCodeDetector()  # 检测二维码
-        wjx_url, pts, st_code = det.detectAndDecode(img)  # 返回url结果
+        file_bytes = request.files['file'].read()  # 读二进制流
+        file_array = np.frombuffer(file_bytes, np.uint8)  # 转np矩阵
+        img = cv2.imdecode(file_array, cv2.IMREAD_COLOR)  # 转cv2对象
+        ret, img = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY);  # 二值化处理
+        wjx_url, pts, st_code = det.detectAndDecode(img)  # 扫描二维码
     except cv2.error:
         return {"code": 1002, "msg": "上传的文件类型无法识别"}
     if wjx_url == '':
@@ -75,7 +78,7 @@ def wjx_pre():
     })
 
     # 计算订单价格
-    options = [{"标准": 0.5}, {"内测用户优惠": -0.4}]
+    options = [{"标准": 0.5}, {"内测用户优惠": -0.1}]
     price = 0
     for i in options:
         for k, v in i.items():
@@ -97,33 +100,43 @@ def wjx_commit():
     wjx_set = json.loads(request.form.get('wjx_set'))
     User.query.filter(User.uid == uid).with_for_update(read=False, nowait=False)  # 锁行
 
-    user = User.query.filter(User.uid==uid).first()
-    order = Order.query.filter(Order.uid==uid, Order.oid==oid).first()
+    user = User.query.filter(User.uid == uid).first()
+    order = Order.query.filter(Order.uid == uid, Order.oid == oid).first()
 
-    if order.state not in [0, 100]:
+    # 检查订单状态
+    if order.status not in [0, 100]:
         return {"code": 1002, "msg": "当前订单正在进行或已被关闭，无法付款"}
-
     ctime = time.mktime(time.strptime(order.ctime, '%Y-%m-%d %H:%M:%S'))
     current_time = time.time()
     if current_time - ctime > 900:
-        order.state = 200
+        order.status = 200
         db.session.commit()
         return {"code": 1003, "msg": "由于长时间未支付，订单已自动关闭"}
 
+    # 检查用户余额
     if order.price > user.balance:
-        order.state = 100
+        order.status = 100
         db.session.commit()
         return {"code": 1001, "msg": '付款失败，账户余额不足'}
 
-    user.balance -= order.price         # 扣款
-    user.ing += 1                       # 进行中订单计数
-    order.config['wjx_set'] = wjx_set   # 添加问卷星订单设置
-    flag_modified(order, "config")      # (该句提交部分json更改)
-    order.ptime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())   # 添加时间戳
-    pass    # TODO:发送给业务服务器
-    order.state = 400            # 修改订单状态
+    # 更新订单数据
+    user.balance -= order.price  # 扣款
+    user.ing += 1  # 进行中订单计数
+    order.config['wjx_set'] = wjx_set  # 添加问卷星订单设置
+    flag_modified(order, "config")  # (提交部分json的更改)
+    order.ptime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())  # 添加时间戳
+    order.status = 300  # 修改订单状态（待接单）
     db.session.commit()
-    return {"code": 1000}
+
+    # 将订单分发给业务服务器
+    headers['Referer'] = TASK_SERVER_DOMAIN  # 配置请求头
+    requests.post(url=TASK_SERVER_DOMAIN + '/wjx',
+                  headers=headers,
+                  data={'key': TASK_SERVER_KEY,
+                        'oid': oid,
+                        'config': json.dumps(order.config)
+                        })
+    return {"code": 1000, 'msg': 'ok'}
 
 
 @business_order.post('/cancel')
@@ -133,24 +146,25 @@ def cancel():
     oid = request.form.get('oid')
     User.query.filter(User.uid == uid).with_for_update(read=False, nowait=False)  # 锁行
 
-    user = User.query.filter(User.uid==uid).first()
-    order = Order.query.filter(Order.uid==uid, Order.oid==oid).first()
+    user = User.query.filter(User.uid == uid).first()
+    order = Order.query.filter(Order.uid == uid, Order.oid == oid).first()
 
-    state = str(order.state)[0]
-    # 记录取消订单时的订单状态
-    if state == '1':        # 待付款时
-        order.state = 201
-    elif state == '3':      # 排队中时
+    status = str(order.status)[0]
+
+    # 更新订单状态
+    if status == '1':  # 待付款时
+        order.status = 201
+    elif status == '3':  # 排队中时
         user.ing -= 1
-        order.state = 202
+        order.status = 202
         user.balance += order.price
-    elif state == '4':      # 进行中时
-        order.state = 203
+    elif status == '4':  # 进行中时
+        order.status = 203
         user.ing -= 1
         user.balance += order.price
-    else:                   # 不允许退款
+    else:  # 不允许退款
         return {"code": 1001, "msg": "当前订单不允许退款"}
     order.dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
     db.session.commit()
-    return {"code": 1000}
 
+    return {"code": 1000, "msg": 'ok'}

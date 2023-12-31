@@ -43,12 +43,12 @@ function show_firework() {
     function frame() {
         confetti({
             particleCount: 2, angle: 60, spread: 55,
-            origin: {x: 0, y: 0.65},
+            origin: {x: 0, y: 0.5},
             colors: colors,
         });
         confetti({
             particleCount: 2, angle: 120, spread: 55,
-            origin: {x: 1, y: 0.65},
+            origin: {x: 1, y: 0.5},
             colors: colors,
         });
         if (Date.now() < end) {
@@ -58,12 +58,10 @@ function show_firework() {
     frame();
 }
 
-/*渲染确认订单页和详情页*/
-function render_wjx_order(order){
-
-    /*渲染订单状态*/
-    const state = order['state'];
-    const s = state.toString()[0]
+/*渲染订单状态*/
+function render_order_status(order){
+    const status = order['status'];
+    const s = status.toString()[0]
     let title = '';
     let subtitle = '';
     if(s === '1'){
@@ -74,11 +72,11 @@ function render_wjx_order(order){
     }else if(s === '2'){
         title = '已关闭';
         $('#feedback_btn').show();
-        if(state === 200) subtitle = '由于超时未付款，此订单已自动关闭'
+        if(status === 200) subtitle = '由于超时未付款，此订单已自动关闭'
         else subtitle = '订单已成功取消，资金将原路退回'
     }else if(s === '3'){
-        title = '排队中';
-        subtitle = '当前下单人数过多，您的订单正在排队中，预计需要?小时'
+        title = '待接单';
+        subtitle = '订单正在分发至服务器，这将很快完成...'
         $('#refund_btn').show();
     }else if(s === '4'){
         title = '进行中';
@@ -90,13 +88,17 @@ function render_wjx_order(order){
         $('#refund_btn').show();
     }else if(s === '9'){
         title = '发生错误';
-        subtitle = '很抱歉，订单执行过程中遇到技术错误，我们已为您退款'
+        subtitle = '很抱歉，任务过程中遇到技术错误，我们已为您退款'
         $('#feedback_btn').show();
     }
     $("#title").text('订单'+title);
     $("#subtitle").text(subtitle);
+}
 
+/*渲染确认订单页和详情页*/
+function render_wjx_order(order){
     /*渲染订单主要信息*/
+    render_order_status(order)
     if(order["type"] === 'wjx') {
         $('#type').text('问卷星活动代抢服务');
         $("#wjx_title").text(order["config"]["title"]);
@@ -159,17 +161,41 @@ function render_wjx_order(order){
 
 window.onload = function () {
     window.URL = $("#URL").text();
-    /*请求订单信息并渲染页面*/
     const params = new URLSearchParams(window.location.search);
     const oid = params.get('oid');
-    const p = request_order(oid);
-    p.then(order => {render_wjx_order(order)});
-    /*提交订单按钮绑定*/
+
+    //请求并渲染订单
+    let p = request_order(oid);
+    p.then(order => {
+      render_wjx_order(order);  //1. 先请求并渲染整个页面
+        if (order['status'] === 300) {//2. 如果订单状态为待接单，进入轮询
+            let count = 0;
+            const interval = setInterval(() => {
+                if (count >= 10) {
+                    clearInterval(interval);
+                } else {
+                    p = request_order(oid);
+                    p.then(newOrder => {
+                        order = newOrder;
+                        if (order['status'] !== 300) {  //3.如果订单状态改变
+                            render_order_status(order);
+                            clearInterval(interval);
+                            show_firework();
+                        }
+                    });
+                    count++;
+                }
+            }, 1000);
+        }
+    });
+
+    /*提交订单按钮*/
     $(document).on("click", "#commit_btn", function () {
         loading_show();
         commit_btn(oid);
     });
-    /*取消订单按钮绑定*/
+
+    /*取消订单按钮*/
     $(document).on("click", "#refund_btn", function () {
         if(confirm("您确实要取消订单吗")){
             loading_show();
@@ -190,7 +216,8 @@ window.onload = function () {
             });
         }
     });
-    /*问题反馈按钮绑定*/
+
+    /*问题反馈按钮*/
     $(document).on("click", "#feedback_btn", function () {
         window.location.assign('/feedback')
     });
