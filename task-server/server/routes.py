@@ -1,24 +1,27 @@
 import os
-import json
+import requests
 from flask import Blueprint, request
 
-from server.src.wjx import Task as Task_wjx
+from .config import config
+from server.src.wjx import wjx_task
+from .filters import signature_verify
 
-route_bp = Blueprint('route', __name__)
+task_bp = Blueprint('task', __name__)
 
-TASK_SERVER_KEY = os.getenv('TASK_SERVER_KEY')
+BACKEND_SERVER_DOMAIN = config[os.getenv('ENV')].BACKEND_SERVER_DOMAIN
 
-@route_bp.post('/wjx')
-def wjx():
 
-    # 身份验证
-    key = request.form.get('key')
-    if key != TASK_SERVER_KEY:
-        return {'code': 2000, 'msg': '拒绝访问'}
-
-    # 任务实例化，开辟新线程
+@task_bp.post('/accept')
+def accept():
     oid = request.form.get('oid')
-    config = json.loads(request.form.get('config'))
-    Task_wjx(oid, config)
+    conf = request.form.get('config')
 
-    return {'code': 1000, 'msg': 'ok'}
+    # 添加本地数据库记录
+    pass
+
+    # 创建任务实例对象
+    wjx_task(oid, conf)
+
+    # 通知后端修改数据库
+    requests.post(url=BACKEND_SERVER_DOMAIN + '/service/accept', data={'oid': oid})
+    return {"code": 1000, "msg": "ok"}

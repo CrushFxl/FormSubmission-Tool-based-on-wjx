@@ -8,7 +8,7 @@ from flask_cors import CORS
 def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
-    CORS(app, supports_credentials=True, origins=config[config_name].CORS_DOMAIN)
+    CORS(app, supports_credentials=True)
     db.init_app(app)
 
     for route in routes:    # 批量注册蓝图

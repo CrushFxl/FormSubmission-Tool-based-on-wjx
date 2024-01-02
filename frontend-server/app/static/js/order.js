@@ -171,7 +171,7 @@ window.onload = function () {
         if (order['status'] === 300) {//2. 如果订单状态为待接单，进入轮询
             let count = 0;
             const interval = setInterval(() => {
-                if (count >= 10) {
+                if (count >= 5) {
                     clearInterval(interval);
                 } else {
                     p = request_order(oid);

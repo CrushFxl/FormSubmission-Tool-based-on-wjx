@@ -16,7 +16,7 @@ from app.models.User import User
 from app.models.BusinessOrder import BusinessOrder as Order
 from app.config import config as env_conf
 
-business_order = Blueprint('order', __name__, url_prefix='/order')
+business_order_bk = Blueprint('order', __name__, url_prefix='/order')
 
 det = cv2.QRCodeDetector()
 ENV = os.getenv('ENV') or 'production'
@@ -29,7 +29,7 @@ headers = {
 }
 
 
-@business_order.post('/wjx/pre')
+@business_order_bk.post('/wjx/pre')
 @login_required
 def wjx_pre():
     # 检查上传的图片
@@ -92,7 +92,7 @@ def wjx_pre():
     return {"code": 1000, "oid": oid}
 
 
-@business_order.post('wjx/commit')
+@business_order_bk.post('wjx/commit')
 @login_required
 def wjx_commit():
     uid = session.get('uid')
@@ -129,9 +129,7 @@ def wjx_commit():
     db.session.commit()
 
     # 将订单分发给业务服务器
-    headers['Referer'] = TASK_SERVER_DOMAIN  # 配置请求头
-    requests.post(url=TASK_SERVER_DOMAIN + '/wjx',
-                  headers=headers,
+    requests.post(url=TASK_SERVER_DOMAIN + '/accept',
                   data={'key': TASK_SERVER_KEY,
                         'oid': oid,
                         'config': json.dumps(order.config)
@@ -139,7 +137,7 @@ def wjx_commit():
     return {"code": 1000, 'msg': 'ok'}
 
 
-@business_order.post('/cancel')
+@business_order_bk.post('/cancel')
 @login_required
 def cancel():
     uid = session.get('uid')

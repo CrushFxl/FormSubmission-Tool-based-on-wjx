@@ -1,12 +1,8 @@
-import os
 from flask import Blueprint, render_template
 
 from .filters import login_required
-from app.config import config
 
 home_ft = Blueprint('home', __name__)
-
-URL = config[os.getenv('ENV') or 'production'].CORS_DOMAIN
 
 
 @home_ft.get('/home/')

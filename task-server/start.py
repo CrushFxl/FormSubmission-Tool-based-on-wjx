@@ -1,24 +1,29 @@
-import os
+import threading
+from threading import Thread
 import cherrypy
-from flask import Flask
-from flask_cors import CORS
+import requests
 
-from server.config import config
-from server.routes import route_bp
+from server import create_flask_app
+from server.api import db
 
-ENV = os.getenv('ENV') or 'production'     # 读取上线环境
+# def read_keyboard_input():
+#     while True:
+#         cmd = input("> ")
+#
+#         if cmd == 'stop':
+#             break
+#
+#         resp = requests.post(url="http://127.0.0.1:10086", data=cmd+"sdsdfsdgsgzsfbsf$end;")
+#         print("发送已完成，接收到的响应：", resp.text)
 
 
-# 创建Flask App
-app = Flask(__name__)
-app.config.from_object(config[ENV])
-app.register_blueprint(route_bp)
-CORS(app, supports_credentials=True, origins=config[ENV].CORS_DOMAIN)
-
-
-# 创建WSGI App
 if __name__ == '__main__':
-    conf = dict(app.config.items())
-    cherrypy.tree.graft(app.wsgi_app, '/')
-    cherrypy.config.update(conf['CHERRYPY'])
+
+    # 启动数据库和服务器
+    db.create_table()
+    create_flask_app()
     cherrypy.engine.start()
+
+    # # 监听键盘输入
+    # read_keyboard_thd = Thread(target=read_keyboard_input)
+    # read_keyboard_thd.start()

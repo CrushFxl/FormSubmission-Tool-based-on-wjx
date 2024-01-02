@@ -19,7 +19,7 @@ routes = [
 
 
 # 注入全局模板变量
-URL = config[os.getenv('ENV') or 'production'].CORS_DOMAIN
+URL = config[os.getenv('ENV') or 'production'].BACKEND_SERVER_DOMAIN
 for route in routes:
     @route.context_processor
     def inject():

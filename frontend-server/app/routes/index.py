@@ -1,13 +1,7 @@
-import os
-import requests
-from flask import Blueprint, request, redirect, render_template
+from flask import Blueprint, request, redirect
 
-from .filters import login_required
-from app.config import config
 
 index_ft = Blueprint('index', __name__)
-
-URL = config[os.getenv('ENV') or 'production'].CORS_DOMAIN
 
 
 @index_ft.get('/index/')
