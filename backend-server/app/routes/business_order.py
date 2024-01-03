@@ -132,6 +132,7 @@ def wjx_commit():
     requests.post(url=TASK_SERVER_DOMAIN + '/accept',
                   data={'key': TASK_SERVER_KEY,
                         'oid': oid,
+                        'type': order.type,
                         'config': json.dumps(order.config)
                         })
     return {"code": 1000, 'msg': 'ok'}

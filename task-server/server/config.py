@@ -1,5 +1,7 @@
 class BaseConfig:
-    DATABASE_PATH = 'tasks.db'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///tasks.db'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ECHO = False
 
 
 class ProductionConfig(BaseConfig):
@@ -8,7 +10,6 @@ class ProductionConfig(BaseConfig):
         'server.socket_port': 10086,
     }
     BACKEND_SERVER_DOMAIN = "https://api.weactive.top"
-
 
 class DevelopmentConfig(BaseConfig):
     CHERRYPY = {

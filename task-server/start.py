@@ -1,29 +1,35 @@
-import threading
-from threading import Thread
+from flask import request
 import cherrypy
-import requests
+import os
 
-from server import create_flask_app
-from server.api import db
+from server import app
+from server.api import database
+from server.config import config
+from server.src.wjx import Taskwjx
 
-# def read_keyboard_input():
-#     while True:
-#         cmd = input("> ")
-#
-#         if cmd == 'stop':
-#             break
-#
-#         resp = requests.post(url="http://127.0.0.1:10086", data=cmd+"sdsdfsdgsgzsfbsf$end;")
-#         print("发送已完成，接收到的响应：", resp.text)
+with app.app_context():
+    database.db.create_all()    # 初始化数据库
+
+ENV = os.getenv('ENV')
+BACKEND_SERVER_DOMAIN = config[ENV].BACKEND_SERVER_DOMAIN
+
+
+@app.post('/accept')
+def accept():
+    oid = request.form.get('oid')
+    type = request.form.get('type')
+    conf = request.form.get('config')
+
+    # 创建任务实例对象
+    task = Taskwjx(oid, type, conf)
+    task.run()
+
+    return {"code": 1000, "msg": "ok"}
 
 
 if __name__ == '__main__':
 
-    # 启动数据库和服务器
-    db.create_table()
-    create_flask_app()
+    # 启动WSGI服务器
+    cherrypy.tree.graft(app.wsgi_app, '/')
+    cherrypy.config.update(config[ENV].CHERRYPY)
     cherrypy.engine.start()
-
-    # # 监听键盘输入
-    # read_keyboard_thd = Thread(target=read_keyboard_input)
-    # read_keyboard_thd.start()

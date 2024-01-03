@@ -1,62 +1,49 @@
+import re
 import threading
 import time
-from concurrent.futures import ThreadPoolExecutor
+import requests
+from bs4 import BeautifulSoup
 
-# import requests
-# import os
-#
-# from server.config import config as env_conf
-#
-# ENV = os.getenv('ENV')
-# TASK_SERVER_KEY = os.getenv('TASK_SERVER_KEY')
-# BACKEND_SERVER_DOMAIN = env_conf[ENV].BACKEND_SERVER_DOMAIN
+from . import Task, headers
+from server.api import database
+from server.api import backend
+from server import app
 
 
-# class Task:
-#     def __init__(self, oid, config):
-#         self.oid = oid
-#         self.url = config['url']
-#         self.conf = config['wjx_set']
-#         self.future = None
-#         self.run()
-#
-#     def run(self):
-#         def _run():
-#             print("任务开始执行")
-#             requests.post(url=BACKEND_SERVER_DOMAIN + '/service/accept',
-#                           data={
-#                               'key': TASK_SERVER_KEY,
-#                               'oid': self.oid,
-#                           })
-#             time.sleep(30)
-#             print("进行到一半了")
-#             time.sleep(30)
-#             print("任务完成")
-#             requests.post(url=BACKEND_SERVER_DOMAIN + '/service/complete',
-#                           data={
-#                               'key': TASK_SERVER_KEY,
-#                               'oid': self.oid,
-#                           })
-#         # self.future = executor.submit(_run)
-#         pass
+class Taskwjx(Task):
+    def __init__(self, oid, type, config):
+        super().__init__(oid, type, config)
+        self.tStamp = None    # 开始报名时间戳
 
-def wjx_task(oid, config):
-    def _run():
-        for i in range(120):
-            print("订单号：", oid, "次序", i)
-            time.sleep(1)
+    # 获取开始报名时间戳
+    def getTimeStamp(self):
+        url = self.config['url']
+        res = requests.get(url, headers=headers)
+        res.encoding = 'utf-8'
+        soup = BeautifulSoup(res.text, 'html.parser')
+        sttime = soup.find(id="divstarttime")
+        if sttime is None:
+            self.status = 901
+            raise AssertionError("获取问卷时间时发生错误")
+        y, M, d, h = re.search(r"于(\d+)年(\d+)月(\d+)日 (\d+)点", sttime.text).groups()
+        try:
+            m = re.search(r"(\d+)分", sttime.text).groups()[0]
+        except AttributeError:
+            m = 0
+        date_time = time.strptime(f"{y}-{M}-{d} {h}:{m}", "%Y-%m-%d %H:%M")
+        self.tStamp = int(time.mktime(date_time))
+        return 0
 
-    thd = threading.Thread(target=_run)
-    thd.start()
-    print("结束")
+    def run(self):
+        def _run():
+            try:
+                self.getTimeStamp()
+            except AssertionError as e:
+                print(f"【错误】订单{self.oid}：{e}")
+            finally:
+                with app.app_context():
+                    database.update(self.oid, self.status)    # 更新本地数据库
+                backend.update(self.oid, self.status)   # 更新后端数据库
 
-
-# # 问卷星业务终端
-# if __name__ == '__main__':
-#
-#     wjx_task_pool = ThreadPoolExecutor(max_workers=100)  # 初始化任务线程池
-
-    # while True:
-    #     cmd = input("> ")
-    #     if cmd == 'stop':
-    #         break
+        thd = threading.Thread(target=_run)
+        thd.start()
