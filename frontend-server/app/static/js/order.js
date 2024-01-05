@@ -138,12 +138,9 @@ function render_wjx_order(order){
 
     //从订单或本地读取代填设置
     let wjx_set;
-    console.log(order)
     if(JSON.stringify(order['config']['wjx_set']) === '{}') {
-        console.log('本地')
         wjx_set = JSON.parse(localStorage.getItem('wjx_set'));
     }else{
-        console.log('订单')
         wjx_set = order['config']['wjx_set'];
     }
     //渲染代填设置
@@ -152,7 +149,6 @@ function render_wjx_order(order){
     else{obj.textContent = '放弃报名'}
     delete wjx_set['strategy'];
     for(let key in wjx_set){
-        if(key === 'strategy'){continue;}
         $("#wjx_set").append('<p class="od_text mar">遇到' +
             '<span class="label orange_bg s14">' + key + '</span>时，' +
             '填写<span class="label orange_bg s14">' + wjx_set[key] + '</span></p>');

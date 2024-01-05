@@ -11,17 +11,14 @@ from flask import Blueprint, request, session
 from sqlalchemy.orm.attributes import flag_modified
 
 from app.routes.filters import login_required
+from app.routes.api import task
 from app.models import db
 from app.models.User import User
 from app.models.BusinessOrder import BusinessOrder as Order
-from app.config import config as env_conf
-
 business_order_bk = Blueprint('order', __name__, url_prefix='/order')
 
 det = cv2.QRCodeDetector()
 ENV = os.getenv('ENV') or 'production'
-TASK_SERVER_KEY = os.getenv('TASK_SERVER_KEY')
-TASK_SERVER_DOMAIN = env_conf[ENV].TASK_SERVER_DOMAIN  # 读取业务服务器地址
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) '
                   'AppleWebKit/537.36 (KHTML, like Gecko) '
@@ -127,14 +124,7 @@ def wjx_commit():
     order.ptime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())  # 添加时间戳
     order.status = 300  # 修改订单状态（待接单）
     db.session.commit()
-
-    # 将订单分发给业务服务器
-    requests.post(url=TASK_SERVER_DOMAIN + '/accept',
-                  data={'key': TASK_SERVER_KEY,
-                        'oid': oid,
-                        'type': order.type,
-                        'config': json.dumps(order.config)
-                        })
+    task.send(oid, order.type, order.config)    # 将订单分发给业务服务器
     return {"code": 1000, 'msg': 'ok'}
 
 
@@ -163,7 +153,6 @@ def cancel():
         user.balance += order.price
     else:  # 不允许退款
         return {"code": 1001, "msg": "当前订单不允许退款"}
-    order.dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
     db.session.commit()
 
     return {"code": 1000, "msg": 'ok'}

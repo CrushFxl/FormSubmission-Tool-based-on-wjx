@@ -43,12 +43,12 @@ function render_orderlist(tabName, orders){
         let status = order['status'];
         let bg = ''
         if(100<=status && status<=199) {status = '待付款';bg = '#f5a74a'}
-        else if(200<=status && status<=299){status = '已关闭';bg = '#a6a6a6'}
-        else if(300<=status && status<=399){status = '待接单';bg = '#e181e1'}
+        else if(200<=status && status<=299){status = '已关闭';bg = '#9d9d9d'}
+        else if(300<=status && status<=399){status = '待接单';bg = '#9d9d9d'}
         else if(400<=status && status<=499){status = '进行中';bg = '#9072ee'}
-        else if(500<=status && status<=599){status = '已完成';bg = '#70f18d'}
+        else if(500<=status && status<=599){status = '已完成';bg = '#4eb63d'}
         else{status = '发生错误';bg = '#f15c57'}
-        //提取订单信息
+        //提取订单信息S
         const oid = order['oid'];
         const title = order['config']['title'];
         const price = order['price'].toFixed(2);
@@ -70,7 +70,7 @@ function render_orderlist(tabName, orders){
         '                    <p class="s16 pur bold">' + type + '</p>\n' +
         '                    <p class="label s14" style="margin: 0; background-color: '+ bg +'">'+ status +'</p>\n' +
         '                </div>\n' +
-        '                <div style="height:45px; justify-content: space-between;align-items: center">\n' +
+        '                <div style="height:50px; justify-content: space-between;align-items: center">\n' +
         '                    <div style="height: 40px; width: 40px"><svg style="height: 40px;width: 40px;fill:#6c5efc;" viewBox="0 0 16 16">\n' +
         '                        <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"></path>\n' +
         '                    </svg></div>\n' +
@@ -185,7 +185,7 @@ window.onload = function () {
                     }
                 }
             },
-            error: function (xhr, status, err){
+            error: function (xhr){
                 alert(xhr.status)
             }
         });

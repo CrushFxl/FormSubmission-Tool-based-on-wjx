@@ -44,12 +44,9 @@ def query_orders():
     orders = []
     for i in ordersObj:
         i = to_json(i)
-        # 删除无用数据
-        del i['config']['wjx_set']
-        del i['uid']
         orders.append(i)
-    max_pn = pageObj.pages
-    return {"code": 1000, "orders": orders, "max_pn": max_pn}
+    # max_pn = pageObj.pages
+    return {"code": 1000, "orders": orders}
 
 
 # 查询用户主页信息
