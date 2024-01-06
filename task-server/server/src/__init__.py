@@ -32,7 +32,7 @@ class Task:
     def run(self):
         pass
 
-    def __del__(self):
+    def close(self):
         self.dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
 
         # 更新本地数据库，同步后端数据库

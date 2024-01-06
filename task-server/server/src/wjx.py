@@ -1,29 +1,11 @@
 import random
-import re
 import time
-import requests
-from bs4 import BeautifulSoup
-from pyppeteer import launch
 
-from . import Task, headers
+from playwright.sync_api import sync_playwright
+
+from server.src import Task
 
 header = {
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-    "Accept-Encoding": "gzip, deflate, br",
-    "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
-    "Cache-Control": "max-age=0",
-    "Connection": "keep-alive: true",
-    "Dnt": "1",
-    "Host": "www.wjx.cn",
-    "Referer": "https://www.wjx.cn/newwjx/design/sendqstart.aspx?activity=239149328",
-    "Sec-Ch-Ua": "\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Microsoft Edge\";v=\"120\"",
-    "Sec-Ch-Ua-Mobile": "?0",
-    "Sec-Ch-Ua-Platform": "\"Windows\"",
-    "Sec-Fetch-Dest": "document",
-    "Sec-Fetch-Mode": "navigate",
-    "Sec-Fetch-Site": "same-origin",
-    "Sec-Fetch-User": "?1",
-    "Upgrade-Insecure-Requests": "1",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0"
 }
 
@@ -31,60 +13,104 @@ header = {
 class Taskwjx(Task):
     def __init__(self, oid, type, config):
         super().__init__(oid, type, config)
-        self.url = self.config['url']  # 问卷网址
-        self.set = self.config['wjx_set']  # 用户设置
-        self.questions = []  # 问卷的题目
-        self.answer = []  # 填写的答案
-        self.stStamp = -1  # 问卷开始时间
+        self.url: str = self.config['url']       # 问卷网址
+        self.set: dict = self.config['wjx_set']   # 用户设置
+        self.time: str = self.config['time']        # 报名开始时间
 
     def run(self):
         try:
-            self.getStartTimeStamp()
-            self.waitUntilStart()
-            self.getQuestions()
+            self.signUpActivity()
         except AssertionError as e:
             print(f"【错误】订单{self.oid}：{e}")
         else:
             # TODO: 更新wjx_result
             self.status = 500
+            self.close()
 
-    def getStartTimeStamp(self):
-        res = requests.get(self.url, headers=headers)
-        res.encoding = 'utf-8'
-        soup = BeautifulSoup(res.text, 'html.parser')
-        sttime = soup.find(id="divstarttime")
-        if sttime is None:
+    def signUpActivity(self):
+
+        # 线程挂起，直到报名开始前一分钟
+        starttime_stamp = time.mktime(time.strptime(self.time, "%Y-%m-%d %H:%M:%S"))
+        nowtime_stamp = time.time()
+        delay = starttime_stamp - nowtime_stamp - random.randint(10, 60)
+        if delay < 0:
             self.status = 901
-            raise AssertionError("获取活动报名时间失败")
-        y, M, d, h = re.search(r"于(\d+)年(\d+)月(\d+)日 (\d+)点", sttime.text).groups()
-        try:
-            m = re.search(r"(\d+)分", sttime.text).groups()[0]
-        except AttributeError:
-            m = 0
-        date_time = time.strptime(f"{y}-{M}-{d} {h}:{m}", "%Y-%m-%d %H:%M")
-        self.stStamp = int(time.mktime(date_time))
+            raise AssertionError(f"活动已经开始或即将开始报名({delay})，无法执行")
+        time.sleep(delay)
 
-    async def waitUntilStart(self):
-        browser = await launch(headless=True, dumpio=True, autoClose=False,
-                               args=['--no-sandbox', '--window-size=1920,1080', '--disable-infobars'])  # 进入有头模式
-        page = await browser.newPage()  # 打开新的标签页
-        await page.goto(self.url)
-        # await page.waitForSelector('.item .name')
-        # names = [item.text() for item in doc('.item .name').items()]
-        # await browser.close()
-        nowtime_stamp = int(time.time())
-        time.sleep(self.stStamp - nowtime_stamp)
-        # TODO: 获取高匿ip
+        # 获取代理ip
+        pass
 
-    def getQuestions(self):
-        while True:
-            resp = requests.get(self.url, headers=header)
-            text = resp.text
-            print("获取到啦", text)
-            break
+        with sync_playwright() as p:
+
+            # 报名开始后获取问卷内容
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+
+            time.sleep(starttime_stamp - time.time() + 1)
+            page.goto(self.url)
+            nodes = page.query_selector_all(".field.ui-field-contain")
+
+            for node in nodes:
+
+                # 跳过非必填项
+                req_node = node.query_selector('.req')
+                if not req_node:
+                    continue
+
+                # 解析题目和题型
+                text_node = node.query_selector('.topichtml')
+                text = text_node.inner_text()
+                type_node = (node.query_selector_all('div:nth-child(2)'))[1]
+                content = node.inner_html()
+
+                # 填空题
+                if 'ui-input-text' in content:
+                    # 本地匹配
+                    answer = None
+                    for key in self.set.keys():
+                        if key in text:
+                            answer = self.set.get(key)
+                    # 调用大模型获取答案
+                    if not answer:
+                        answer = '大模型'
+                        pass
+                    type_node.query_selector('input').fill(answer)
+
+                # 单选/多选题
+                elif 'ui-radio' in content or 'ui-checkbox' in content:
+                    # 特判
+                    if text == '性别' and self.set['性别'] in ['男', '女']:
+                        page.get_by_text(self.set['性别']).click()
+                        continue
+
+                    # 解析选项
+                    self.status = 911
+                    raise AssertionError("正在开发...")
+                    # options = ''
+                    # option_nodes = type_node.query_selector_all('.label')
+                    # for option in option_nodes:
+                    #     option_text = option.inner_text()
+                    #     options += option_text + '&'
+                    # print("选项：", options)
+                    # # 调用大模型获取答案
+                    # resp = "大模型"
+                    # answers = resp.split('&')
+                    # print(answers)
+                    # for ans in answers:
+                    #     page.get_by_text(ans).click()
+
+                else:
+                    self.status = 910
+                    raise AssertionError(f'遇到未知的问题类型：{type}')
+
+            # 点击提交按钮
+            page.query_selector('#ctlNext').click()
+            time.sleep(10)
+            browser.close()
 
 
 if __name__ == '__main__':
-    task = Taskwjx("123", 'wjx', "a")
-    task.url = "https://www.wjx.top/vm/rWAcLTu.aspx"
-    task.execute()
+    pass
+    # task = Taskwjx()
+    # task.execute()
