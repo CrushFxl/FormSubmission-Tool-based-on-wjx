@@ -95,6 +95,7 @@ def wjx_commit():
     uid = session.get('uid')
     oid = request.form.get('oid')
     wjx_set = json.loads(request.form.get('wjx_set'))
+    remark = request.form.get('remark')
     User.query.filter(User.uid == uid).with_for_update(read=False, nowait=False)  # 锁行
 
     user = User.query.filter(User.uid == uid).first()
@@ -118,8 +119,8 @@ def wjx_commit():
 
     # 更新订单数据
     user.balance -= order.price  # 扣款
-    user.ing += 1  # 进行中订单计数
     order.config['wjx_set'] = wjx_set  # 添加问卷星订单设置
+    order.config['remark'] = remark     # 添加订单备注信息
     flag_modified(order, "config")  # (提交部分json的更改)
     order.ptime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())  # 添加时间戳
     order.status = 300  # 修改订单状态（待接单）
@@ -144,13 +145,10 @@ def cancel():
     if status == '1':  # 待付款时
         order.status = 201
     elif status == '3':  # 排队中时
-        user.ing -= 1
         order.status = 202
         user.balance += order.price
     elif status == '4':  # 进行中时
-        order.status = 203
-        user.ing -= 1
-        user.balance += order.price
+        return {"code": 1001, "msg": "抱歉，暂不支持进行中订单退款"}
     else:  # 不允许退款
         return {"code": 1001, "msg": "当前订单不允许退款"}
     db.session.commit()

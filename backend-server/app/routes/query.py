@@ -55,10 +55,12 @@ def query_orders():
 def query_user():
     uid = session.get('uid')
     user = User.query.filter(User.uid == uid).first()
+    ing = bOrder.query.filter(bOrder.uid == uid, bOrder.status == 400).count()
+    done = bOrder.query.filter(bOrder.uid == uid, bOrder.status == 500).count()
     return {"code": 1000, "user": {"nick": user.nick,
                                    "balance": user.balance,
-                                   "ing": user.ing,
-                                   "done": user.done}}
+                                   "ing": ing,
+                                   "done": done}}
 
 
 # 查询充值订单支付状态

@@ -10,5 +10,3 @@ class User(db.Model):
     mob = db.Column('mob', db.Integer, unique=True, nullable=False)
     pwd = db.Column('pwd', db.Text, nullable=False)
     balance = db.Column('balance', db.Float, nullable=False, default=1.0)
-    ing = db.Column('ing_ods', db.JSON, nullable=False, default=0)
-    done = db.Column('done_ods', db.JSON, nullable=False, default=0)

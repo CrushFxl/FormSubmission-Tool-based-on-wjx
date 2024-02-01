@@ -18,12 +18,17 @@ function request_order(oid){
 
 /*提交订单*/
 function commit_btn(oid){
+
     $.ajax({
         url: URL + "/order/wjx/commit",
         xhrFields: {withCredentials: true},
         type: "POST",
         dataType: "json",
-        data: {"oid": oid, "wjx_set":localStorage.getItem('wjx_set')},
+        data: {
+            "oid": oid,
+            "wjx_set":localStorage.getItem('wjx_set'),
+            "remark": $(".remark_input").val() //将订单备注添加到订单信息中
+        },
         success: function (resp){
             const code = resp['code']
             if(code === 1000){
@@ -72,11 +77,12 @@ function render_order_status(order){
     }else if(s === '2'){
         title = '已关闭';
         $('#feedback_btn').show();
-        if(status === 200) subtitle = '由于超时未付款，此订单已自动关闭'
+        if(status === 200) subtitle = '由于超时未付款，此订单已自动关闭';
+        else if(status === 204) subtitle = '所有服务器忙，无法接受您的订单，已为您退款';
         else subtitle = '订单已成功取消，资金将原路退回'
     }else if(s === '3'){
         title = '待接单';
-        subtitle = '订单正在分发至服务器，这将很快完成...'
+        subtitle = '订单正在分发至服务器，通常这将很快完成'
         $('#refund_btn').show();
     }else if(s === '4'){
         title = '进行中';
@@ -85,7 +91,7 @@ function render_order_status(order){
     }else if(s === '5'){
         title = '已完成';
         subtitle = '订单已完成，感谢您选择WeActive活动托管平台'
-        $('#refund_btn').show();
+        $('#feedback_btn').show();
     }else if(s === '9'){
         title = '发生错误';
         subtitle = '很抱歉，任务过程中遇到技术错误，我们已为您退款'
@@ -206,7 +212,8 @@ window.onload = function () {
                     if(code === 1000){
                         window.location.replace('/wjx_order_detail/?oid='+oid);
                     }else if(code === 1001){
-                        alert("订单状态异常，无法退款");
+                        alert(resp['msg']);
+                        loading_hide();
                     }
                 }
             });
