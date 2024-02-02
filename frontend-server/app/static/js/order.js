@@ -149,6 +149,7 @@ function render_wjx_order(order){
     }else{
         wjx_set = order['config']['wjx_set'];
     }
+
     //渲染代填设置
     let obj = document.getElementById('strategy');
     if(wjx_set['strategy'] === 'ai'){obj.textContent = '智能填写'}
@@ -158,6 +159,20 @@ function render_wjx_order(order){
         $("#wjx_set").append('<p class="od_text mar">遇到' +
             '<span class="label orange_bg s14">' + key + '</span>时，' +
             '填写<span class="label orange_bg s14">' + wjx_set[key] + '</span></p>');
+    }
+
+    //渲染实际回答
+    let wjx_result = order['config']['wjx_result'];
+    if(JSON.stringify(wjx_result) !== "[]"){
+        $('#result').show();
+        for(let que in wjx_result){
+            $("#wjx_result").append('<p class="od_text"><span class="label orange_bg s14">' +
+                '问题</span>' + que + '</p>' +
+                '<p class="od_text mar" style="margin-bottom: 6px"><span class="label pink_bg s14">回答</span>'
+                + wjx_result[que] + '</p>'
+            );
+        }
+        document.getElementById('remark').textContent = order['config']['remark'];
     }
 }
 

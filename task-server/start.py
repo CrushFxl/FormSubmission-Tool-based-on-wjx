@@ -40,6 +40,9 @@ def accept():
 if __name__ == '__main__':
     cherrypy.tree.graft(app.wsgi_app, '/')
     cherrypy.config.update(env_conf[ENV].CHERRYPY)
+    if os.getenv('ENV') == 'production':
+        cherrypy.server.ssl_certificate = "certs/service01.weactive.top.pem"
+        cherrypy.server.ssl_private_key = "certs/service01.weactive.top.key"
     cherrypy.engine.start()
 
     # 从本地读取任务

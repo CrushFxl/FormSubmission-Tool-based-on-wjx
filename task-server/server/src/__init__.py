@@ -1,4 +1,5 @@
 import json
+import os
 import threading
 import time
 from abc import abstractmethod
@@ -24,7 +25,7 @@ class Task:
 
     def execute(self):
         # 特判：检查问卷星任务并发量
-        MAX_TASKS = 5
+        MAX_TASKS = int(os.getenv('MAX_TASKS') or 5)
         if self.type == 'wjx':
             if tTask.query.filter(tTask.unique == self.config['time'], tTask.status == 400).count() >= MAX_TASKS:
                 backend.update(self.oid, 301, self.config)

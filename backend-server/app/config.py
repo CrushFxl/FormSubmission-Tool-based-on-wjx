@@ -13,7 +13,6 @@ class BaseConfig:
 
 class ProductionConfig(BaseConfig):
     FRONTEND_SERVER_DOMAIN = "https://hmc.weactive.top"
-    TASK_SERVER_DOMAIN = "https://service.weactive.top"
 
     SESSION_COOKIE_DOMAIN = ".weactive.top"
     SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')
@@ -23,7 +22,6 @@ class ProductionConfig(BaseConfig):
 
 class DevelopmentConfig(BaseConfig):
     FRONTEND_SERVER_DOMAIN = "http://127.0.0.1"
-    TASK_SERVER_DOMAIN = "http://127.0.0.1:10086"
 
     SQLALCHEMY_DATABASE_URI = "sqlite:///C:/Users/24289/Desktop/weactive.db"
     CHERRYPY = {

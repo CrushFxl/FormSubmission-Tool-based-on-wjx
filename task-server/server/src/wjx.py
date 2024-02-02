@@ -1,12 +1,13 @@
 import json
+import os
 import random
 import time
 
-import playwright
 from playwright.sync_api import sync_playwright
 
 from server.src import Task
 from server.api import gpt
+from server.api import proxy
 from server import app
 
 header = {
@@ -20,6 +21,7 @@ class Taskwjx(Task):
         self.set: dict = self.config['wjx_set']   # 用户设置
         self.time: str = self.config['time']        # 报名开始时间
         self.remark: str = self.config['remark']    # 订单备注
+        self.result: dict = {}                      # 代填快照
 
     def run(self):
         try:
@@ -42,19 +44,24 @@ class Taskwjx(Task):
             raise AssertionError(f"活动已经开始或即将开始报名({delay})，无法执行")
         time.sleep(delay)
 
-        # 获取代理ip
-        pass
-
         with sync_playwright() as p:
 
-            # 报名开始后获取问卷内容
-            browser = p.chromium.launch(headless=False)
+            # 获取代理IP，启动浏览器
+            ip = proxy.getIP()
+            if os.getenv('ENV') == 'production':
+                browser = p.chromium.launch(headless=True,
+                                            proxy={'server': f'http://{ip}'})
+            else:
+                browser = p.chromium.launch(headless=False,
+                                            proxy={'server': f'http://{ip}'})
             page = browser.new_page()
             page.goto(self.url)
 
             time.sleep(starttime_stamp - time.time() + 1)
+
+            # 开始填写问卷
             next_btn = page.wait_for_selector('.button.mainBgColor')
-            time.sleep(1)
+            time.sleep(1)     # 硬延迟
             next_btn.click()
             submit_btn = page.wait_for_selector('#ctlNext')
             nodes = page.query_selector_all(".field.ui-field-contain")
@@ -79,8 +86,9 @@ class Taskwjx(Task):
                         if key in text:
                             answer = self.set.get(key)
                     if not answer:  # 调用大模型获取答案
-                        answer = gpt.getAnswer('【填空题】'+text, self.remark)
-                    type_node.query_selector('input').fill(answer[:10])
+                        answer = gpt.getAnswer('【填空题】'+text, self.remark)[:10]
+                    type_node.query_selector('input').fill(answer)
+                    self.result[f'[填空题] {text}'] = answer
 
                 # 对于单选题&多选题
                 elif 'ui-controlgroup column1' in content:
@@ -91,6 +99,7 @@ class Taskwjx(Task):
                     # 解析选项
                     num = 0
                     options = []
+                    chooses = []
                     options_text = ''
                     option_text_node = type_node.query_selector_all('.label')
                     for option in option_text_node:
@@ -105,6 +114,8 @@ class Taskwjx(Task):
                     for i in range(1, num + 1):
                         if f"[{i}]" in answer:
                             page.get_by_text(options[i - 1]).click()
+                            chooses.append(options[i - 1])
+                    self.result[f'[选择题] {text}'] = "; ".join(chooses)
 
                 # 对于未知类型
                 else:
@@ -117,9 +128,7 @@ class Taskwjx(Task):
             except:
                 self.status = 902
                 raise AssertionError('提交问卷超时')
-
-            page.close()
-            time.sleep(5)
+            self.config['wjx_result'] = self.result
             browser.close()
 
 
@@ -131,7 +140,7 @@ if __name__ == '__main__':
             '姓名': '鲁迪',
             '学号': '6401230103'
         },
-        "time": "2024-02-01 23:40:00",
+        "time": "2024-02-02 20:52:00",
         "remark": "选择上午时间段"
     }))
     with app.app_context():
