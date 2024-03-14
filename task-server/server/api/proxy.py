@@ -16,4 +16,5 @@ def getIP():
     resp = resp.json()
     if resp['code'] != 'SUCCESS':
         raise "提取IP时出现错误：" + resp['code']
+    print(f"获取到代理IP信息：{resp}")
     return resp['data'][0]['server']

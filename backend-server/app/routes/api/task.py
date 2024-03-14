@@ -17,8 +17,7 @@ TASK_SERVER_KEY = os.getenv('TASK_SERVER_KEY')
 
 def getTaskServer():
     task_server_list = [
-        "http://127.0.0.1:10086",
-        "https://service01.weactive.top"
+        "http://service01.w1.luyouxia.net"
     ]
     return random.choice(task_server_list)
 

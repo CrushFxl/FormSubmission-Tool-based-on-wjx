@@ -28,12 +28,12 @@ class Task:
         MAX_TASKS = int(os.getenv('MAX_TASKS') or 5)
         if self.type == 'wjx':
             if tTask.query.filter(tTask.unique == self.config['time'], tTask.status == 400).count() >= MAX_TASKS:
-                backend.update(self.oid, 301, self.config)
+                backend.update(self.oid, 301)
                 return
 
         if not tTask.query.filter(tTask.oid == self.oid).first():
             database.save(self.oid, self.type, json.dumps(self.config), str(self.config['time']))
-            backend.update(self.oid, self.status, self.config)
+            backend.update(self.oid, self.status)
 
         thd = threading.Thread(target=self.run)
         thd.start()

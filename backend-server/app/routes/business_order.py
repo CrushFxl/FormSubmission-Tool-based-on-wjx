@@ -53,12 +53,7 @@ def wjx_pre():
     if sttime is None:
         return {"code": 1005, "msg": "订单创建失败，此活动可能已开始报名或已结束报名，"
                                      "如果对此有疑问，请联系网站管理员。"}
-    y, M, d, h = re.search(r"于(\d+)年(\d+)月(\d+)日 (\d+)点", sttime.text).groups()
-    try:
-        m = re.search(r"(\d+)分", sttime.text).groups()[0]
-    except AttributeError:
-        m = 0
-
+    y, M, d, h, m = re.search(r"于(\d+)-(\d+)-(\d+) (\d+):(\d+)", sttime.text).groups()
     # 预生成订单信息
     current_time = time.localtime()
     uid = session.get('uid')
@@ -75,7 +70,10 @@ def wjx_pre():
     })
 
     # 计算订单价格
-    options = [{"标准": 0.5}, {"内测用户优惠": -0.1}]
+    options = [{"标准": 0.8}]
+    user = User.query.filter(User.uid == uid).first()
+    if user.status == 'class':
+        options.append({"智医班级优惠": -0.6})
     price = 0
     for i in options:
         for k, v in i.items():
@@ -86,6 +84,7 @@ def wjx_pre():
                   options=options, price=price)
     db.session.add(order)
     db.session.commit()
+    print(f"预生成问卷星订单：{oid}，计划开始时间：{y}-{M}-{d} {h}:{m}")
     return {"code": 1000, "oid": oid}
 
 

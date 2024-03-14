@@ -18,7 +18,11 @@ function request_order(oid){
 
 /*提交订单*/
 function commit_btn(oid){
-
+    let remark = $(".remark_input").val();
+    if(remark.includes('；') || remark.includes('：')){
+        alert("订单备注格式有误。分号和冒号应为英文字符，需要在英文输入法状态下输入。");
+        return;
+    }
     $.ajax({
         url: URL + "/order/wjx/commit",
         xhrFields: {withCredentials: true},
@@ -27,7 +31,7 @@ function commit_btn(oid){
         data: {
             "oid": oid,
             "wjx_set":localStorage.getItem('wjx_set'),
-            "remark": $(".remark_input").val() //将订单备注添加到订单信息中
+            "remark": remark //将订单备注添加到订单信息中
         },
         success: function (resp){
             const code = resp['code']
@@ -197,7 +201,6 @@ window.onload = function () {
                         if (order['status'] !== 300) {  //3.如果订单状态改变
                             render_order_status(order);
                             clearInterval(interval);
-                            show_firework();
                         }
                     });
                     count++;

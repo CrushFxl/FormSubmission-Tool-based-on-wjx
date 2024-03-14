@@ -91,8 +91,7 @@
         <div id="ssetTitle">
             <p class="od_title">订单备注</p>
             <div style="justify-content: space-between;align-items: center; width: 100%">
-                <p class="s14 grey2 pt" style="display: flex;align-items: flex-end;margin-top: 4px">
-                选填，可按您的要求进行报名</p>
+                <p class="s14 grey2 pt" style="display: flex;align-items: flex-end;margin-top: 4px">选填，添加更多代填设置</p>
                 <svg class="pt" width="16" height="16" fill="rgb(99,90,210)" viewBox="0 0 16 16" style="margin-top: 2px">
                     <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0
                         .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"></path>
@@ -100,7 +99,7 @@
             </div>
         </div>
         <div id="ssetFolder" style="flex-direction: column">
-            <textarea id='text' class='input remark_input'  maxlength="100" placeholder="例如：帮我报名1月3日（周六）上午的志愿活动" onchange="this.value=this.value.substring(0, 100)" onkeydown="this.value=this.value.substring(0, 100)" onkeyup="this.value=this.value.substring(0, 100)"></textarea>
+            <textarea id='text' class='input remark_input'  maxlength="100" placeholder="(选填) 格式：[关键词]:[选项]，每组用;间隔。例如：时间:3.9;时间:3月9" onchange="this.value=this.value.substring(0, 100)" onkeydown="this.value=this.value.substring(0, 100)" onkeyup="this.value=this.value.substring(0, 100)"></textarea>
         </div>
     </div>
     <p class="blank">(占位)</p>

@@ -46,8 +46,6 @@ def send():
     ctime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
 
     # 检查是否满足注册条件
-    if rCache.query.filter(rCache.ip == ip).count() >= 3:
-        return {"code": 1001}
     if User.query.filter(User.mob == mob).first():
         return {"code": 1002}
 

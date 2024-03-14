@@ -1,4 +1,3 @@
-import json
 import os
 import random
 import time
@@ -6,9 +5,7 @@ import time
 from playwright.sync_api import sync_playwright
 
 from server.src import Task
-from server.api import gpt
 from server.api import proxy
-from server import app
 
 header = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0"
@@ -18,9 +15,16 @@ class Taskwjx(Task):
     def __init__(self, oid, type, config):
         super().__init__(oid, type, config)
         self.url: str = self.config['url']       # 问卷网址
-        self.set: dict = self.config['wjx_set']   # 用户设置
+
+        # 代填设置
+        self.set: list = [[k, v] for k, v in self.config['wjx_set'].items()]
+        self.set.append(["联系方式", self.config['wjx_set']['手机']])
+        self.remark: str = self.config['remark']  # 订单附加信息
+        if self.remark:
+            for i in self.remark.split(';'):
+                self.set.append(i.split(":"))
+
         self.time: str = self.config['time']        # 报名开始时间
-        self.remark: str = self.config['remark']    # 订单备注
         self.result: dict = {}                      # 代填快照
 
     def run(self):
@@ -38,7 +42,7 @@ class Taskwjx(Task):
         # 线程挂起，直到报名开始前一分钟
         starttime_stamp = time.mktime(time.strptime(self.time, "%Y-%m-%d %H:%M:%S"))
         nowtime_stamp = time.time()
-        delay = starttime_stamp - nowtime_stamp - random.randint(10, 60)
+        delay = starttime_stamp - nowtime_stamp - random.randint(25, 40)
         if delay < 0:
             self.status = 901
             raise AssertionError(f"活动已经开始或即将开始报名({delay})，无法执行")
@@ -60,11 +64,16 @@ class Taskwjx(Task):
             time.sleep(starttime_stamp - time.time() + 1)
 
             # 开始填写问卷
-            next_btn = page.wait_for_selector('.button.mainBgColor')
-            time.sleep(1)     # 硬延迟
-            next_btn.click()
-            submit_btn = page.wait_for_selector('#ctlNext')
-            nodes = page.query_selector_all(".field.ui-field-contain")
+            try:
+                next_btn = page.wait_for_selector('.button.mainBgColor')
+                time.sleep(0.3)
+                next_btn.click()
+                submit_btn = page.wait_for_selector('#ctlNext')
+                time.sleep(0.2)
+                nodes = page.query_selector_all(".field.ui-field-contain")
+            except:
+                self.status = 903
+                raise AssertionError(f"超时等待，订单发生预期之外的错误")
 
             for node in nodes:
 
@@ -74,48 +83,46 @@ class Taskwjx(Task):
                     continue
 
                 # 解析题目和题型
-                text_node = node.query_selector('.topichtml')
-                text = text_node.inner_text()   # 题干
-                type_node = (node.query_selector_all('div:nth-child(2)'))[1]    # 选项
+                text = node.query_selector('.topichtml').inner_text()   # 题干
+                type_node = (node.query_selector_all('div:nth-child(2)'))[1]
                 content = node.inner_html()     # 题型
 
                 # 对于填空题
                 if 'ui-input-text' in content:
-                    answer = None   # 本地匹配
-                    for key in self.set.keys():
-                        if key in text:
-                            answer = self.set.get(key)
-                    if not answer:  # 调用大模型获取答案
-                        answer = gpt.getAnswer('【填空题】'+text, self.remark)[:10]
+                    for i in self.set:
+                        if i[0] in text:
+                            answer = i[1];
+                            break
+                    else:
+                        answer = "1"    # 未知情况下填写
                     type_node.query_selector('input').fill(answer)
                     self.result[f'[填空题] {text}'] = answer
 
                 # 对于单选题&多选题
                 elif 'ui-controlgroup column1' in content:
-                    # 特判
-                    if text == '性别' and self.set['性别'] in ['男', '女']:
-                        page.get_by_text(self.set['性别']).click()
-                        continue
-                    # 解析选项
-                    num = 0
-                    options = []
-                    chooses = []
-                    options_text = ''
+                    options = []    # 选项内容列表
+                    self.result[f'[选择题] {text}'] = ''   # 回答内容
                     option_text_node = type_node.query_selector_all('.label')
-                    for option in option_text_node:
-                        num += 1
-                        options.append(option.inner_text())
-                        options_text += f"[{num}]{options[-1]}; "
-                    # 大模型生成回答
-                    if '【多选题】' in text:
-                        answer = gpt.getAnswer('【多选题】' + text[:-5], self.remark, options_text)
-                    else:
-                        answer = gpt.getAnswer('【单选题】' + text, self.remark, options_text)
-                    for i in range(1, num + 1):
-                        if f"[{i}]" in answer:
-                            page.get_by_text(options[i - 1]).click()
-                            chooses.append(options[i - 1])
-                    self.result[f'[选择题] {text}'] = "; ".join(chooses)
+                    for i in option_text_node:
+                        options.append(i.inner_text())
+                    isFind = False
+                    for i in self.set:
+                        if i[0] in text:
+                            for j in range(len(options)):
+                                if i[1] in options[j]:
+                                    tick = j;
+                                    isFind = True
+                                    option_text_node[tick].click()
+                                    self.result[f'[选择题] {text}'] += options[tick]+';';
+                    if not isFind:
+                        if options[0] == '是':
+                            tick = 0;
+                        elif options[1] == '是':
+                            tick = 1;
+                        else:
+                            tick = random.randint(0, len(options) - 1)
+                        option_text_node[tick].click()
+                        self.result[f'[选择题] {text}'] += options[tick]+';';
 
                 # 对于未知类型
                 else:
@@ -130,18 +137,3 @@ class Taskwjx(Task):
                 raise AssertionError('提交问卷超时')
             self.config['wjx_result'] = self.result
             browser.close()
-
-
-if __name__ == '__main__':
-    task = Taskwjx("123456", "wjx", json.dumps({
-        "url": "https://www.wjx.cn/vm/evfoZuA.aspx",
-        "wjx_set": {
-            '班级': '魔法学院1年级3班',
-            '姓名': '鲁迪',
-            '学号': '6401230103'
-        },
-        "time": "2024-02-02 20:52:00",
-        "remark": "选择上午时间段"
-    }))
-    with app.app_context():
-        task.execute()
