@@ -94,7 +94,7 @@ function render_order_status(order){
         $('#refund_btn').show();
     }else if(s === '5'){
         title = '已完成';
-        subtitle = '订单已完成，感谢您选择WeActive活动托管平台'
+        subtitle = '感谢您选择WeActive活动托管平台'
         $('#feedback_btn').show();
     }else if(s === '9'){
         title = '发生错误';

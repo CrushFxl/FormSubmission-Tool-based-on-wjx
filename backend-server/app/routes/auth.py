@@ -4,6 +4,7 @@ import time
 
 from app.models import db
 from app.models.User import User
+from app.models.Discount import Discount
 from app.models.RegisterCache import RegisterCache as rCache
 from app.api.aliyun_sms import send_sm
 
@@ -89,7 +90,11 @@ def register():
                 uid = random.randint(10000, 1000000000)
                 if not User.query.filter(User.uid==uid).first():
                     break
-            db.session.add(User(uid=uid, mob=mob, pwd=pwd))
+            if Discount.query.filter(Discount.mob == mob).first():
+                db.session.add(User(uid=uid, mob=mob, pwd=pwd, status="class"))
+            else:
+                db.session.add(User(uid=uid, mob=mob, pwd=pwd))
+
             db.session.commit()
             session['uid'] = uid
             session.permanent = True

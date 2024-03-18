@@ -11,10 +11,9 @@ url = ("https://share.proxy.qg.net/get"
        "&format=json&distinct=false")
 
 def getIP():
-    # 向后端服务器请求ip地址资源
-    resp = requests.get(url=url)
-    resp = resp.json()
-    if resp['code'] != 'SUCCESS':
-        raise "提取IP时出现错误：" + resp['code']
-    print(f"获取到代理IP信息：{resp}")
-    return resp['data'][0]['server']
+    while True:
+        resp = requests.get(url=url)
+        resp = resp.json()
+        if resp['code'] == 'SUCCESS':
+            return resp['data'][0]['server']
+        print("提取IP时出现错误，尝试重新提取")

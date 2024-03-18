@@ -69,7 +69,6 @@ def commit():
     resp = requests.post('https://open.h5zhifu.com/api/' + env,
                          headers=headers,
                          data=json.dumps(data))
-    print("\n请求拉起resp：", resp.text, "\n")
     resp = resp.json()
     jump_url = resp['data']['jump_url']
     if resp['msg'] != "success" or resp['code'] != 200:
@@ -86,13 +85,10 @@ def commit():
     # 微信H5支付：通过爬虫去掉中间页回调，返回deep_link
     if env == 'h5':
         h5_resp = requests.get(jump_url, headers=headers)
-        print("\n中转h5_resp：", h5_resp.text, "\n")
         wx_url = re.search(r'top.location.href = "(.*?)"', h5_resp.text).groups()[0]
         headers['Referer'] = 'https://service-bejmsi0z-1252021128.sh.apigw.tencentcs.com/'  # 伪装请求头
         wx_resp = requests.get(wx_url, headers=headers)
-        print("\n微信wx_resp：", wx_resp.text, "\n")
         deep_link = re.findall(r'deeplink : "(.*?)"', wx_resp.text)[1]
-        print("\ndeep_link：", deep_link, "\n")
         return {"code": 1000, "msg": "ok", "link": deep_link, "oid": oid}
 
     # 微信内JSAPI支付：直接返回jump_url
@@ -125,6 +121,8 @@ def callback():
     # 账户累加充值金额
     uid = order.uid
     amount = order.price
-    User.query.filter(User.uid == uid).first().balance += amount
+    user = User.query.filter(User.uid == uid).first()
+    user.balance += amount
     db.session.commit()
+    print(f"【用户{user.nick}】充值金额：{amount}.00￥已到账.")
     return "success"

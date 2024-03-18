@@ -1,5 +1,4 @@
 import json
-import os
 import threading
 import time
 from abc import abstractmethod
@@ -24,17 +23,9 @@ class Task:
         self.dtime = '-'                    # 任务完成时间
 
     def execute(self):
-        # 特判：检查问卷星任务并发量
-        MAX_TASKS = int(os.getenv('MAX_TASKS') or 5)
-        if self.type == 'wjx':
-            if tTask.query.filter(tTask.unique == self.config['time'], tTask.status == 400).count() >= MAX_TASKS:
-                backend.update(self.oid, 301)
-                return
-
         if not tTask.query.filter(tTask.oid == self.oid).first():
             database.save(self.oid, self.type, json.dumps(self.config), str(self.config['time']))
             backend.update(self.oid, self.status)
-
         thd = threading.Thread(target=self.run)
         thd.start()
 

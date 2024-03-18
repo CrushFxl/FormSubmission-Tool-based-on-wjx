@@ -73,7 +73,7 @@ def wjx_pre():
     options = [{"标准": 0.8}]
     user = User.query.filter(User.uid == uid).first()
     if user.status == 'class':
-        options.append({"智医班级优惠": -0.6})
+        options.append({"智医班级优惠": -0.4})
     price = 0
     for i in options:
         for k, v in i.items():
@@ -84,7 +84,6 @@ def wjx_pre():
                   options=options, price=price)
     db.session.add(order)
     db.session.commit()
-    print(f"预生成问卷星订单：{oid}，计划开始时间：{y}-{M}-{d} {h}:{m}")
     return {"code": 1000, "oid": oid}
 
 
@@ -125,6 +124,8 @@ def wjx_commit():
     order.status = 300  # 修改订单状态（待接单）
     db.session.commit()
     task.send(oid, order.type, order.config)    # 将订单分发给业务服务器
+    print(f"{time.strptime(order.ctime, '%Y-%m-%d %H:%M:%S')} "
+          f"用户[{user.nick}]提交订单，配置信息：{order.config} \n\n")
     return {"code": 1000, 'msg': 'ok'}
 
 

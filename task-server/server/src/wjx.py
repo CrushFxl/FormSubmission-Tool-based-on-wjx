@@ -19,6 +19,7 @@ class Taskwjx(Task):
         # 代填设置
         self.set: list = [[k, v] for k, v in self.config['wjx_set'].items()]
         self.set.append(["联系方式", self.config['wjx_set']['手机']])
+        self.set.append(["电话", self.config['wjx_set']['手机']])
         self.remark: str = self.config['remark']  # 订单附加信息
         if self.remark:
             for i in self.remark.split(';'):
@@ -29,6 +30,7 @@ class Taskwjx(Task):
 
     def run(self):
         try:
+            print(f"收到订单：{self.config}")
             self.signUpActivity()
         except AssertionError as e:
             print(f"【错误】订单{self.oid}：{e}")
@@ -66,10 +68,8 @@ class Taskwjx(Task):
             # 开始填写问卷
             try:
                 next_btn = page.wait_for_selector('.button.mainBgColor')
-                time.sleep(0.3)
                 next_btn.click()
                 submit_btn = page.wait_for_selector('#ctlNext')
-                time.sleep(0.2)
                 nodes = page.query_selector_all(".field.ui-field-contain")
             except:
                 self.status = 903
@@ -77,10 +77,10 @@ class Taskwjx(Task):
 
             for node in nodes:
 
-                # 跳过非必填项
-                req_node = node.query_selector('.req')
-                if not req_node:
-                    continue
+                # # 跳过非必填项
+                # req_node = node.query_selector('.req')
+                # if not req_node:
+                #     continue
 
                 # 解析题目和题型
                 text = node.query_selector('.topichtml').inner_text()   # 题干
@@ -137,3 +137,4 @@ class Taskwjx(Task):
                 raise AssertionError('提交问卷超时')
             self.config['wjx_result'] = self.result
             browser.close()
+            print(f"成功执行")

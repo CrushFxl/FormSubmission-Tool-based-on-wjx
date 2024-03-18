@@ -13,4 +13,4 @@ class BusinessOrder(db.Model):
     config = db.Column('config', db.JSON, nullable=False)
     options = db.Column('options', db.JSON, nullable=False)
     price = db.Column('price', db.FLOAT, nullable=False)
-    callback = db.Column('callback', db.INTEGER, nullable=False, default=1)
+    callback = db.Column('callback', db.TEXT, nullable=True)
