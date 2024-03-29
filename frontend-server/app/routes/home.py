@@ -27,3 +27,13 @@ def feedback():
 @login_required
 def config():
     return render_template("config.html")
+
+@home_ft.get('/message/')
+@login_required
+def message():
+    return render_template("message.html")
+
+@home_ft.get('/admin/')
+@login_required
+def admin():
+    return render_template("admin.html")

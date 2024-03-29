@@ -8,7 +8,7 @@ from server import app
 from server.api import database
 from server.config import config as env_conf
 from server.src.wjx import Taskwjx
-from server.api.database import Task
+from server.api.database import Task, db
 
 with app.app_context():
     database.db.create_all()
@@ -26,8 +26,18 @@ def accept():
     if Task.query.filter(Task.unique == jsoned_config['time'],
                          Task.status == 400).count() >= MAX_TASKS:
         return {"code": 1001}
-    task = Taskwjx(oid, type, config)
-    task.execute()
+    ptask = Taskwjx(oid, type, config)
+    ptask.execute()
+    return {"code": 1000, "msg": "ok"}
+
+# 修改问卷星订单配置
+@app.post('/modify_remark')
+def modify_remark():
+    oid = request.form.get('oid')
+    new_remark = request.form.get('remark')
+    ptask = Task.query.filter(Task.oid == oid).first()
+    ptask.config = json.loads(new_remark)
+    db.session.commit()
     return {"code": 1000, "msg": "ok"}
 
 

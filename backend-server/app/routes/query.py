@@ -5,8 +5,8 @@ from app.routes.filters import login_required
 from app.models.BusinessOrder import BusinessOrder as bOrder
 from app.models.RechargeOrder import RechargeOrder as rOrder
 from app.models.User import User
-
-
+from app.models.Message import Message
+from app.models import db
 query_bk = Blueprint('query', __name__, url_prefix='/query')
 
 
@@ -73,3 +73,37 @@ def query_recharge_order():
     if recharge_order.uid != str(uid):
         return {"code": 2000, "msg": '拒绝访问'}
     return {"code": 1000, "msg": 'ok', 'status': recharge_order.status}
+
+
+# 查询是否存在未读消息
+@query_bk.post('/msg_check')
+@login_required
+def query_msg_check():
+    uid = session.get('uid')
+    cnt = Message.query.filter(Message.uid == uid, Message.status == 0).count()
+    if cnt:
+        return {"code": 1000, "read": 0}
+    else:
+        return {"code": 1000, "read": 1}
+
+
+# 获取所有消息
+@query_bk.post('/msg_collect')
+@login_required
+def query_msg_collect():
+    uid = session.get('uid')
+    pageObj = (Message.query.filter(Message.uid == uid)
+               .order_by(Message.date.desc())
+               .paginate(page=1, per_page=10))
+    msgObj = pageObj.items
+    message = []
+    for i in msgObj:
+        i = to_json(i)
+        message.append(i)
+
+    msgs = Message.query.filter(Message.uid == uid)
+    for m in msgs:
+        m.status = 1  # 所有消息标记为已读
+    db.session.commit()
+
+    return {"code": 1000, "message": message}

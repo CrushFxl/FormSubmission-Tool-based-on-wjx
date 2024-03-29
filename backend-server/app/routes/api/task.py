@@ -14,8 +14,8 @@ ENV = os.getenv('ENV') or 'production'
 TASK_SERVER_KEY = os.getenv('TASK_SERVER_KEY')
 
 servers = [
-    "http://server02.w1.luyouxia.net",
-    "http://service01.w1.luyouxia.net"
+    "http://service01.w1.luyouxia.net",
+    "http://server02.w1.luyouxia.net"
 ]
 
 
@@ -46,21 +46,26 @@ def update():
 
 
 def send(oid, type, config):
-    proxies = {"http": None, "https": None}
     order = Order.query.filter(Order.oid == oid).first()
+    rjson = {"code": 3000}
     for s in servers:
         resp = requests.post(url=s + '/accept',
                              data={'key': TASK_SERVER_KEY, 'oid': oid,
-                                   'type': type, 'config': json.dumps(config)},
-                             proxies=proxies)
-        rjson = resp.json()
+                                   'type': type, 'config': json.dumps(config)})
+        try:
+            rjson = resp.json()
+        except:
+            pass
         if rjson["code"] == 1000:
             order.callback = s;
             break
     else:
         order.status = 204
         User.query.filter(User.uid == order.uid).first().balance += order.price
+        db.session.commit()
+        return 1001
     db.session.commit()
+    return 1000
 
 
 def cancel(oid):

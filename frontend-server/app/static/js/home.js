@@ -215,6 +215,20 @@ window.onload = function () {
                 }
             }
         });
+        //请求查询未读消息
+        $.ajax({
+            url: URL + "/query/msg_check",
+            xhrFields: {withCredentials: true},
+            type: "POST",
+            dataType: "json",
+            success: function (resp) {
+                if (resp["read"] === 0) {
+                    $('#msg_read').show();
+                }else{
+                    $('#msg_read').hide();
+                }
+            }
+        });
     });
 
     /*点击余额*/
@@ -230,6 +244,11 @@ window.onload = function () {
     /*配置修改按钮*/
     $(document).on("click", "#config_btn", function () {
         window.location.assign("/config");
+    });
+
+    /*我的消息按钮*/
+    $(document).on("click", ".message", function () {
+        window.location.assign("/message");
     });
 
     /*帮助文档按钮*/

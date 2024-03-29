@@ -123,10 +123,10 @@ def wjx_commit():
     order.ptime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())  # 添加时间戳
     order.status = 300  # 修改订单状态（待接单）
     db.session.commit()
-    task.send(oid, order.type, order.config)    # 将订单分发给业务服务器
+    code = task.send(oid, order.type, order.config)    # 将订单分发给业务服务器
     print(f"{time.strptime(order.ctime, '%Y-%m-%d %H:%M:%S')} "
           f"用户[{user.nick}]提交订单，配置信息：{order.config} \n\n")
-    return {"code": 1000, 'msg': 'ok'}
+    return {"code": code, 'msg': 'ok'}
 
 
 @business_order_bk.post('/cancel')

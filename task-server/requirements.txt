@@ -1,7 +1,6 @@
 zhipuai~=2.0.1
 requests~=2.31.0
-playwright~=1.40.0
 flask~=3.0.0
 CherryPy~=18.9.0
-flask_cors~=4.0.0
-flask-sqlalchemy~=3.1.1
+bs4~=0.0.1
+beautifulsoup4~=4.12.2

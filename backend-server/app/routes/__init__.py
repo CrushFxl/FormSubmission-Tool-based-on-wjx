@@ -4,6 +4,7 @@ from .business_order import business_order_bk
 from .query import query_bk
 from .recharge_order import recharge_order_bk
 from .api.task import task_bk
+from .admin import admin_bk
 
 routes = [
     auth_bk,
@@ -11,5 +12,6 @@ routes = [
     business_order_bk,
     query_bk,
     recharge_order_bk,
-    task_bk
+    task_bk,
+    admin_bk
 ]

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>WeActive - 超级管理员</title>
+    <link rel="shortcut icon" href="../static/img/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="../static/css/public.css">
+    <style>
+        .input{
+            margin: 7px;
+            width: 85%;
+        }
+        .feedback_input{
+            text-align: unset;
+            margin: 10px 0 15px 0;
+            padding: 10px;
+            height: 200px;
+            resize: none;
+            box-sizing: border-box;
+            font-family: "PingFang SC", "Microsoft YaHei", "sans-serif";
+            text-indent: 0;
+        }
+        .btn{
+            bottom: 20px;
+            width: 90%;
+            max-width: 85%;
+            height: 35px;
+        }
+    </style>
+</head>
+<body style="background-color: #FAFAFA">
+    <p id="URL" class="hide">{{URL}}</p>
+    <div id="top_nav" class="box sd0" style="align-items: center">
+        <div id="back">
+            <svg width="17px" height="17px" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"></path>
+            </svg>
+        </div>
+        <p class="s18 grey3">管理员页面</p>
+    </div>
+    <div class="blank">(占位)</div>
+
+    <p class="s19 bold" style="margin: 15px 0 5px 0">发送邮件</p>
+    <input id="uid1" class="input" type="text" name="uid1" placeholder="发送人（UID）">
+    <input id="title1" class="input" type="text" name="title1" placeholder="邮件标题">
+    <textarea id='content1' class='input feedback_input' placeholder="邮件正文"></textarea>
+    <button id='send_msg_btn' class="btn">发送邮件</button>
+
+    <p class="s19 bold" style="margin: 15px 0 5px 0">修改备注</p>
+    <input id="oid1" class="input" type="text" name="uid1" placeholder="订单编号（OID）">
+    <button id='query_btn' class="btn">查询</button>
+    <input id="user1" class="input" type="text" name="title1" placeholder="用户昵称/UID" readonly>
+    <textarea id="remark1" class="input feedback_input" placeholder="订单备注"></textarea>
+    <button id='modify_btn' class="btn">修改订单</button>
+
+    <div class="blank" style="height: 60px">(占位)</div>
+</body>
+<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+<script src="../static/js/public.js"></script>
+<script>
+    $(document).on("click", "#query_btn", function () {
+        $.ajax({
+            url: $('#URL').text() + "/admin/query_order",
+            xhrFields: {withCredentials: true},
+            type: "POST",
+            dataType: "json",
+            data: {"oid": $('#oid1').val(),},
+            success: function (resp){
+                const nick = resp['nick'];
+                const uid = resp['uid'];
+                const remark = resp['remark'];
+                $('#user1').val(nick + " " + uid);
+                $('#remark1').val(JSON.stringify(remark));
+            }
+        });
+    });
+
+    $(document).on("click", "#modify_btn", function () {
+        $.ajax({
+            url: $('#URL').text() + "/admin/modify_order",
+            xhrFields: {withCredentials: true},
+            type: "POST",
+            dataType: "json",
+            data: {"oid": $('#oid1').val(),"remark":$('#remark1').val()},
+            success: function (resp){
+                if(resp['code'] === 1000){
+                    alert("修改成功");
+                }
+            }
+        });
+    });
+
+    $(document).on("click", "#send_msg_btn", function () {
+        $.ajax({
+            url: $('#URL').text() + "/admin/send_msg",
+            xhrFields: {withCredentials: true},
+            type: "POST",
+            dataType: "json",
+            data: {"uid": $('#uid1').val(),
+                "title": $('#title1').val(),
+                "content": $('#content1').val()
+            },
+            success: function (resp){
+                const nick = resp['nick'];
+                alert('发送成功，已将邮件发至用户' + nick);
+            }
+        });
+    });
+</script>
+</html>
