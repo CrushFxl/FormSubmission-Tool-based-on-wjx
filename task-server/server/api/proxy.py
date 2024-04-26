@@ -27,4 +27,4 @@ def getIP():
         resp = resp.json()
         if resp['code'] == 'SUCCESS':
             return resp['data'][0]['server']
-        print("提取IP时出现错误，尝试重新提取")
+        # print("提取IP时出现错误，尝试重新提取")

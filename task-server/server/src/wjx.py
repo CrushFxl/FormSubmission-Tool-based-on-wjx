@@ -1,3 +1,4 @@
+import datetime
 import json
 import random
 import re
@@ -102,7 +103,8 @@ class Taskwjx(Task):
             self.getPostURL()
             self.submit()
         except AssertionError as e:
-            print(f"【错误】订单{self.oid}：{e}")
+            print(f"【{datetime.datetime.now().strftime('%Y-%m-%d  %H:%M:%S')}】"
+                  f"【错误】订单{self.oid}：{e}")
         else:
             self.status = 500
         finally:
@@ -137,12 +139,12 @@ class Taskwjx(Task):
         for i in range(10):
             try:
                 resp = requests.get(url=self.url, headers=header_get,
-                                    timeout=3, proxies=self.proxies)
+                                    timeout=3)
                 assert 'divQuestion' in resp.text
                 self.content = resp.text
                 success = True
             except AssertionError:
-                print("未开始，尝试轮询...")
+                # print("未开始，尝试轮询...")
                 time.sleep(1)
             except requests.exceptions.Timeout:
                 print("【警告】连接超时")
@@ -228,16 +230,16 @@ class Taskwjx(Task):
             raise AssertionError('无权或无效的代理IP')
         if '10〒' in resp.text:
             self.config['wjx_result'] = self.result
-            print(f'【提示】订单{self.oid}成功执行')
+            print(f'【{datetime.datetime.now().strftime("%Y-%m-%d  %H:%M:%S")}】'
+                  f'【提示】订单{self.oid}成功执行')
         elif '9〒' in resp.text:
             self.status = 907
             raise AssertionError('构造参数有误')
-        elif '7〒' in resp.text:
+        elif '7〒' in resp.text or '22' in resp.text:
             self.status = 908
             raise AssertionError('提交问卷时被拦截')
         else:
             self.status = 909
-            print(resp.text)
             raise AssertionError('提交时发生未知错误')
 
 

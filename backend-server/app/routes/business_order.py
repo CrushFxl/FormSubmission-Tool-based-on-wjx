@@ -70,7 +70,7 @@ def wjx_pre():
     })
 
     # 计算订单价格
-    options = [{"标准": 0.8}]
+    options = [{"标准": 0.8}, {"五一节前限免": -0.79}]
     user = User.query.filter(User.uid == uid).first()
     if user.status == 'class':
         options.append({"智医班级优惠": -0.4})
