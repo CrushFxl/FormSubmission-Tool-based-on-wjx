@@ -1,4 +1,4 @@
-/*向服务器请求订单信息（Promise）*/
+/*向服务器请求活动信息（Promise）*/
 function request_order(oid){
     return new Promise((resolve) => {
         $.ajax({
@@ -16,11 +16,11 @@ function request_order(oid){
     });
 }
 
-/*提交订单*/
+/*提交活动*/
 function commit_btn(oid){
     let remark = $(".remark_input").val();
     if(remark.includes('；') || remark.includes('：')){
-        alert("订单备注格式有误。分号和冒号应为英文字符，需要在英文输入法状态下输入。");
+        show_tip("报名备注格式有误。");
         return;
     }
     $.ajax({
@@ -31,7 +31,7 @@ function commit_btn(oid){
         data: {
             "oid": oid,
             "wjx_set":localStorage.getItem('wjx_set'),
-            "remark": remark //将订单备注添加到订单信息中
+            "remark": remark //将活动备注添加到活动信息中
         },
         success: function (resp){
             const code = resp['code']
@@ -67,70 +67,70 @@ function show_firework() {
     frame();
 }
 
-/*渲染订单状态*/
+/*渲染活动状态*/
 function render_order_status(order){
     const status = order['status'];
     const s = status.toString()[0]
     let title = '';
     let subtitle = '';
     if(s === '1'){
-        title = '待付款';
-        subtitle = '待付款，15分钟后订单将自动取消'
+        title = '待确认';
+        subtitle = '待确认，15分钟后活动将自动取消'
         $('#commit_btn').show();
         $('#refund_btn').show();
     }else if(s === '2'){
         title = '已关闭';
         $('#feedback_btn').show();
-        if(status === 200) subtitle = '由于超时未付款，此订单已自动关闭';
-        else if(status === 204) subtitle = '所有服务器忙，无法接受您的订单，已为您退款';
-        else subtitle = '订单已成功取消，资金将原路退回'
+        if(status === 200) subtitle = '由于超时未确认，此活动已自动关闭';
+        else if(status === 204) subtitle = '所有服务器忙，无法接受您的活动，已为您取消';
+        else subtitle = '活动已成功取消，资金将原路退回'
     }else if(s === '3'){
-        title = '待接单';
-        subtitle = '订单正在分发至服务器，通常这将很快完成'
+        title = '已报名';
+        subtitle = '已参与报名，正在等待更多人报名...'
         $('#refund_btn').show();
     }else if(s === '4'){
-        title = '进行中';
-        subtitle = '我们已收到您的付款，订单任务开始进行'
+        title = '已报名';
+        subtitle = '已收到报名，正在等待更多人报名...'
         $('#refund_btn').show();
     }else if(s === '5'){
-        title = '已完成';
-        subtitle = '感谢您选择WeActive活动托管平台'
+        title = '已结束';
+        subtitle = '感谢使用WeActive活动信息聚合平台'
         $('#feedback_btn').show();
     }else if(s === '9'){
         title = '发生错误';
-        subtitle = '很抱歉，任务过程中遇到技术错误，我们已为您退款'
+        subtitle = '很抱歉，任务过程中遇到技术错误，活动已取消'
         $('#feedback_btn').show();
     }
-    $("#title").text('订单'+title);
+    $("#title").text('活动'+title);
     $("#subtitle").text(subtitle);
 }
 
-/*渲染确认订单页和详情页*/
+/*渲染确认活动页和详情页*/
 function render_wjx_order(order){
-    /*渲染订单主要信息*/
+    /*渲染活动主要信息*/
     render_order_status(order)
     if(order["type"] === 'wjx') {
-        $('#type').text('问卷星活动代抢服务');
+        $('#type').text('问卷星活动报名');
         $("#wjx_title").text(order["config"]["title"]);
         $("#wjx_time").text(order["config"]["time"]);
     }
 
-    /*渲染订单价格信息*/
+    /*渲染活动积分信息*/
     const options = order['options'];
     for(let i=0;i<options.length;i++){
         let option = options[i];
         let name = Object.keys(option)[0];
-        let price = Object.values(option)[0].toFixed(2);
+        let price = Object.values(option)[0].toFixed(1);
         if(price < 0){
             $('#options').append('<div style="justify-content: space-between">\n' +
             '                <p class="s16 grey3 dt_gap">'+ name +'</p>\n' +
-            '                <p class="s16 grey3 red">'+ price +'￥</p>\n' +
+            '                <p class="s16 grey3 red">'+ price +'分</p>\n' +
             '            </div>'
             )
         }else{
             $('#options').append('<div style="justify-content: space-between">\n' +
             '                <p class="s16 grey3 dt_gap">'+ name +'</p>\n' +
-            '                <p class="s16 grey3">'+ price +'￥</p>\n' +
+            '                <p class="s16 grey3">'+ price +'分</p>\n' +
             '            </div>'
             )
         }
@@ -138,7 +138,7 @@ function render_wjx_order(order){
     const price = order["price"].toFixed(2);
     $(".price").text(price);
 
-    /*渲染订单详细信息*/
+    /*渲染活动详细信息*/
     $("#oid").text(order['oid']);
     $("#ctime").text(order['ctime']);
     $("#ptime").text(order['ptime']);
@@ -146,7 +146,7 @@ function render_wjx_order(order){
 
     /* =================== 具体业务 =================== */
 
-    //从订单或本地读取代填设置
+    //从活动或本地读取信息设置
     let wjx_set;
     if(JSON.stringify(order['config']['wjx_set']) === '{}') {
         wjx_set = JSON.parse(localStorage.getItem('wjx_set'));
@@ -156,14 +156,14 @@ function render_wjx_order(order){
 
     //渲染代填设置
     let obj = document.getElementById('strategy');
-    if(wjx_set['strategy'] === 'ai'){obj.textContent = '智能填写'}
-    else{obj.textContent = '放弃报名'}
     delete wjx_set['strategy'];
+    delete wjx_set['delay'];
     for(let key in wjx_set){
         $("#wjx_set").append('<p class="od_text mar">遇到' +
             '<span class="label orange_bg s14">' + key + '</span>时，' +
             '填写<span class="label orange_bg s14">' + wjx_set[key] + '</span></p>');
     }
+
 
     //渲染实际回答
     let wjx_result = order['config']['wjx_result'];
@@ -185,11 +185,11 @@ window.onload = function () {
     const params = new URLSearchParams(window.location.search);
     const oid = params.get('oid');
 
-    //请求并渲染订单
+    //请求并渲染活动
     let p = request_order(oid);
     p.then(order => {
       render_wjx_order(order);  //1. 先请求并渲染整个页面
-        if (order['status'] === 300) {//2. 如果订单状态为待接单，进入轮询
+        if (order['status'] === 300) {//2. 如果活动状态为待报名，进入轮询
             let count = 0;
             const interval = setInterval(() => {
                 if (count >= 5) {
@@ -198,7 +198,7 @@ window.onload = function () {
                     p = request_order(oid);
                     p.then(newOrder => {
                         order = newOrder;
-                        if (order['status'] !== 300) {  //3.如果订单状态改变
+                        if (order['status'] !== 300) {  //3.如果活动状态改变
                             render_order_status(order);
                             clearInterval(interval);
                         }
@@ -209,15 +209,15 @@ window.onload = function () {
         }
     });
 
-    /*提交订单按钮*/
+    /*提交活动按钮*/
     $(document).on("click", "#commit_btn", function () {
         loading_show();
         commit_btn(oid);
     });
 
-    /*取消订单按钮*/
+    /*取消活动按钮*/
     $(document).on("click", "#refund_btn", function () {
-        if(confirm("您确实要取消订单吗")){
+        if(confirm("您确实要取消报名吗")){
             loading_show();
             $.ajax({
                 url: URL + "/order/cancel",

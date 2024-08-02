@@ -117,7 +117,7 @@ class Taskwjx(Task):
         self.wjx_set.append(["联系方式", self.config['wjx_set']['手机']])
         self.wjx_set.append(["电话", self.config['wjx_set']['手机']])
         self.wjx_set.append(["是否", "是"])
-        remark = self.config['remark']  # 订单备注
+        remark = self.config['remark']  # 备注
         if remark:
             for i in remark.split(';'):
                 self.wjx_set.append(i.split(":"))
@@ -237,7 +237,7 @@ class Taskwjx(Task):
             raise AssertionError('构造参数有误')
         elif '7〒' in resp.text or '22' in resp.text:
             self.status = 908
-            raise AssertionError('提交问卷时被拦截')
+            raise AssertionError('提交问卷时出错')
         else:
             self.status = 909
             raise AssertionError('提交时发生未知错误')
@@ -249,8 +249,8 @@ if __name__ == '__main__':
         "wjx_set": {
             '班级': '魔法学院1年级3班',
             '姓名': '鲁迪乌斯',
-            '学号': '6401230103',
-            '手机': '18768594590'
+            '学号': '0000000000',
+            '手机': '0000000000'
         },
         "time": "2024-03-28 00:13:00",
         "remark": ""

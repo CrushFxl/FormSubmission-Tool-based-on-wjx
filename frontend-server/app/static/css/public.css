@@ -112,6 +112,62 @@ div{
     -webkit-appearance: none;
 }
 
+.btn3{
+    border-radius: 3px;
+    border: 1px #4d9a39 solid;
+    color: #4d9a39;
+    background-color: #FFFFFF;
+    font-size: 90%;
+    display: block;
+    margin-top: 6px;
+    height: 30px;
+    width: 55px;
+    justify-content: center;
+    transition: all, 300ms;
+    cursor: pointer;
+}
+
+.btn3:hover{
+    border-radius: 3px;
+    border: 1px #4d9a39 solid;
+    color: #FFFFFF;
+    background-color: #4d9a39;
+    font-size: 90%;
+    display: block;
+    margin-top: 6px;
+    height: 30px;
+    width: 55px;
+}
+
+.btn4{
+    border-radius: 3px;
+    border: 1px #5646f5 solid;
+    color: #5646f5;
+    background-color: #FFFFFF;
+    font-size: 90%;
+    display: block;
+    margin-top: 6px;
+    height: 30px;
+    width: 55px;
+    justify-content: center;
+    transition: all, 300ms;
+    cursor: pointer;
+}
+
+.btn4:hover{
+    border-radius: 3px;
+    border: 1px #5646f5 solid;
+    color: #FFFFFF;
+    background-color: #5646f5;
+    font-size: 90%;
+    display: block;
+    margin-top: 6px;
+    height: 30px;
+    width: 55px;
+}
+
+
+
 #footer{
     bottom: 10px;
     font-size: 14px;
@@ -174,6 +230,24 @@ div{
     width: 130px;
     height: 130px;
     z-index: 1001;
+}
+
+.tip_box{
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 15px;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 50px;
+    margin: auto auto;
+    z-index: 1001;
+}
+
+.tip_text{
+    font-weight: bold;
+    color: rgb(99,90,210);
 }
 
 .loading_text{
@@ -250,6 +324,16 @@ div{
 }
 
 #top_nav{
+    z-index: 10;
+    width: 100%;
+    height: 50px;
+    justify-content: space-around;
+    position: fixed;
+    top: 0;
+    border-radius: 0;
+}
+
+.top_nav{
     z-index: 10;
     width: 100%;
     height: 50px;

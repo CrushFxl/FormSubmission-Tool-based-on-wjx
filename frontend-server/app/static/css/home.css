@@ -81,7 +81,7 @@ body{
     justify-content: center;
     margin-top: 20px;
 }
-#getActivity_btn, #getVideo_btn{
+#getActivity_btn, #getVideo_btn, #analysis_btn{
     margin: 10px;
     padding: 16px;
 }
@@ -99,10 +99,34 @@ body{
 
 .temp_menu{
     align-items: center;
-    background-image: linear-gradient(to right, #6f6479 0%, #576881 100%);
+    background-image: linear-gradient(to right, #2ea3b2 0%, #619612 100%);
     border-radius: 10px;
     padding: 10px 10px 10px 15px;
 }
+
+.temp_menu:hover{
+    align-items: center;
+    background-image: linear-gradient(to right, #2b8f8c 0%, #55830e 100%);
+    border-radius: 10px;
+    padding: 10px 10px 10px 15px;
+    cursor: pointer;
+}
+
+.ana_menu{
+    align-items: center;
+    background-image: linear-gradient(to right, #564b49 0%, #393748 100%);
+    border-radius: 10px;
+    padding: 10px 10px 10px 15px;
+}
+
+.ana_menu:hover{
+    align-items: center;
+    background-image: linear-gradient(to right, #413b38 0%, #3a374d 100%);
+    border-radius: 10px;
+    padding: 10px 10px 10px 15px;
+    cursor: pointer;
+}
+
 .menu:hover{
     transition: all, 300ms;
     background-image: linear-gradient(to right, #8038ce 0%, #3a7ef3 100%);

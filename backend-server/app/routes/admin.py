@@ -47,7 +47,7 @@ def query_order():
     return {"code": 1000, "nick": nick, "uid": uid, "remark": remark}
 
 
-# 修改订单备注
+# 修改备注
 @admin_bk.post('/modify_order')
 @login_required
 def modify_order():

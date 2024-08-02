@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>WeActive - 确认订单</title>
+    <title>WeActive - 确认报名</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="viewport" content="minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -31,7 +31,7 @@
                 <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"></path>
             </svg>
         </div>
-        <p class="s18  grey2">确认订单</p>
+        <p class="s18  grey2">确认报名</p>
     </div>
     <div class="blank">(占位)</div>
     <div id="orderBox" class="od_box box sd1">
@@ -60,15 +60,15 @@
         <div class="od_line"></div>
         <div id='options' style="flex-direction: column"></div>
         <div style="justify-content: end; margin-top: 10px; width: 100%">
-            <p>小计：<span class="bold s16"></span><span class="bold s17 price"></span>￥</p>
+            <p>小计：<span class="bold s16"></span><span class="bold s17 price"></span>分</p>
         </div>
     </div>
     <div id="setBox" class="od_box box sd1">
         <div id="setTitle">
-            <p class="od_title">代填设置</p>
+            <p class="od_title">信息设置</p>
             <div style="justify-content: space-between;align-items: center; width: 100%">
                 <p class="s14 grey2 pt" style="display: flex;align-items: flex-end;margin-top: 4px">
-                可在"我的"-"配置修改"中更改</p>
+                可在"我的"-"个人信息"中更改</p>
                 <svg class="pt" width="16" height="16" fill="rgb(99,90,210)" viewBox="0 0 16 16" style="margin-top: 2px;">
                         <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0
                         .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"></path>
@@ -79,19 +79,14 @@
             <div class="od_line"></div>
             <div class="od_ex">
                 <p id="wjx_set" class="od_li"></p>
-                <p class="s14 grey3 mar">
-                    *若遇到未知问题，默认采取
-                    <span id="strategy" class="label pink_bg s13"></span>
-                    策略
-                </p>
             </div>
         </div>
     </div>
     <div id="ssetBox" class="od_box box sd1">
         <div id="ssetTitle">
-            <p class="od_title">订单备注</p>
+            <p class="od_title">报名备注</p>
             <div style="justify-content: space-between;align-items: center; width: 100%">
-                <p class="s14 grey2 pt" style="display: flex;align-items: flex-end;margin-top: 4px">选填，添加更多代填设置</p>
+                <p class="s14 grey2 pt" style="display: flex;align-items: flex-end;margin-top: 4px">选填</p>
                 <svg class="pt" width="16" height="16" fill="rgb(99,90,210)" viewBox="0 0 16 16" style="margin-top: 2px">
                     <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0
                         .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"></path>
@@ -99,17 +94,12 @@
             </div>
         </div>
         <div id="ssetFolder" style="flex-direction: column">
-            <textarea id='text' class='input remark_input'  maxlength="100" placeholder="(选填) 格式：[关键词]:[选项]，每组用;间隔。例如：时间:3.9;时间:3月9" onchange="this.value=this.value.substring(0, 100)" onkeydown="this.value=this.value.substring(0, 100)" onkeyup="this.value=this.value.substring(0, 100)"></textarea>
+            <textarea id='text' class='input remark_input'  maxlength="100" placeholder="(选填) 用于补充更多报名信息" onchange="this.value=this.value.substring(0, 100)" onkeydown="this.value=this.value.substring(0, 100)" onkeyup="this.value=this.value.substring(0, 100)"></textarea>
         </div>
     </div>
     <p class="blank">(占位)</p>
     <div class="od_nav box sd1">
-        <div class="od_price">
-            <p class="s15 bold grey3" style="margin: 2px 5px 0 0">合计: </p>
-            <span class="s15 bold" style="margin-top: 5px;color:rgb(99,90,210);">￥</span>
-            <span class="bold price" style="color:rgb(99,90,210);font-size: 23px;"></span>
-        </div>
-        <input id="commit_btn" type="button" class="btn1" value="立即付款">
+        <input id="commit_btn" type="button" class="btn1" value="确认报名">
     </div>
 </body>
 <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>

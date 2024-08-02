@@ -51,10 +51,10 @@ def wjx_pre():
     soup = BeautifulSoup(res.text, 'html.parser')
     sttime = soup.find(id="divstarttime")
     if sttime is None:
-        return {"code": 1005, "msg": "订单创建失败，此活动可能已开始报名或已结束报名，"
+        return {"code": 1005, "msg": "创建失败，此活动可能已开始报名或已结束报名，"
                                      "如果对此有疑问，请联系网站管理员。"}
     y, M, d, h, m = re.search(r"于(\d+)-(\d+)-(\d+) (\d+):(\d+)", sttime.text).groups()
-    # 预生成订单信息
+    # 预生成活动信息
     current_time = time.localtime()
     uid = session.get('uid')
     oid = (str(int(time.time() * 1000)) + '01'
@@ -69,11 +69,9 @@ def wjx_pre():
         "wjx_result": []
     })
 
-    # 计算订单价格
-    options = [{"标准": 0.8}, {"五一节前限免": -0.79}]
+    # 计算积分
+    options = [{"活动参与": 1.0},]
     user = User.query.filter(User.uid == uid).first()
-    if user.status == 'class':
-        options.append({"智医班级优惠": -0.4})
     price = 0
     for i in options:
         for k, v in i.items():
@@ -81,7 +79,7 @@ def wjx_pre():
 
     # 写入数据库
     order = Order(oid=oid, uid=uid, type=type, ctime=ctime, config=config,
-                  options=options, price=price)
+                  options=options, price=price, callback=1)
     db.session.add(order)
     db.session.commit()
     return {"code": 1000, "oid": oid}
@@ -99,33 +97,33 @@ def wjx_commit():
     user = User.query.filter(User.uid == uid).first()
     order = Order.query.filter(Order.uid == uid, Order.oid == oid).first()
 
-    # 检查订单状态
+    # 检查活动状态
     if order.status not in [0, 100]:
-        return {"code": 1002, "msg": "当前订单正在进行或已被关闭，无法付款"}
+        return {"code": 1002, "msg": "当前活动正在进行或已被关闭"}
     ctime = time.mktime(time.strptime(order.ctime, '%Y-%m-%d %H:%M:%S'))
     current_time = time.time()
     if current_time - ctime > 900:
         order.status = 200
         db.session.commit()
-        return {"code": 1003, "msg": "由于长时间未支付，订单已自动关闭"}
+        return {"code": 1003, "msg": "由于长时间未报名，报名已自动关闭"}
 
-    # 检查用户余额
+    # 检查用户积分
     if order.price > user.balance:
         order.status = 100
         db.session.commit()
-        return {"code": 1001, "msg": '付款失败，账户余额不足'}
+        return {"code": 1001, "msg": '报名失败，积分不足'}
 
-    # 更新订单数据
+    # 更新活动数据
     user.balance -= order.price  # 扣款
-    order.config['wjx_set'] = wjx_set  # 添加问卷星订单设置
-    order.config['remark'] = remark     # 添加订单备注信息
+    order.config['wjx_set'] = wjx_set  # 添加问卷星活动设置
+    order.config['remark'] = remark     # 添加备注信息
     flag_modified(order, "config")  # (提交部分json的更改)
     order.ptime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())  # 添加时间戳
-    order.status = 300  # 修改订单状态（待接单）
+    order.status = 300  # 修改活动状态（待接单）
     db.session.commit()
-    code = task.send(oid, order.type, order.config)    # 将订单分发给业务服务器
+    code = task.send(oid, order.type, order.config)    # 将活动分发给业务服务器
     print(f"{time.strptime(order.ctime, '%Y-%m-%d %H:%M:%S')} "
-          f"用户[{user.nick}]提交订单，配置信息：{order.config} \n\n")
+          f"用户[{user.nick}]提交活动，配置信息：{order.config} \n\n")
     return {"code": code, 'msg': 'ok'}
 
 
@@ -141,16 +139,16 @@ def cancel():
 
     status = str(order.status)[0]
 
-    # 更新订单状态
+    # 更新活动状态
     if status == '1':  # 待付款时
         order.status = 201
     elif status == '3':  # 排队中时
         order.status = 202
         user.balance += order.price
     elif status == '4':  # 进行中时
-        return {"code": 1001, "msg": "抱歉，暂不支持进行中订单退款"}
+        return {"code": 1001, "msg": "抱歉，暂不支持进行中活动退款"}
     else:  # 不允许退款
-        return {"code": 1001, "msg": "当前订单不允许退款"}
+        return {"code": 1001, "msg": "当前活动不允许退款"}
     db.session.commit()
 
     return {"code": 1000, "msg": 'ok'}

@@ -5,6 +5,14 @@
     height: auto;
 }
 
+.ac_box{
+    min-width: 100%;
+    padding: 10px 20px;
+    margin-bottom: 5px;
+    flex-direction: column;
+    height: auto;
+}
+
 .od_title{
     color: rgb(99,90,210);
     font-weight: bold;

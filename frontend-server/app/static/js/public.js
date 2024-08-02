@@ -71,7 +71,24 @@ function loading_show(){
 
 }
 
+function show_tip(text){
+    let $body = $("body")
+    $('.loading').empty()
+    $('body .loading.loading_tip').remove();
+    $body.append('<div class="loading loading_tip" style="white-space: pre-line; flex-direction: column">' +
+            '<div class="tip_box box sd2">' +
+                '<p class="grey3 s14">'+ text +'</p><button class="btn3 close">关闭</button>' +
+            '</div>' +
+        '</div>');
+    $('.loading').show()
+}
+
 function loading_hide(){
+    $(".loading").hide()
+}
+
+function hide_tip(){
+    $(".loading_tip").hide()
     $(".loading").hide()
 }
 
@@ -101,6 +118,7 @@ function changePage(obj){
 
 /*点击返回按钮*/
 $(document).on("click", "#back", function () {history.back();});
+$(document).on("click", ".close", function () {hide_tip();});
 
 /*实现od_box折叠展开*/
 $(document).on("click", "#setTitle", function () {$("#setFolder").toggle(200);});

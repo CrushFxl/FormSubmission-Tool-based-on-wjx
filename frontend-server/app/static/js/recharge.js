@@ -29,7 +29,7 @@ window.onload = function (){
         }
     }
 
-    /*改变付款方式*/
+    /*改变方式*/
     let payment = 'wechat'; // 默认微信
     $(document).on("click", "#alipay", function () {
         $('#alipay_btn').prop("checked", true);

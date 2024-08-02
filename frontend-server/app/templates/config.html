@@ -2,7 +2,7 @@
 <html lang="zh-CN" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
-    <title>WeActive - 配置修改</title>
+    <title>WeActive - 个人信息</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="viewport" content="minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -44,12 +44,19 @@
                 <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"></path>
             </svg>
         </div>
-        <p class="s18 grey3">配置修改</p>
+        <p class="s18 grey3">信息修改</p>
     </div>
     <div class="blank">(占位)</div>
-    <p class="s14 grey3">我们重视您的隐私安全，下列信息将只用于相关业务</p>
+    <p class="s14 grey3">我们重视您的隐私安全，下列信息将只用于活动报名</p>
+    <div id='score' class="conf_box box sd0" style="">
+        <p class="s18 bold grey3" style="margin-bottom: 10px">信用积分</p>
+        <div style="flex-direction: column; align-items: center;">
+            <div style="font-size: 30px; color: #4d9a39; font-weight: bold; margin: 0 0 5px 5px">100</div>
+            <div class="grey3" style="font-size: 15px;margin-bottom: 5px">太棒啦！你按时参与了所有活动~ </div>
+        </div>
+    </div>
     <div id='wjx_set' class="conf_box box sd0" style="">
-        <p class="s18 bold grey3" style="margin-bottom: 10px">问卷星活动代抢设置</p>
+        <p class="s18 bold grey3" style="margin-bottom: 10px">问卷星活动报名</p>
         <div id="banji" class="s16 text_box" style="align-items: center">
             <p>当遇到<span class="label orange_bg side">班级</span>时，填写</p>
             <input type="text" class="conf_input input">
@@ -83,7 +90,7 @@
             <input type="text" class="conf_input input">
         </div>
         <!-- 有新选项时可以直接在这ctrl+CV -->
-        <p class="s15 text_box grey3" style="align-items: center; margin: 10px 0 3px 6px">
+        <p class="s15 text_box grey3 hide" style="align-items: center; margin: 10px 0 3px 6px">
             若遇到未知问题，采取
             <select id="strategy" class="conf_input input" style="width: 90px; text-indent: 2px">
                 <option>随机回答</option>
@@ -92,7 +99,7 @@
         </p>
         <p id="ai" class="s14 grey2 tip hide">- 随机回答：填空题填1，选择题随机选择</p>
         <p id="fail" class="s14 grey2 tip hide">- 放弃报名：终止任务，订单将退款给您</p>
-        <p class="s15 text_box grey3" style="align-items: center; margin: 10px 0 3px 6px">
+        <p class="s15 text_box grey3 hide" style="align-items: center; margin: 10px 0 3px 6px">
             延迟提交：等待
             <select id="delay" class="conf_input input" style="width: 90px; text-indent: 2px; max-width: 50px">
                 <option>0</option>
@@ -103,11 +110,17 @@
                 <option>5</option>
             </select>秒后再提交问卷
         </p>
-        <p class="s14 grey2 tip">- 问卷提交最终用时 = 填写用时(1-5秒) + 延迟用时</p>
+        <p class="s14 grey2 tip hide">- 问卷提交最终用时 = 填写用时(1-5秒) + 延迟用时</p>
+    </div>
+    <div id='hobby' class="conf_box box sd0" style="">
+        <p class="s18 bold grey3" style="margin-bottom: 10px">兴趣标签</p>
+        <p class="grey2"> 在这里添加你感兴趣的标签吧（最多5个）</p>
+        <div style="flex-direction: column; ">
 
+        </div>
     </div>
     <div class="blank" style="height: 60px">(占位)</div>
-    <button id='save_btn' class="btn1 sd2">保存配置</button>
+    <button id='save_btn' class="btn1 sd2">保存信息</button>
 </body>
 <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
 <script src="../static/js/public.js"></script>
@@ -116,7 +129,7 @@
     let wjx_set = localStorage.getItem('wjx_set')
     if(wjx_set === null){
         wjx_set = {};
-        $('#ai').show();
+        //$('#ai').show();
     }else{
         wjx_set = JSON.parse(wjx_set);
         for(let key in wjx_set){
@@ -159,7 +172,7 @@
         wjx_set['delay'] = document.getElementById("delay").selectedIndex
         //保存到本地
         localStorage.setItem('wjx_set', JSON.stringify(wjx_set));
-        alert("保存成功");
+        show_tip("保存成功");
     });
 </script>
 </html>

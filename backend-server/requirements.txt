@@ -8,3 +8,5 @@ numpy~=1.26.2
 SQLAlchemy~=2.0.23
 bs4~=0.0.1
 CherryPy~=18.9.0
+zhipuai~=2.0.1
+modelscope~=1.14.0

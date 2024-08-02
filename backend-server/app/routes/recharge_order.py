@@ -21,10 +21,10 @@ headers = {
                   'Chrome/63.0.3239.132 Safari/537.36 QIHU 360SE'
 }
 
-# 配置信息（注：支付接口只能在生产环境下测试）
+# 配置信息（注：接口只能在生产环境下测试）
 app_id = 2312208768
 H5PAY_KEY = os.getenv('H5PAY_KEY')
-description = "WeActive充值订单"
+description = "WeActive活动"
 notify_url = 'https://api.weactive.top/recharge/callback'
 
 
@@ -41,7 +41,7 @@ def sign(attributes, key):
     )
 
 
-# 拉起支付接口
+# 拉起接口
 @recharge_order_bk.post('/')
 @login_required
 def commit():
@@ -65,7 +65,7 @@ def commit():
     signed = sign(data, key=H5PAY_KEY)
     data['sign'] = signed
 
-    # 请求拉起支付跳转
+    # 请求拉起跳转
     resp = requests.post('https://open.h5zhifu.com/api/' + env,
                          headers=headers,
                          data=json.dumps(data))
@@ -73,16 +73,16 @@ def commit():
     jump_url = resp['data']['jump_url']
     if resp['msg'] != "success" or resp['code'] != 200:
         return {"code": 1001,
-                "msg": "拉起支付接口失败，内部错误代码：" + str(resp['code'])}
+                "msg": "拉起接口失败，内部错误代码：" + str(resp['code'])}
 
-    # 生成支付订单
+    # 生成活动
     h5id = resp['data']['trade_no']
     ctime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
     order = Order(oid=oid, h5id=h5id, uid=uid, payment=pay_type, price=amount / 100, ctime=ctime)
     db.session.add(order)
     db.session.commit()
 
-    # 微信H5支付：通过爬虫去掉中间页回调，返回deep_link
+    # 通过爬虫去掉中间页回调，返回deep_link
     if env == 'h5':
         h5_resp = requests.get(jump_url, headers=headers)
         wx_url = re.search(r'top.location.href = "(.*?)"', h5_resp.text).groups()[0]
@@ -91,12 +91,12 @@ def commit():
         deep_link = re.findall(r'deeplink : "(.*?)"', wx_resp.text)[1]
         return {"code": 1000, "msg": "ok", "link": deep_link, "oid": oid}
 
-    # 微信内JSAPI支付：直接返回jump_url
+    # 直接返回jump_url
     elif env == 'jsapi':
         return {"code": 1000, "msg": "ok", "link": jump_url, "oid": oid}
 
 
-# 接收订单支付成功通知
+# 接收成功通知
 @recharge_order_bk.post('/callback')
 def callback():
     # 验证签名
@@ -107,7 +107,7 @@ def callback():
     if correct_sign != received_sign:
         return "拒绝访问"
 
-    # 更新订单信息
+    # 更新活动信息
     oid = req['out_trade_no']
     order = Order.query.filter(Order.oid == oid).first()
     if order.status == "wait":
@@ -118,11 +118,10 @@ def callback():
     else:
         return "success"  # 防止重复通知
 
-    # 账户累加充值金额
+    # 账户累加积分
     uid = order.uid
     amount = order.price
     user = User.query.filter(User.uid == uid).first()
     user.balance += amount
     db.session.commit()
-    print(f"【用户{user.nick}】充值金额：{amount}.00￥已到账.")
     return "success"

@@ -1,6 +1,7 @@
 let $input_img = $('.input-img')
 const URL = $("#URL").text()
 
+
 function request_orderlist(tabName, pn){
     $('#'+tabName+'Page').append('<p class="s14 grey1" style="margin: 5px 0">正在努力加载...</p>');
     return new Promise(function (resolve, reject) {
@@ -38,23 +39,23 @@ function render_orderlist(tabName, orders){
         return;
     }
     for(let i in orders){
-        //提取订单状态
+        //提取活动状态
         const order = orders[i];
         let status = order['status'];
         let bg = ''
-        if(100<=status && status<=199) {status = '待付款';bg = '#f5a74a'}
+        if(100<=status && status<=199) {status = '待确认';bg = '#f5a74a'}
         else if(200<=status && status<=299){status = '已关闭';bg = '#9d9d9d'}
-        else if(300<=status && status<=399){status = '待接单';bg = '#9d9d9d'}
-        else if(400<=status && status<=499){status = '进行中';bg = '#9072ee'}
-        else if(500<=status && status<=599){status = '已完成';bg = '#4eb63d'}
+        else if(300<=status && status<=399){status = '已报名';bg = '#9d9d9d'}
+        else if(400<=status && status<=499){status = '已报名';bg = '#9072ee'}
+        else if(500<=status && status<=599){status = '已结束';bg = '#4eb63d'}
         else{status = '发生错误';bg = '#f15c57'}
-        //提取订单信息
+        //提取活动信息
         const oid = order['oid'];
         const title = order['config']['title'];
-        const price = order['price'].toFixed(2);
+        const price = order['price'].toFixed(1);
         let type = '';
         if(order['type'] === 'wjx'){
-            type = '问卷星活动代抢服务'
+            type = '问卷星活动报名'
         }
         //提取options信息
         let options = '';
@@ -78,7 +79,7 @@ function render_orderlist(tabName, orders){
         '                        <p class="s15 grey3 hidet">'+ title +'</p>\n' +
         '                        <p class="s13 grey1">'+ options +'</p>\n' +
         '                    </div>\n' +
-        '                    <div class="s16 grey3" style="align-items: center;width: 50px">￥'+ price +'</div>\n' +
+        '                    <div class="s16 grey3" style="align-items: center;width: 50px"> '+ price +'分</div>\n' +
         '                </div>\n' +
         '            </div>')
     }
@@ -99,15 +100,101 @@ function handle_orderlist(tabName){
     }
 }
 
+
+/*计算机设计大赛：广场活动渲染*/
+function render_squares(squares){
+    let $page = $('#activity');
+    $page.empty();
+    if(squares.length === 0){    //显示"木大"icon
+        $page.append('' +
+            '<div style="flex-direction: column;align-items: center">\n' +
+            '    <svg style="margin: 50px 0 10px 0" width="75px" height="75px" fill="#AAAAAA" class="bi bi-box-seam-fill" viewBox="0 0 16 16">\n' +
+            '        <path fill-rule="evenodd" d="M15.528 2.973a.75.75 0 0 1 .472.696v8.662a.75.75 0 0 1-.472.696l-7.25 2.9a.75.75 0 0 1-.557 0l-7.25-2.9A.75.75 0 0 1 0 12.331V3.669a.75.75 0 0 1 .471-.696L7.443.184l.01-.003.268-.108a.75.75 0 0 1 .558 0l.269.108.01.003 6.97 2.789ZM10.404 2 4.25 4.461 1.846 3.5 1 3.839v.4l6.5 2.6v7.922l.5.2.5-.2V6.84l6.5-2.6v-.4l-.846-.339L8 5.961 5.596 5l6.154-2.461L10.404 2Z"></path>\n' +
+            '    </svg>\n' +
+            '    <p class="s14 grey1">木大! 真的木大!</p>\n' +
+            '</div>'
+        );
+        return;
+    }
+    for(let s in squares){
+        const square = squares[s];
+        const aid = square['aid'];
+        let title = square['title'];
+        if (title.length > 15) {
+            title = title.substring(0, 18) + '...';
+        }
+        const score = square['score'];
+        const short = square['short']
+        const stime = square['stime']
+        const atime = square['atime']
+        let raw = square['raw']
+        raw = raw.replace(/[\r\n]/g,"<br />");
+        const location = square['location']
+        $page.append('<div id="aid'+ aid +'" class="order ac_box box sd1" style="margin-bottom: 20px"> ' +
+            '<div style="justify-content: space-between; margin-bottom: 5px"> ' +
+            '<p class="s17 pur bold">' + title + '</p> ' +
+            '<div> ' +
+            '<p class="label s14" style="margin: 0 5px; background-color:#ec752f">报名中</p> ' +
+            '<p class="label s14" style="margin: 0; background-color:#7366f6">+' + score + '积分</p> ' +
+            '</div> ' +
+            '</div> ' +
+            '<div style="flex-direction: column"> ' +
+            '<p class="s15 grey3" style="margin: 3px 0">活动内容：' + short + '</p> ' +
+            '<p class="s14 grey2">报名时间：' + stime + ' 止</p> ' +
+            '<p class="s14 grey2">活动时间：' + atime + ' 起</p> ' +
+            '<p class="s14 grey2">活动地点：' + location + '</p> ' +
+            '</div> ' +
+            '<div style="justify-content: space-between; margin: 5px 0"> ' +
+            '<p class=""></p> ' +
+            '<div> ' +
+            '<button id="raw'+ aid +'" class="btn4" style="margin-right: 10px">详情</button> ' +
+            '<button id="sign'+ aid +'" class="btn3">报名</button> ' +
+            '</div> ' +
+            '</div>' +
+            '</div>' +
+            '<script>$(document).on("click", "#raw' + aid + '", function () {show_tip("' + raw + '")})</script>')
+    }
+    if(squares.length >= 10){
+        $page.append(
+            '<p class="s14 grey1" style="margin: 5px 0">只能查看最近十个活动噢~</p>');
+    }
+}
+
 window.onload = function () {
-    /*清除本地订单缓存*/
+    /*清除本地活动缓存*/
     sessionStorage.removeItem('all');
     sessionStorage.removeItem('ing');
     sessionStorage.removeItem('done');
 
-    /* =========================== 订单相关 ============================ */
+    /* =========================== 广场相关 ============================ */
 
-    /*点击底部订单标签*/
+    /*点击底部广场标签*/
+    $(document).on("click", "#squareTab", function () {
+        changePage(this)
+        /*请求获取活动信息*/
+        $.ajax({
+            url: URL + "/query/squares",
+            xhrFields: {withCredentials: true},
+            type: "POST",
+            dataType: "json",
+            success: function (resp) {
+                if (resp["code"] === 1000) {
+                    const squares = resp['squares'];
+                    render_squares(squares)
+                    console.log(squares)
+                }
+            }
+        });
+    });
+    /*点击广场活动 -> 广场活动卡片跳转*/
+    $(document).on("click", "div[id^='sign']", function () {
+        const aid = $(this).attr("id").slice(4);
+        window.location.assign('/wjx_order_pre/?oid='+aid);
+    });
+
+    /* =========================== 活动相关 ============================ */
+
+    /*点击底部活动标签*/
     $(document).on("click", "#orderTab", function () {
         changePage(this);
         /*跳转到上次的标签位置*/
@@ -116,20 +203,20 @@ window.onload = function () {
         $("#"+tab+"Tab").trigger("click");
     });
 
-    /*点击订单 -> 订单卡片跳转*/
+    /*点击活动 -> 活动卡片跳转*/
     $(document).on("click", "div[id^='oid']", function () {
         const oid = $(this).attr("id").slice(3);
         window.location.assign('/wjx_order_detail/?oid='+oid);
     });
-    /*点击订单 -> "全部" 标签*/
+    /*点击活动 -> "全部" 标签*/
     $(document).on("click", "#allTab", function () {
         handle_orderlist(changeTab(this));
     });
-    /*点击订单 -> "进行中" 标签*/
+    /*点击活动 -> "进行中" 标签*/
     $(document).on("click", "#ingTab", function () {
         handle_orderlist(changeTab(this));
     });
-    /*点击订单 -> "已完成" 标签*/
+    /*点击活动 -> "已完成" 标签*/
     $(document).on("click", "#doneTab", function () {
         handle_orderlist(changeTab(this));
     });
@@ -145,19 +232,24 @@ window.onload = function () {
     $(document).on("click", "#getActivity_btn", function () {
         /*先检查本地问卷星配置*/
         if(localStorage.getItem('wjx_set') === null){
-            alert('您还没有完成问卷星代填设置哦，请先去[我的]-[配置修改]中填写吧');
+            show_tip('您还没有完成个人信息设置哦，请先去[我的]-[个人信息]中填写吧');
         }else{
             $input_img[0].click();
         }
     });
 
-    /*发送图片解析请求，生成订单*/
+     /*点击上传活动*/
+    $(document).on("click", "#getVideo_btn", function () {
+        window.location.assign("/upload");
+    });
+
+    /*发送图片解析请求，生成活动*/
     $input_img.on('change', function () {
         let file = $(this).get(0).files[0]
         if (!file || file.length === 0) return;
         const isLt5M = file.size / 1024 / 1024 < 5;
         if(!isLt5M) {
-            alert('上传的图片大小不能超过5MB');
+            show_tip('上传的图片大小不能超过5MB');
             $(this).get(0).value = '';
             return;
         }
@@ -191,6 +283,13 @@ window.onload = function () {
         });
         $(this).get(0).value = '';
     });
+
+    /* =========================== 更多相关 ============================ */
+
+    /*点击底部更多标签*/
+    $(document).on("click", "#moreTab", function () {
+        changePage(this)
+    });
     
 
     /* =========================== 我的相关 ============================ */
@@ -211,7 +310,7 @@ window.onload = function () {
                     $('#mine_nick').text('你好，'+user['nick']);
                     $('#mine_ing').text(user['ing']);
                     $mine_welcome.text(user['balance'].toFixed(2));
-                    $mine_welcome.append('<span class="s15">￥</span>')
+                    $mine_welcome.append('<span class="s15"> 分</span>')
                     $('#mine_done').text(user['done']);
                 }
             }
@@ -232,12 +331,12 @@ window.onload = function () {
         });
     });
 
-    /*点击余额*/
+    /*点击积分*/
     $(document).on("click", "#balance", function () {
         window.location.assign("/balance");
     });
 
-    /*余额充值按钮*/
+    /*积分按钮*/
     $(document).on("click", "#recharge_btn", function () {
         window.location.assign("/recharge");
     });

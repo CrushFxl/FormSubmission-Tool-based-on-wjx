@@ -37,3 +37,9 @@ def message():
 @login_required
 def admin():
     return render_template("admin.html")
+
+@home_ft.get('/upload/')
+@login_required
+def upload():
+    return render_template("upload.html")
+

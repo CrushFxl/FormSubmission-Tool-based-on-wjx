@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>WeActive - 评价活动</title>
+    <title>WeActive - 发布活动</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="viewport" content="minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -41,40 +41,46 @@
                 <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"></path>
             </svg>
         </div>
-        <p class="s18 grey3">活动评价</p>
+        <p class="s18 grey3">发布活动</p>
     </div>
     <div class="blank">(占位)</div>
     <div class="feedback_box" style="width: 100%">
-        <p class="s18 bold grey3" style="margin-bottom: 5px">写下您的问题或建议</p>
-        <p class="s14 grey3">我们重视您的用户建议，感谢您帮助我们改进活动。</p>
-        <textarea id='text' class='input feedback_input'  maxlength="300" placeholder="在此写下你的问题或建议..." onchange="this.value=this.value.substring(0, 300)" onkeydown="this.value=this.value.substring(0, 300)" onkeyup="this.value=this.value.substring(0, 300)"></textarea>
-        <input id='info' type="text" class="input" maxlength="30" placeholder="联系方式 (选填)">
+        <p class="s18 bold grey3" style="margin-bottom: 5px">粘贴活动通知</p>
+        <p class="s14 grey3">活动通知至少应包含活动内容、时间、地点、奖励方案。</p>
+        <textarea id='text' class='input feedback_input' placeholder="在此粘贴活动通知..."></textarea>
+        <input id='link' type="text" class="input" maxlength="30" placeholder="报名表链接 (选填)">
     </div>
-    <button id='feedback_btn' class="btn1">提交反馈</button>
+    <button id='feedback_btn' class="btn1">一键发布到广场</button>
 </body>
 <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
 <script src="../static/js/public.js"></script>
 <script>
+    const URL = $("#URL").text()
     $(document).on("click", "#feedback_btn", function () {
-        let $text = $('#text');
-        if($text.val().length === 0){
-            alert('还没有填写反馈内容哦');
-            return;
-        }
+        let text  = document.getElementById('text').value
+        let link = document.getElementById('link').value
         loading_show();
         $.ajax({
-            url: $('#URL').text() + "/user/feedback",
+            url: URL + "/query/extract",
             xhrFields: {withCredentials: true},
             type: "POST",
             dataType: "json",
-            data: {"text": $text.val(), "info": $('#info').val()},
+            data: {
+                "raw": text,
+                "link": link
+            },
             success: function (resp){
-                const code = resp['code'];
-                if(code === 1000){
-                    loading_hide();
-                    show_tip('反馈已提交，我们将尽快处理！');
-                    window.history.go(-1)
-                }
+                loading_hide();
+                let tips= "解析成功，信息抽取如下：\n\n"
+                tips += "【活动编号】" + resp['aid'] + "\n"
+                tips += "【活动标题】" + resp['title'] + "\n"
+                tips += "【活动介绍】" + resp['short'] + "\n"
+                tips += "【报名时间】" + resp['stime'] + " 止\n"
+                tips += "【活动时间】" + resp['atime'] + " 起\n"
+                tips += "【活动地点】" + resp['location'] + "\n"
+                tips += "【招募人数】" + resp['limit'] + "\n"
+                tips += "【奖励分数】" + resp['score'] + "\n"
+                show_tip(tips);
             }
         });
     });
